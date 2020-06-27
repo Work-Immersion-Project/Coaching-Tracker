@@ -1,6 +1,13 @@
 ## Teacher Coaching Tracker
 
-- This project tracks if a student had been successfully coached by their teacher/s. Aside from that, this serves as the final project for Information Management and Work Immersion Subject.
+A beautiful, fast, and responsive coaching tracker website, that has a sole purpose of tracking whether a teacher has successfully coached a student.
+
+This serves as a final requirement for Work Immersion Subject, and Information Management.
+
+### Technologies Used
+
+- ⚛️ **React JS (Front End Framework)**
+- 🔥 **Firestore (Backend)**
 
 ### Team
 

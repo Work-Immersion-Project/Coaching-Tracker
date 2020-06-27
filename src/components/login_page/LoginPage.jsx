@@ -1,21 +1,19 @@
 import React, { Component } from "react";
+import { reduxForm } from "redux-form";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Container,
-  Card,
-  CardContent,
-  CardActions,
-  Typography,
-  Grid,
-} from "@material-ui/core";
+import { Card, CardContent, Typography, TextField } from "@material-ui/core";
+import { Field } from "redux-form";
 
 const useStyles = makeStyles({
   root: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     width: "100vw",
     height: "100vh",
     backgroundColor: "#4B4E6D",
   },
-  login_wrapper: {
+  loginCard: {
     maxWidth: "500px",
     backgroundColor: "#222222",
   },
@@ -24,19 +22,40 @@ const useStyles = makeStyles({
   },
 });
 
-export default function LoginPage() {
+const renderTextField = ({
+  label,
+  input,
+  meta: { touched, invalid, error },
+  ...custom
+}) => (
+  <TextField
+    label={label}
+    placeholder={label}
+    error={touched && invalid}
+    helperText={touched && error}
+    {...input}
+    {...custom}
+  />
+);
+
+const LoginPage = () => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <Container>
-        <Card align="center" className={classes.login_wrapper}>
-          <CardContent>
-            <Typography className={classes.header} align="center">
-              Login
-            </Typography>
-          </CardContent>
-        </Card>
-      </Container>
+      <Card className={classes.loginCard}>
+        <CardContent>
+          <Typography className={classes.header} align="center">
+            Login
+          </Typography>
+          <form>
+            {/* <div>
+              <Field name="email" label="Email" component={renderTextField} />
+            </div> */}
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
-}
+};
+
+export default LoginPage;

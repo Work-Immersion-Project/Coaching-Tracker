@@ -12,6 +12,7 @@ import {
   FormControl,
   Container,
   Grid,
+  Button,
 } from "@material-ui/core";
 
 import { Email, Lock } from "@material-ui/icons";
@@ -24,13 +25,7 @@ const useStyles = makeStyles({
     color: "#FFFFFF",
   },
   loginCard: {
-    maxWidth: "500px",
     backgroundColor: "#222222",
-  },
-  loginForm: {
-    display: "flex",
-    flexDirection: "column",
-    color: "#FFFFFF",
   },
   header: {
     color: "white",
@@ -94,65 +89,75 @@ const renderTextField = ({
 const LoginPage = () => {
   const classes = useStyles();
   return (
-    <div className={classes.root}>
-      <Grid
-        container
-        direction="column"
-        alignContent="center"
-        justify="center"
-      >
-        <Grid item>
-          <Card className={classes.loginCard}>
-            <CardContent>
-              <Typography className={classes.header} align="center">
-                Welcome
-              </Typography>
-              <form className={classes.loginForm}>
-                <FormControl>
-                  <InputLabel shrink htmlFor="email-input">
-                    Email
-                  </InputLabel>
-                  <Field
-                    id="email-input"
-                    name="email"
-                    component={renderTextField}
-                    variant="outlined"
-                    label="Email"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Email />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </FormControl>
+    <Grid
+      container
+      direction="column"
+      alignContent="center"
+      justify="center"
+      className={classes.root}
+    >
+      <Grid item>
+        <Card className={classes.loginCard}>
+          <CardContent>
+            <form>
+              <Grid direction="column" justify="center" alignItems="center">
+                <Grid item>
+                  <Typography className={classes.header} align="center">
+                    Welcome
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <FormControl>
+                    <InputLabel shrink htmlFor="email-input">
+                      Email
+                    </InputLabel>
+                    <Field
+                      id="email-input"
+                      name="email"
+                      component={renderTextField}
+                      variant="outlined"
+                      label="Email"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Email />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item>
+                  <FormControl>
+                    <InputLabel shrink htmlFor="password-input">
+                      Password
+                    </InputLabel>
+                    <Field
+                      id="password-input"
+                      name="password"
+                      component={renderTextField}
+                      variant="outlined"
+                      label="Password"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Lock />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </FormControl>
+                </Grid>
 
-                <FormControl>
-                  <InputLabel shrink htmlFor="password-input">
-                    Password
-                  </InputLabel>
-                  <Field
-                    id="password-input"
-                    name="password"
-                    component={renderTextField}
-                    variant="outlined"
-                    label="Password"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Lock />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </FormControl>
-              </form>
-            </CardContent>
-          </Card>
-        </Grid>
+                <Grid item>
+                  <Button>Submit</Button>
+                </Grid>
+              </Grid>
+            </form>
+          </CardContent>
+        </Card>
       </Grid>
-    </div>
+    </Grid>
   );
 };
 

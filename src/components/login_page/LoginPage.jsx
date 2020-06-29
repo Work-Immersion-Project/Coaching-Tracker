@@ -13,6 +13,7 @@ import {
   Container,
   Grid,
   Button,
+  OutlinedInput,
 } from "@material-ui/core";
 
 import { Email, Lock } from "@material-ui/icons";
@@ -22,16 +23,57 @@ const useStyles = makeStyles({
     width: "100vw",
     height: "100vh",
     backgroundColor: "#4B4E6D",
-    color: "#FFFFFF",
   },
   loginCard: {
     backgroundColor: "#222222",
+  },
+  inputLabel: {
+    color: "white",
+  },
+  inputIcon: {
+    color: "white",
+  },
+  inputForm: {
+    marginTop: "1em",
+  },
+  submitButton: {
+    backgroundColor: "#222222",
+    borderRadius: "2em",
+    width: "100%",
+    textAlign: "center",
+    color: "white",
+    marginTop: "2em",
   },
   header: {
     color: "white",
     fontSize: "2rem",
   },
 });
+
+//This helper is used to integrate redux form with material ui's text field.
+const renderTextField = ({
+  classes,
+  label,
+  input,
+  variant,
+  id,
+  meta: { touched, invalid, error },
+  ...custom
+}) => (
+  <FormControl className={classes.inputForm}>
+    <InputLabel shrink className={classes.inputLabel}>
+      {label}
+    </InputLabel>
+    <CustomTextField
+      id={id}
+      error={touched && invalid}
+      helperText={touched && error}
+      variant={variant}
+      {...input}
+      {...custom}
+    />
+  </FormControl>
+);
 
 const CustomTextField = withStyles((theme) => ({
   root: {
@@ -40,54 +82,26 @@ const CustomTextField = withStyles((theme) => ({
     },
   },
   input: {
-    borderRadius: 4,
-    position: "relative",
-    backgroundColor: theme.palette.common.white,
-    border: "1px solid #ced4da",
+    border: "2px solid #ffffff",
     fontSize: 16,
     width: "auto",
-    padding: "10px 12px",
+    padding: "4px 10px",
+    marginLeft: 6,
+    color: "white",
     transition: theme.transitions.create(["border-color", "box-shadow"]),
-    // Use the system font instead of the default Roboto font.
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
     "&:focus": {
       boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
       borderColor: theme.palette.primary.main,
     },
   },
+  inputAdornedStart: {
+    paddingRight: 10,
+  },
 }))(InputBase);
-
-const renderTextField = ({
-  label,
-  input,
-  variant,
-  id,
-  meta: { touched, invalid, error },
-  ...custom
-}) => (
-  <CustomTextField
-    id={id}
-    error={touched && invalid}
-    helperText={touched && error}
-    variant={variant}
-    {...input}
-    {...custom}
-  />
-);
 
 const LoginPage = () => {
   const classes = useStyles();
+
   return (
     <Grid
       container
@@ -98,64 +112,51 @@ const LoginPage = () => {
     >
       <Grid item>
         <Card className={classes.loginCard}>
-          <CardContent>
-            <form>
-              <Grid direction="column" justify="center" alignItems="center">
-                <Grid item>
-                  <Typography className={classes.header} align="center">
-                    Welcome
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <FormControl>
-                    <InputLabel shrink htmlFor="email-input">
-                      Email
-                    </InputLabel>
-                    <Field
-                      id="email-input"
-                      name="email"
-                      component={renderTextField}
-                      variant="outlined"
-                      label="Email"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Email />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item>
-                  <FormControl>
-                    <InputLabel shrink htmlFor="password-input">
-                      Password
-                    </InputLabel>
-                    <Field
-                      id="password-input"
-                      name="password"
-                      component={renderTextField}
-                      variant="outlined"
-                      label="Password"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Lock />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </FormControl>
-                </Grid>
-
-                <Grid item>
-                  <Button>Submit</Button>
-                </Grid>
+          <CardContent component="form">
+            <Grid direction="column" justify="center" alignItems="center">
+              <Grid item>
+                <Typography className={classes.header} align="center">
+                  Welcome
+                </Typography>
               </Grid>
-            </form>
+              <Grid item>
+                <Field
+                  id="email-input"
+                  name="email"
+                  component={renderTextField}
+                  classes={classes}
+                  variant="outlined"
+                  label="Email"
+                  startAdornment={
+                    <InputAdornment>
+                      <Email className={classes.inputIcon} />
+                    </InputAdornment>
+                  }
+                />
+              </Grid>
+              <Grid item>
+                <Field
+                  id="password-input"
+                  name="password"
+                  component={renderTextField}
+                  classes={classes}
+                  variant="outlined"
+                  label="Password"
+                  startAdornment={
+                    <InputAdornment>
+                      <Lock className={classes.inputIcon} />
+                    </InputAdornment>
+                  }
+                />
+              </Grid>
+            </Grid>
           </CardContent>
         </Card>
+      </Grid>
+      <Grid item>
+        <Button className={classes.submitButton} variant="contained">
+          Submit
+        </Button>
       </Grid>
     </Grid>
   );

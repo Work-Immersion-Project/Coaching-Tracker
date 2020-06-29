@@ -14,6 +14,7 @@ export default function App() {
       <Route path="/admin" exact>
         <AdminPage />
       </Route>
+      <Route path="/admin/coachinglog" exact></Route>
     </BrowserRouter>
   );
 }

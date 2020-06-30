@@ -24,9 +24,12 @@ export const signOut = () => {
 };
 
 // User Actions
-export const getUser = (userId, userToken) => async (dispatch) => {
-  const document = await userCollection.doc(userId).get();
-  dispatch({ type: GET_USER, payload: { ...document.data(), userToken } });
+export const getUser = (email, userToken) => async (dispatch) => {
+  const document = await userCollection.doc(email).get();
+  dispatch({
+    type: GET_USER,
+    payload: { currentUser: { ...document.data() }, userToken },
+  });
 };
 
 export const addUser = (userId, email, name, type, userToken) => async (
@@ -41,10 +44,7 @@ export const addUser = (userId, email, name, type, userToken) => async (
   dispatch({
     type: ADD_USER,
     payload: {
-      userId,
-      email,
-      name,
-      type,
+      currentUser: { userId, email, name, type },
       userToken,
     },
   });

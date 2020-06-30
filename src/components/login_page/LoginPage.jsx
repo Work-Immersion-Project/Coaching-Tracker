@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { makeStyles, fade, withStyles } from "@material-ui/core/styles";
-import { Grid, CircularProgress } from "@material-ui/core";
+import { Grid, CircularProgress, Typography } from "@material-ui/core";
 import GoogleAuth from "../GoogleAuth";
 
 const useStyles = makeStyles({
@@ -23,7 +23,11 @@ const LoginPage = (props) => {
       className={classes.root}
     >
       <GoogleAuth />
-      {props.isSignedIn ? <div>Welcome!</div> : <CircularProgress />}
+      {props.isSignedIn ? (
+        <Typography>Redirecting...</Typography>
+      ) : (
+        <CircularProgress />
+      )}
     </Grid>
   );
 };

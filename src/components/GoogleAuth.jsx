@@ -23,7 +23,6 @@ class GoogleAuth extends React.Component {
         });
     });
   }
-
   onAuthChange = async (isSignedIn) => {
     if (!isSignedIn) {
       await this.auth.signIn({
@@ -33,18 +32,19 @@ class GoogleAuth extends React.Component {
       const currentUser = this.auth.currentUser.get();
       const { access_token, id_token } = currentUser.getAuthResponse();
       const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+
       app.auth().onAuthStateChanged(async (user) => {
         if (user) {
-          this.props.getUser(user.uid, access_token);
-          if (this.props.currentUser != null) {
-            this.props.addUser(
-              user.uid,
-              user.email,
-              user.displayName,
-              "admin",
-              access_token
-            );
-          }
+          this.props.getUser(user.email, access_token);
+          // if (this.props.currentUser == null) {
+          //   this.props.addUser(
+          //     user.uid,
+          //     user.email,
+          //     user.displayName,
+          //     "admin",
+          //     access_token
+          //   );
+          // }
           this.props.signIn();
         } else {
           await app.auth().signInWithCredential(credential);

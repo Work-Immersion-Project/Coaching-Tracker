@@ -12,6 +12,8 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
+import HomeIcon from "@material-ui/icons/Home";
+import HowToRegIcon from "@material-ui/icons/HowToReg";
 
 const drawerWidth = 240;
 
@@ -39,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AdminDrawer() {
+const AdminDrawer = () => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -52,29 +54,21 @@ export default function AdminDrawer() {
         anchor="left"
       >
         <div className={classes.toolbar} />
-        <Divider />
-        <List>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
+        <ListItem button key="home">
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="Home" />
+        </ListItem>
+        <ListItem button key="registration">
+          <ListItemIcon>
+            <HowToRegIcon />
+          </ListItemIcon>
+          <ListItemText primary="Registration" />
+        </ListItem>
       </Drawer>
     </div>
   );
-}
+};
+
+export default AdminDrawer;

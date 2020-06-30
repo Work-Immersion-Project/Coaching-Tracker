@@ -15,7 +15,7 @@ import {
   Button,
   OutlinedInput,
 } from "@material-ui/core";
-
+import GoogleAuth from "../GoogleAuth";
 import { Email, Lock } from "@material-ui/icons";
 
 const useStyles = makeStyles({
@@ -110,54 +110,7 @@ const LoginPage = () => {
       justify="center"
       className={classes.root}
     >
-      <Grid item>
-        <Card className={classes.loginCard}>
-          <CardContent component="form">
-            <Grid direction="column" justify="center" alignItems="center">
-              <Grid item>
-                <Typography className={classes.header} align="center">
-                  Welcome
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Field
-                  id="email-input"
-                  name="email"
-                  component={renderTextField}
-                  classes={classes}
-                  variant="outlined"
-                  label="Email"
-                  startAdornment={
-                    <InputAdornment>
-                      <Email className={classes.inputIcon} />
-                    </InputAdornment>
-                  }
-                />
-              </Grid>
-              <Grid item>
-                <Field
-                  id="password-input"
-                  name="password"
-                  component={renderTextField}
-                  classes={classes}
-                  variant="outlined"
-                  label="Password"
-                  startAdornment={
-                    <InputAdornment>
-                      <Lock className={classes.inputIcon} />
-                    </InputAdornment>
-                  }
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-      </Grid>
-      <Grid item>
-        <Button className={classes.submitButton} variant="contained">
-          Submit
-        </Button>
-      </Grid>
+      <GoogleAuth />
     </Grid>
   );
 };

@@ -4,14 +4,14 @@ import LoginPage from "./login_page/LoginPage";
 import AdminPage from "./admin_page/AdminPage";
 import AdminUser from "./admin_page/AdminUser";
 import AdminCoachingLog from "./admin_page/AdminCoachingLog";
+import PrivateRoute from "./PrivateRoute";
 import "./App.css";
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Route path="/" exact>
-        <LoginPage />
-      </Route>
+      <PrivateRoute path="/" component={LoginPage} />
+
       <Route path="/admin" exact>
         <AdminPage />
       </Route>

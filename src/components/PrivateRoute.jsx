@@ -1,4 +1,5 @@
 import React from "react";
+import _ from "lodash";
 import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 const PrivateRoute = ({ component: RouteComponent, ...props }) => {
@@ -6,8 +7,7 @@ const PrivateRoute = ({ component: RouteComponent, ...props }) => {
     <Route
       {...props}
       render={(routeProps) => {
-        console.log(props.currentUser);
-        if (!props.currentUser) {
+        if (props.currentUser == null || _.isEmpty(props.currentUser)) {
           return <RouteComponent {...routeProps} />;
         } else {
           if (props.currentUser.type === "admin") {

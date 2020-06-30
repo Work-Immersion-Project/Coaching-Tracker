@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, BrowserRouter, Route, Switch } from "react-router-dom";
+import { Link, BrowserRouter, Route, Switch, Router } from "react-router-dom";
 import LoginPage from "./login_page/LoginPage";
 import AdminPage from "./admin_page/AdminPage";
 import AdminUser from "./admin_page/AdminUser";
@@ -12,15 +12,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <PrivateRoute path="/" component={LoginPage} exact />
-      <Route path="/admin" exact>
-        <AdminPage />
-      </Route>
-      <Route path="/admin/coaching-log" exact>
-        <AdminCoachingLog />
-      </Route>
-      <Route path="/admin/registration" exact>
-        <AdminRegistration />
-      </Route>
+      <Route path="/admin" exact component={AdminPage} />
+      <Route path="/admin/coaching-log" exact component={AdminCoachingLog} />
+      <Route path="/admin/registration" exact component={AdminRegistration} />
     </BrowserRouter>
   );
 }

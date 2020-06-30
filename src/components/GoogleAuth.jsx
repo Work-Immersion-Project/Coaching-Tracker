@@ -6,20 +6,20 @@ import { signIn } from "../actions";
 
 const GoogleAuth = (props) => {
   useEffect(() => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-
-    provider.addScope("https://www.googleapis.com/auth/calendar");
-    provider.addScope("email");
-
     app.auth().onAuthStateChanged(async (user) => {
       if (user) {
         props.signIn(user.uid, user.email);
       } else {
         try {
-          await app.auth().signInWithRedirect(provider);
-          const redirectResult = await app.auth().getRedirectResult();
-          const { uid, email } = redirectResult.user;
-          props.signIn(uid, email);
+          (async () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            provider.addScope("https://www.googleapis.com/auth/calendar");
+            provider.addScope("email");
+            await app.auth().signInWithRedirect(provider);
+            const redirectResult = await app.auth().getRedirectResult();
+            const { uid, email } = redirectResult.user;
+            props.signIn(uid, email);
+          })();
         } catch (error) {
           console.error(error);
         }

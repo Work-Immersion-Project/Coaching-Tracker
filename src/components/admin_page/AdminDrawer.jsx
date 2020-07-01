@@ -14,6 +14,10 @@ import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
 import HomeIcon from "@material-ui/icons/Home";
 import HowToRegIcon from "@material-ui/icons/HowToReg";
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import FaceIcon from '@material-ui/icons/Face';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
+
 
 const drawerWidth = 240;
 
@@ -60,11 +64,33 @@ const AdminDrawer = () => {
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItem>
+
         <ListItem button key="registration">
           <ListItemIcon>
             <HowToRegIcon />
           </ListItemIcon>
           <ListItemText primary="Registration" />
+        </ListItem>
+
+        <ListItem button key="coaching-log">
+          <ListItemIcon>
+            <AssignmentIndIcon />
+          </ListItemIcon>
+          <ListItemText primary="Coaching Log" />
+        </ListItem>
+
+        <ListItem button key="profiles">
+          <ListItemIcon>
+            <FaceIcon />
+          </ListItemIcon>
+          <ListItemText primary="Profiles" />
+        </ListItem>
+
+        <ListItem button key="statistics">
+          <ListItemIcon>
+            <DoneAllIcon />
+          </ListItemIcon>
+          <ListItemText primary="Statistics" />
         </ListItem>
       </Drawer>
     </div>

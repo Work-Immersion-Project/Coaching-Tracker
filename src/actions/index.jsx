@@ -24,8 +24,8 @@ export const signOut = () => {
 };
 
 // User Actions
-export const getUser = (email, userToken) => async (dispatch) => {
-  const document = await userCollection.doc(email).get();
+export const getUser = (email, uid, userToken) => async (dispatch) => {
+  const document = await userCollection.doc(uid).get();
   dispatch({
     type: GET_USER,
     payload: { currentUser: { ...document.data() }, userToken },

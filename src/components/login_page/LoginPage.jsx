@@ -6,6 +6,7 @@ import { getUser } from "../../actions";
 import _ from "lodash";
 import firebase from "firebase";
 import app from "../../firebase";
+import { Redirect } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -19,6 +20,7 @@ const useStyles = makeStyles({
 const LoginPage = (props) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const _auth = useRef();
+  const classes = useStyles();
 
   const onAuthChange = async (isSignedIn) => {
     if (!isSignedIn) {
@@ -35,7 +37,7 @@ const LoginPage = (props) => {
       const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
       app.auth().onAuthStateChanged(async (user) => {
         if (user) {
-          props.getUser(user.email, access_token);
+          props.getUser(user.email, user.uid, access_token);
         } else {
           await app.auth().signInWithCredential(credential);
         }
@@ -59,8 +61,6 @@ const LoginPage = (props) => {
         });
     });
   }, []);
-
-  const classes = useStyles();
 
   const renderContent = () => {
     if (errorMessage) {
@@ -92,11 +92,14 @@ const LoginPage = (props) => {
         </Typography>
       );
     } else {
-      return (
-        <Typography>
-          Please wait while we redirect you the another page...
-        </Typography>
-      );
+      // Handle Routing
+      if (props.currentUser.type === "admin") {
+        return <Redirect to="/admin" />;
+      } else if (props.currentUser.type === "student") {
+        return <Redirect to="/student" />;
+      } else if (props.currentUser.type === "teacher") {
+        return <Redirect to="/teacher" />;
+      }
     }
   };
   return (

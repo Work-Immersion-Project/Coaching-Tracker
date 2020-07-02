@@ -8,11 +8,9 @@ const PrivateRoute = ({ component: RouteComponent, ...props }) => {
       {...props}
       render={(routeProps) => {
         if (props.currentUser == null || _.isEmpty(props.currentUser)) {
-          return <RouteComponent {...routeProps} />;
+          return <Redirect to="/login" {...routeProps} />;
         } else {
-          if (props.currentUser.type === "admin") {
-            return <Redirect to="/admin" {...routeProps} />;
-          }
+          return <RouteComponent {...routeProps} />;
         }
       }}
     />

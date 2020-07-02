@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, BrowserRouter, Route, Switch, Router } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Router } from "react-router-dom";
 import LoginPage from "./login_page/LoginPage";
 import AdminPage from "./admin_page/AdminPage";
 import AdminUser from "./admin_page/AdminUser";
@@ -12,12 +12,22 @@ import "./App.css";
 export default function App() {
   return (
     <BrowserRouter>
-      <PrivateRoute path="/" component={LoginPage} exact />
-      <Route path="/admin" exact component={AdminPage} />
-      <Route path="/admin/registration" exact component={AdminRegistration} />
-      <Route path="/admin/coaching-log" exact component={AdminCoachingLog} />
-      <Route path="/admin/profiles" exact component={AdminProfiles} />
-      
+      <Switch>
+        <Route path="/login" component={LoginPage} exact />
+        <PrivateRoute path="/admin" exact component={AdminPage} />
+        <PrivateRoute
+          path="/admin/registration"
+          exact
+          component={AdminRegistration}
+        />
+        <PrivateRoute
+          path="/admin/coaching-log"
+          exact
+          component={AdminCoachingLog}
+        />
+        <PrivateRoute path="/admin/profiles" exact component={AdminProfiles} />
+        <Route component={LoginPage} />
+      </Switch>
     </BrowserRouter>
   );
 }

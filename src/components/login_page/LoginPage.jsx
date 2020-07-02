@@ -6,7 +6,7 @@ import { getUser } from "../../actions";
 import _ from "lodash";
 import firebase from "firebase";
 import app from "../../firebase";
-import { Redirect } from "react-router-dom";
+import { Redirect, useLocation, useHistory } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -21,6 +21,9 @@ const LoginPage = (props) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const _auth = useRef();
   const classes = useStyles();
+  const history = useHistory();
+  const location = useLocation();
+  const { from } = location.state || { from: { pathName: "/" } };
 
   const onAuthChange = async (isSignedIn) => {
     if (!isSignedIn) {
@@ -94,11 +97,11 @@ const LoginPage = (props) => {
     } else {
       // Handle Routing
       if (props.currentUser.type === "admin") {
-        return <Redirect to="/admin" />;
+        history.replace(from);
       } else if (props.currentUser.type === "student") {
-        return <Redirect to="/student" />;
+        history.replace(from);
       } else if (props.currentUser.type === "teacher") {
-        return <Redirect to="/teacher" />;
+        history.replace(from);
       }
     }
   };

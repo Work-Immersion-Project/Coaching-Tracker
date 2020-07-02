@@ -8,7 +8,15 @@ const PrivateRoute = ({ component: RouteComponent, ...props }) => {
       {...props}
       render={(routeProps) => {
         if (props.currentUser == null || _.isEmpty(props.currentUser)) {
-          return <Redirect to="/login" {...routeProps} />;
+          return (
+            <Redirect
+              to={{
+                pathname: "/login",
+                state: { from: routeProps.location },
+              }}
+              {...routeProps}
+            />
+          );
         } else {
           return <RouteComponent {...routeProps} />;
         }

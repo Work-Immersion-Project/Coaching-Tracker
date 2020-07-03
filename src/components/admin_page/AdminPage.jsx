@@ -5,7 +5,8 @@ import { Route, useRouteMatch } from "react-router-dom";
 import AdminUser from "./AdminUser";
 import AdminCoachingLog from "./AdminCoachingLog";
 import AdminRegistration from "./AdminRegistration";
-import AdminProfiles from "./AdminProfiles";
+import TeacherList from "./TeacherList";
+import StudentList from "./StudentList";
 import AdminDrawer from "./AdminDrawer";
 
 const useStyles = makeStyles({
@@ -44,8 +45,11 @@ const AdminPage = () => {
           <Route path={`${path}/coaching-log`} exact>
             <AdminCoachingLog />
           </Route>
-          <Route path={`${path}/profile`} exact>
-            <AdminProfiles />
+          <Route path={`${path}/teacher-list`} exact>
+            <TeacherList />
+          </Route>
+          <Route path={`${path}/student-list`} exact>
+            <StudentList />
           </Route>
         </Grid>
       </Grid>

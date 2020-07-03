@@ -1,18 +1,16 @@
 import React from "react";
 import {
-  Button,
-  TextField,
   Grid,
   Typography,
-  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Card,
 } from "@material-ui/core";
-import { makeStyles, fade, withStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import AdminDrawer from "./AdminDrawer";
 
 function createData(teacher, student, date, time_in, time_out) {
@@ -44,6 +42,12 @@ const useStyles = makeStyles((theme) => ({
   tablePaper: {
     backgroundColor: "#4B4E6D",
     color: "white",
+  },
+  titlePaper:{
+    textAlign: "center",
+    width: "100%",
+    color: "white",
+    backgroundColor: "#95A3B3"
   },
   root: {
     backgroundColor: "#4B4E6D",
@@ -83,8 +87,8 @@ const AdminCoachingLog = () => {
           alignItems="center"
           className={classes.content}
         >
-          <Paper elevation={3} className={classes.tablePaper}>
-            <Typography align="center">Coaching Logs</Typography>
+          <Card elevation={3}  >
+            <Typography className={classes.titlePaper}>Coaching Logs</Typography>
             <TableContainer className={classes.table}>
               <Table>
                 <TableHead>
@@ -137,11 +141,12 @@ const AdminCoachingLog = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-          </Paper>
-        </Grid>
+          </Card>
+    
       </Grid>
     </Grid>
-  );
+  </Grid>
+);
 };
 
 export default AdminCoachingLog;

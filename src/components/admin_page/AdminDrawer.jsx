@@ -17,7 +17,7 @@ import HowToRegIcon from "@material-ui/icons/HowToReg";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import FaceIcon from "@material-ui/icons/Face";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import SentimentSatisfiedAltIcon from "@material-ui/icons/SentimentSatisfiedAlt";
+import SchoolIcon from '@material-ui/icons/School';
 
 const drawerWidth = 240;
 
@@ -34,13 +34,15 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 0,
   },
   drawerPaper: {
+    backgroundColor: "#95A3B3",
     width: drawerWidth,
+    color: "white",
   },
   // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: "#95A3B3",
     padding: theme.spacing(3),
   },
 }));
@@ -92,7 +94,7 @@ const AdminDrawer = () => {
 
         <ListItem button key="student-list">
           <ListItemIcon>
-            <SentimentSatisfiedAltIcon />
+            <SchoolIcon />
           </ListItemIcon>
           <ListItemText primary="Student List" />
         </ListItem>

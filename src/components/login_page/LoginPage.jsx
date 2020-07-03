@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, CircularProgress, Typography } from "@material-ui/core";
-import { getUser } from "../../actions";
+import { getUser, signIn } from "../../actions";
 import _ from "lodash";
 import firebase from "firebase";
 import app from "../../firebase";
+import history from "../../history";
 import { Redirect, useLocation, useHistory } from "react-router-dom";
 
 const useStyles = makeStyles({
@@ -21,7 +22,6 @@ const LoginPage = (props) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const _auth = useRef();
   const classes = useStyles();
-  const history = useHistory();
   const location = useLocation();
   const { from } = location.state || { from: { pathName: "/" } };
 
@@ -49,19 +49,9 @@ const LoginPage = (props) => {
   };
 
   useEffect(() => {
-    window.gapi.load("client:auth2", () => {
-      window.gapi.client
-        .init({
-          clientId:
-            "347125005886-kt2hubgo6bljk7m9q0kj0t6vg8bk6g0b.apps.googleusercontent.com",
-          scope: "email https://www.googleapis.com/auth/calendar",
-          ux_mode: "popup",
-        })
-        .then(() => {
-          _auth.current = window.gapi.auth2.getAuthInstance();
-          onAuthChange(_auth.current.isSignedIn.get());
-          _auth.current.isSignedIn.listen(onAuthChange);
-        });
+    window.gapi.load("client:auth2", async () => {
+      // onAuthChange(_auth.current.isSignedIn.get());
+      // _auth.current.isSignedIn.listen(onAuthChange);
     });
   }, []);
 
@@ -95,14 +85,10 @@ const LoginPage = (props) => {
         </Typography>
       );
     } else {
-      // Handle Routing
-      if (props.currentUser.type === "admin") {
-        history.replace(from);
-      } else if (props.currentUser.type === "student") {
-        history.replace(from);
-      } else if (props.currentUser.type === "teacher") {
-        history.replace(from);
+      if (from.pathName === "/") {
+        return <Redirect to={`${from.pathName}${props.currentUser.type}`} />;
       }
+      return <Redirect to={`${from.pathName}`} />;
     }
   };
   return (
@@ -127,4 +113,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   getUser,
+  signIn,
 })(LoginPage);

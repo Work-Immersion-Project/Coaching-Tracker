@@ -1,19 +1,29 @@
-import React from "react";
-import { BrowserRouter, Route, Switch, Router } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Switch, Router } from "react-router-dom";
 import LoginPage from "./login_page/LoginPage";
 import AdminPage from "./admin_page/AdminPage";
+import history from "../history";
+import { initializeGapiAuth } from "../actions";
 
 import PrivateRoute from "./PrivateRoute";
 import "./App.css";
+import { connect } from "react-redux";
 
-export default function App() {
+const App = (props) => {
+  useEffect(() => {
+    props.initializeGapiAuth();
+  }, []);
   return (
-    <BrowserRouter>
+    <Router history={history}>
       <Switch>
         <Route path="/login" component={LoginPage} exact />
-        <PrivateRoute path="/admin" component={AdminPage} />
-        {/* <Route component={LoginPage} /> */}
+        <Route path="/admin" component={AdminPage} />
+        <Route component={LoginPage} />
       </Switch>
-    </BrowserRouter>
+    </Router>
   );
-}
+};
+
+export default connect(null, {
+  initializeGapiAuth,
+})(App);

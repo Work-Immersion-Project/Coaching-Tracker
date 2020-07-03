@@ -15,16 +15,17 @@ import {
 import { makeStyles, fade, withStyles } from "@material-ui/core/styles";
 import AdminDrawer from "./AdminDrawer";
 
-function createData(teacher, student, time_in, time_out) {
-  return { teacher, student, time_in, time_out };
+function createData(teacher, student, date, time_in, time_out) {
+  return { teacher, student, date, time_in, time_out };
 }
 
 const rows = [
-  createData("Teacher", 10, "8:00 AM", "6:00 PM"),
-  createData("Teacher1", 10, "9:00 AM", "6:00 PM"),
-  createData("Teacher2", 20, "8:00 AM", "6:00 PM"),
-  createData("Teacher3", 15, "8:00 AM", "6:00 PM"),
-  createData("Teacher4", 6, "8:00 AM", "6:00 PM"),
+  createData("Teacher", 10, "5/5/2020", "8:00 AM", "6:00 PM"),
+  ,
+  createData("Teacher1", 10, "5/5/2020", "9:00 AM", "6:00 PM"),
+  createData("Teacher2", 20, "5/5/2020", "8:00 AM", "6:00 PM"),
+  createData("Teacher3", 15, "5/5/2020", "8:00 AM", "6:00 PM"),
+  createData("Teacher4", 6, "5/5/2020", "8:00 AM", "6:00 PM"),
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -33,14 +34,26 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   table: {
-    width: "60vw",
+    width: "40vw",
+    backgroundColor: "#222222",
+    color: theme.palette.common.white,
+  },
+  tableCell: {
+    color: "white",
+  },
+  tablePaper: {
+    backgroundColor: "#4B4E6D",
+    color: "white",
+  },
+  root: {
+    backgroundColor: "#4B4E6D",
   },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    backgroundColor: "#84DCC6",
+    color: theme.palette.common.black,
   },
   body: {
     fontSize: 14,
@@ -59,10 +72,10 @@ const AdminCoachingLog = () => {
   const classes = useStyles();
   return (
     <Grid container direction="row">
-      <Grid item xs={2}>
+      <Grid item sm={"auto"}>
         <AdminDrawer />
       </Grid>
-      <Grid item xs={10}>
+      <Grid item sm={"auto"} container className={classes.root}>
         <Grid
           container
           direction="column"
@@ -70,7 +83,7 @@ const AdminCoachingLog = () => {
           alignItems="center"
           className={classes.content}
         >
-          <Paper elevation={3}>
+          <Paper elevation={3} className={classes.tablePaper}>
             <Typography align="center">Coaching Logs</Typography>
             <TableContainer className={classes.table}>
               <Table>
@@ -78,9 +91,9 @@ const AdminCoachingLog = () => {
                   <TableRow>
                     <StyledTableCell> Teacher</StyledTableCell>
                     <StyledTableCell align="right">
-                      {" "}
                       Students Coached
                     </StyledTableCell>
+                    <StyledTableCell align="right"> Date</StyledTableCell>
                     <StyledTableCell align="right"> Time In</StyledTableCell>
                     <StyledTableCell align="right"> Time Out</StyledTableCell>
                   </TableRow>
@@ -88,17 +101,35 @@ const AdminCoachingLog = () => {
                 <TableBody>
                   {rows.map((row) => (
                     <StyledTableRow key={row.teacher}>
-                      <StyledTableCell component="th" scope="row">
+                      <StyledTableCell
+                        component="th"
+                        scope="row"
+                        className={classes.tableCell}
+                      >
                         {row.teacher}
                       </StyledTableCell>
-                      <StyledTableCell align="right">
+                      <StyledTableCell
+                        align="right"
+                        className={classes.tableCell}
+                      >
                         {row.student}
                       </StyledTableCell>
-                      <StyledTableCell align="right">
+                      <StyledTableCell
+                        align="right"
+                        className={classes.tableCell}
+                      >
+                        {row.date}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        align="right"
+                        className={classes.tableCell}
+                      >
                         {row.time_in}
                       </StyledTableCell>
-                      <StyledTableCell align="right">
-                        {" "}
+                      <StyledTableCell
+                        align="right"
+                        className={classes.tableCell}
+                      >
                         {row.time_out}
                       </StyledTableCell>
                     </StyledTableRow>

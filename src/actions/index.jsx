@@ -14,15 +14,15 @@ const db = app.firestore();
 const userCollection = db.collection("users");
 // Authentication Actions.
 export const signIn = () => async (dispatch) => {
-  return {
+  dispatch({
     type: SIGN_IN,
-  };
+  });
 };
 
 export const signOut = () => async (dispatch) => {
-  return {
+  dispatch({
     type: SIGN_OUT,
-  };
+  });
 };
 
 // User Actions

@@ -1,5 +1,4 @@
 import React from "react";
-import _ from "lodash";
 import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 const PrivateRoute = ({ component: RouteComponent, ...props }) => {
@@ -7,7 +6,7 @@ const PrivateRoute = ({ component: RouteComponent, ...props }) => {
     <Route
       {...props}
       render={(routeProps) => {
-        if (props.currentUser == null || _.isEmpty(props.currentUser)) {
+        if (!props.isSignedIn) {
           return (
             <Redirect
               to={{
@@ -27,7 +26,7 @@ const PrivateRoute = ({ component: RouteComponent, ...props }) => {
 
 const mapStateToProps = (state) => {
   return {
-    currentUser: state.users.currentUser,
+    isSignedIn: state.auth.isSignedIn,
   };
 };
 

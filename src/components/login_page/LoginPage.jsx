@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, CircularProgress, Typography } from "@material-ui/core";
-import { getUser, signIn } from "../../actions";
+import { getUser, signIn, signOut } from "../../actions";
 import _ from "lodash";
 import firebase from "firebase";
 import app from "../../firebase";
 import history from "../../history";
-import { Redirect, useLocation, useHistory } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -20,40 +19,47 @@ const useStyles = makeStyles({
 
 const LoginPage = (props) => {
   const [errorMessage, setErrorMessage] = useState(null);
-  const _auth = useRef();
   const classes = useStyles();
-  const location = useLocation();
+  const location = history.location;
   const { from } = location.state || { from: { pathName: "/" } };
 
   const onAuthChange = async (isSignedIn) => {
+    const { gapiAuth } = props;
     if (!isSignedIn) {
       try {
-        await _auth.current.signIn({
+        await gapiAuth.signIn({
           prompt: "select_account",
+        });
+        const currentUser = gapiAuth.currentUser.get();
+        const { access_token, id_token } = currentUser.getAuthResponse();
+        const credential = firebase.auth.GoogleAuthProvider.credential(
+          id_token
+        );
+        app.auth().onAuthStateChanged(async (user) => {
+          if (user) {
+            props.getUser(user.email, user.uid, access_token);
+          } else {
+            await app.auth().signInWithCredential(credential);
+          }
         });
       } catch (error) {
         setErrorMessage(error);
       }
-    } else {
-      const currentUser = _auth.current.currentUser.get();
-      const { access_token, id_token } = currentUser.getAuthResponse();
-      const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
-      app.auth().onAuthStateChanged(async (user) => {
-        if (user) {
-          props.getUser(user.email, user.uid, access_token);
-        } else {
-          await app.auth().signInWithCredential(credential);
-        }
-      });
     }
   };
 
   useEffect(() => {
-    window.gapi.load("client:auth2", async () => {
-      // onAuthChange(_auth.current.isSignedIn.get());
-      // _auth.current.isSignedIn.listen(onAuthChange);
-    });
-  }, []);
+    onAuthChange(props.gapiAuth.isSignedIn.get());
+    props.gapiAuth.isSignedIn.listen(onAuthChange);
+
+    if (props.isSignedIn && !_.isEmpty(props.currentUser)) {
+      if (from.pathName === "/") {
+        history.replace(`${from.pathName}${props.currentUser.type}`);
+      } else {
+        history.replace(from);
+      }
+    }
+  }, [props.isSignedIn, props.currentUser]);
 
   const renderContent = () => {
     if (errorMessage) {
@@ -85,10 +91,7 @@ const LoginPage = (props) => {
         </Typography>
       );
     } else {
-      if (from.pathName === "/") {
-        return <Redirect to={`${from.pathName}${props.currentUser.type}`} />;
-      }
-      return <Redirect to={`${from.pathName}`} />;
+      return <Typography>Redirecting...</Typography>;
     }
   };
   return (
@@ -104,14 +107,20 @@ const LoginPage = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
+  const isSignedIn = state.auth.isSignedIn;
+  const currentUser = state.users.currentUser;
+  const gapiAuth = state.gapi.gapiAuth;
+
   return {
-    isSignedIn: state.auth.isSignedIn,
-    currentUser: state.users.currentUser,
+    isSignedIn,
+    currentUser,
+    gapiAuth,
   };
 };
 
 export default connect(mapStateToProps, {
   getUser,
   signIn,
+  signOut,
 })(LoginPage);

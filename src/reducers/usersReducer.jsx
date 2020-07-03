@@ -2,7 +2,7 @@ import { GET_USER, ADD_USER } from "../actions/types";
 
 const INITIAL_STATE = {
   currentUser: null,
-  accessToken: null,
+  userToken: null,
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -11,13 +11,13 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         currentUser: action.payload.currentUser,
-        accessToken: action.payload.accessToken,
+        userToken: action.payload.userToken,
       };
     case ADD_USER:
       return {
         ...state,
         currentUser: action.payload.currentUser,
-        accessToken: action.payload.accessToken,
+        userToken: action.payload.userToken,
       };
     default:
       return state;

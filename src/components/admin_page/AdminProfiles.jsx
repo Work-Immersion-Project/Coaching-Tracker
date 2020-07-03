@@ -12,16 +12,16 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { makeStyles, fade, withStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import AdminDrawer from "./AdminDrawer";
 
 function createData(teacher, student) {
-  return { teacher, student};
+  return { teacher, student };
 }
 
 const rows = [
-  createData("Teacher", 10,),
-  createData("Teacher1", 10,),
+  createData("Teacher", 10),
+  createData("Teacher1", 10),
   createData("Teacher2", 20),
   createData("Teacher3", 15),
   createData("Teacher4", 6),
@@ -34,13 +34,25 @@ const useStyles = makeStyles((theme) => ({
   },
   table: {
     width: "40vw",
+    backgroundColor: "#222222",
+    color: theme.palette.common.white,
+  },
+  tableCell: {
+    color: "white",
+  },
+  tablePaper: {
+    backgroundColor: "#4B4E6D",
+    color: "white",
+  },
+  root: {
+    backgroundColor: "#4B4E6D",
   },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    backgroundColor: "#84DCC6",
+    color: theme.palette.common.black,
   },
   body: {
     fontSize: 14,
@@ -70,17 +82,14 @@ const AdminProfiles = () => {
           alignItems="center"
           className={classes.content}
         >
-          <Paper elevation={3}>
+          <Paper elevation={3} className={classes.tablePaper}>
             <Typography align="center">Profiles</Typography>
-            <TableContainer className={classes.table}>
+            <TableContainer className={classes.Cell}>
               <Table>
                 <TableHead>
                   <TableRow>
                     <StyledTableCell> Name of Teachers</StyledTableCell>
-                    <StyledTableCell align="right">
-                      {" "}
-                      No. of Students Coached
-                    </StyledTableCell>
+                    <StyledTableCell align="right"> </StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -105,4 +114,3 @@ const AdminProfiles = () => {
 };
 
 export default AdminProfiles;
-

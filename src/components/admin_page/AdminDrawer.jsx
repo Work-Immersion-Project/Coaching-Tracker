@@ -12,7 +12,7 @@ import HowToRegIcon from "@material-ui/icons/HowToReg";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import FaceIcon from "@material-ui/icons/Face";
 import SchoolIcon from "@material-ui/icons/School";
-import { Link } from "react-dom";
+import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 

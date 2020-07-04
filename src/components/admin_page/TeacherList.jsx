@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     height: "100vh",
     width: "100%",
+    backgroundColor: "#4B4E6D",
   },
   table: {
     width: "60vw",
@@ -43,9 +44,6 @@ const useStyles = makeStyles((theme) => ({
   tablePaper: {
     backgroundColor: "#95A3B3",
     color: "white",
-  },
-  root: {
-    backgroundColor: "#4B4E6D",
   },
 }));
 
@@ -70,43 +68,40 @@ const StyledTableRow = withStyles((theme) => ({
 const TeacherList = () => {
   const classes = useStyles();
   return (
-    <Grid item sm={"auto"} container className={classes.root}>
-      <Grid
-        container
-        direction="column"
-        justify="center"
-        alignItems="center"
-        className={classes.content}
-      >
-        <Paper elevation={3} className={classes.tablePaper}>
-          <TableContainer className={classes.table}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell align="center">
-                    {" "}
-                    Name of Teachers
+    <Grid
+      container
+      direction="column"
+      justify="center"
+      alignItems="center"
+      className={classes.content}
+    >
+      <Paper elevation={3} className={classes.tablePaper}>
+        <TableContainer className={classes.table}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell align="center">
+                  Name of Teachers
+                </StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <StyledTableRow key={row.teacher}>
+                  <StyledTableCell
+                    component="th"
+                    scope="row"
+                    className={classes.tableCell}
+                    align="left"
+                  >
+                    {row.teacher}
                   </StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <StyledTableRow key={row.teacher}>
-                    <StyledTableCell
-                      component="th"
-                      scope="row"
-                      className={classes.tableCell}
-                      align="left"
-                    >
-                      {row.teacher}
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
-      </Grid>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
     </Grid>
   );
 };

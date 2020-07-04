@@ -81,7 +81,7 @@ const AdminDrawer = () => {
       {drawerItems.map((item) => {
         const { path, text, icon } = item;
         return (
-          <ListItem button component={Link} to={`/admin${path}`}>
+          <ListItem button component={Link} to={`/admin${path}`} key={text}>
             <ListItemIcon>{icon}</ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>

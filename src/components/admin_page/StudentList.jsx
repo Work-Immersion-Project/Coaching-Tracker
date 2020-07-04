@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     height: "100vh",
     width: "100%",
+    backgroundColor: "#4B4E6D",
   },
   table: {
     width: "60vw",
@@ -43,9 +44,6 @@ const useStyles = makeStyles((theme) => ({
   tablePaper: {
     backgroundColor: "#95A3B3",
     color: "white",
-  },
-  root: {
-    backgroundColor: "#4B4E6D",
   },
 }));
 
@@ -70,54 +68,46 @@ const StyledTableRow = withStyles((theme) => ({
 const StudentList = () => {
   const classes = useStyles();
   return (
-    <Grid item sm={"auto"} container className={classes.root}>
-      <Grid
-        container
-        direction="column"
-        justify="center"
-        alignItems="center"
-        className={classes.content}
-      >
-        <Paper elevation={3} className={classes.tablePaper}>
-          <Typography align="center">Student List</Typography>
-          <TableContainer className={classes.table}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell align="center">
-                    {" "}
-                    Name of Students
+    <Grid
+      container
+      direction="column"
+      justify="center"
+      alignItems="center"
+      className={classes.content}
+    >
+      <Paper elevation={3} className={classes.tablePaper}>
+        <Typography align="center">Student List</Typography>
+        <TableContainer className={classes.table}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell align="center">
+                  {" "}
+                  Name of Students
+                </StyledTableCell>
+                <StyledTableCell align="center"> Grade Level </StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <StyledTableRow key={row.teacher}>
+                  <StyledTableCell
+                    component="th"
+                    scope="row"
+                    className={classes.tableCell}
+                    align="center"
+                  >
+                    {row.studentName}
                   </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {" "}
-                    Grade Level{" "}
+                  <StyledTableCell className={classes.tableCell} align="center">
+                    {row.gradeLvl}
                   </StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <StyledTableRow key={row.teacher}>
-                    <StyledTableCell
-                      component="th"
-                      scope="row"
-                      className={classes.tableCell}
-                      align="center"
-                    >
-                      {row.studentName}
-                    </StyledTableCell>
-                    <StyledTableCell
-                      className={classes.tableCell}
-                      align="center"
-                    >
-                      {row.gradeLvl}
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
-      </Grid>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
     </Grid>
   );
 };

@@ -14,16 +14,25 @@ import FaceIcon from "@material-ui/icons/Face";
 import SchoolIcon from "@material-ui/icons/School";
 import { Link } from "react-router-dom";
 
+const drawerWidth = 240;
+
 const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-  },
   drawer: {
-    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      width: drawerWidth,
+      flexShrink: 0,
+    },
   },
   drawerPaper: {
+    width: drawerWidth,
     backgroundColor: "#95A3B3",
     color: "white",
+  },
+  appBar: {
+    [theme.breakpoints.up("sm")]: {
+      width: `cal(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+    },
   },
   // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
@@ -45,17 +54,17 @@ const AdminDrawer = () => {
     {
       text: "Coaching Log",
       icon: <AssignmentIndIcon />,
-      path: "coaching-log",
+      path: "/coaching-log",
     },
     {
       text: "Teacher List",
       icon: <FaceIcon />,
-      path: "teacher-list",
+      path: "/teacher-list",
     },
     {
       text: "Student List",
       icon: <SchoolIcon />,
-      path: "student-list",
+      path: "/student-list",
     },
   ];
 

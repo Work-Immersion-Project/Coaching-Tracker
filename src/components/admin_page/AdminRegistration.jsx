@@ -55,30 +55,22 @@ const AdminRegistration = () => {
   };
 
   return (
-    <Grid container direction="row">
-      <Grid item sm={2}>
-        <AdminDrawer />
-      </Grid>
-      <Paper elevation={3} className={classes.titlePadding}>
-        <Grid item sm={10}>
-          <Grid
-            container
-            direction="column"
-            justify="center"
-            alignItems="center"
-            className={classes.content}
-          >
-            <Typography align="center">Registration Page</Typography>
-            <form className={classes.root} noValidate autoComplete="off">
-              <Field
-                name="name"
-                component={CustomTextField}
-                label="Full Name"
-              />
-              <Field name="email" component={CustomTextField} label="Email" />
-              {/* <TextField id="standard-basic" label="Full Name" />
+    <Paper elevation={3} className={classes.titlePadding}>
+      <Grid item sm={10}>
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+          className={classes.content}
+        >
+          <Typography align="center">Registration Page</Typography>
+          <form className={classes.root} noValidate autoComplete="off">
+            <Field name="name" component={CustomTextField} label="Full Name" />
+            <Field name="email" component={CustomTextField} label="Email" />
+            {/* <TextField id="standard-basic" label="Full Name" />
               <TextField id="standard-basic" label="Email Address" /> */}
-              {/* <div classname={classes.section2}>
+            {/* <div classname={classes.section2}>
                 <FormControl variant="outlined" className={classes.formControl}>
                   <InputLabel id="demo-simple-select-outlined-label">
                     Account Type
@@ -103,11 +95,10 @@ const AdminRegistration = () => {
                   <Button variant="contained">Submit</Button>
                 </div>
               </div> */}
-            </form>
-          </Grid>
+          </form>
         </Grid>
-      </Paper>
-    </Grid>
+      </Grid>
+    </Paper>
   );
 };
 

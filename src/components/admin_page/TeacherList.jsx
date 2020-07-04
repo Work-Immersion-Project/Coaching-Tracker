@@ -16,7 +16,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import AdminDrawer from "./AdminDrawer";
 
 function createData(teacher) {
-  return { teacher};
+  return { teacher };
 }
 
 const rows = [
@@ -70,45 +70,43 @@ const StyledTableRow = withStyles((theme) => ({
 const TeacherList = () => {
   const classes = useStyles();
   return (
-    <Grid container direction="row">
-      <Grid item sm={"auto"}>
-        <AdminDrawer />
-      </Grid>
-      <Grid item sm={"auto"}container className={classes.root}>
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          className={classes.content}
-        >
-          <Paper elevation={3} className={classes.tablePaper}>
-            <Typography align="center">Teacher List</Typography>
-            <TableContainer className={classes.table}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell align="center"> Name of Teachers</StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => (
-                    <StyledTableRow key={row.teacher}>
-                      <StyledTableCell
-                        component="th"
-                        scope="row"
-                        className={classes.tableCell}
-                        align = "left"
-                      >
-                        {row.teacher}
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </Grid>
+    <Grid item sm={"auto"} container className={classes.root}>
+      <Grid
+        container
+        direction="column"
+        justify="center"
+        alignItems="center"
+        className={classes.content}
+      >
+        <Paper elevation={3} className={classes.tablePaper}>
+          <Typography align="center">Teacher List</Typography>
+          <TableContainer className={classes.table}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell align="center">
+                    {" "}
+                    Name of Teachers
+                  </StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <StyledTableRow key={row.teacher}>
+                    <StyledTableCell
+                      component="th"
+                      scope="row"
+                      className={classes.tableCell}
+                      align="left"
+                    >
+                      {row.teacher}
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
       </Grid>
     </Grid>
   );

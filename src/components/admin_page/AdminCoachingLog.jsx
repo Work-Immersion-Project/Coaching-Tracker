@@ -43,11 +43,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#4B4E6D",
     color: "white",
   },
-  titlePaper:{
+  titlePaper: {
     textAlign: "center",
     width: "100%",
     color: "white",
-    backgroundColor: "#95A3B3"
+    backgroundColor: "#95A3B3",
   },
   root: {
     backgroundColor: "#4B4E6D",
@@ -75,78 +75,72 @@ const StyledTableRow = withStyles((theme) => ({
 const AdminCoachingLog = () => {
   const classes = useStyles();
   return (
-    <Grid container direction="row">
-      <Grid item sm={"auto"}>
-        <AdminDrawer />
-      </Grid>
-      <Grid item sm={"auto"} container className={classes.root}>
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          className={classes.content}
-        >
-          <Card elevation={3}  >
-            <Typography className={classes.titlePaper}>Coaching Logs</Typography>
-            <TableContainer className={classes.table}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell> Teacher</StyledTableCell>
-                    <StyledTableCell align="right">
-                      Students Coached
+    <Grid item sm={"auto"} container className={classes.root}>
+      <Grid
+        container
+        direction="column"
+        justify="center"
+        alignItems="center"
+        className={classes.content}
+      >
+        <Card elevation={3}>
+          <Typography className={classes.titlePaper}>Coaching Logs</Typography>
+          <TableContainer className={classes.table}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell> Teacher</StyledTableCell>
+                  <StyledTableCell align="right">
+                    Students Coached
+                  </StyledTableCell>
+                  <StyledTableCell align="right"> Date</StyledTableCell>
+                  <StyledTableCell align="right"> Time In</StyledTableCell>
+                  <StyledTableCell align="right"> Time Out</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <StyledTableRow key={row.teacher}>
+                    <StyledTableCell
+                      component="th"
+                      scope="row"
+                      className={classes.tableCell}
+                    >
+                      {row.teacher}
                     </StyledTableCell>
-                    <StyledTableCell align="right"> Date</StyledTableCell>
-                    <StyledTableCell align="right"> Time In</StyledTableCell>
-                    <StyledTableCell align="right"> Time Out</StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => (
-                    <StyledTableRow key={row.teacher}>
-                      <StyledTableCell
-                        component="th"
-                        scope="row"
-                        className={classes.tableCell}
-                      >
-                        {row.teacher}
-                      </StyledTableCell>
-                      <StyledTableCell
-                        align="right"
-                        className={classes.tableCell}
-                      >
-                        {row.student}
-                      </StyledTableCell>
-                      <StyledTableCell
-                        align="right"
-                        className={classes.tableCell}
-                      >
-                        {row.date}
-                      </StyledTableCell>
-                      <StyledTableCell
-                        align="right"
-                        className={classes.tableCell}
-                      >
-                        {row.time_in}
-                      </StyledTableCell>
-                      <StyledTableCell
-                        align="right"
-                        className={classes.tableCell}
-                      >
-                        {row.time_out}
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Card>
-    
+                    <StyledTableCell
+                      align="right"
+                      className={classes.tableCell}
+                    >
+                      {row.student}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      align="right"
+                      className={classes.tableCell}
+                    >
+                      {row.date}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      align="right"
+                      className={classes.tableCell}
+                    >
+                      {row.time_in}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      align="right"
+                      className={classes.tableCell}
+                    >
+                      {row.time_out}
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Card>
       </Grid>
     </Grid>
-  </Grid>
-);
+  );
 };
 
 export default AdminCoachingLog;

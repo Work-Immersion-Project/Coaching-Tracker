@@ -13,7 +13,8 @@ const useStyles = makeStyles({
     backgroundColor: "red",
     color: "white",
   },
-  content: {
+  container: {
+    display: "flex",
     height: "100vh",
     width: "100%",
   },
@@ -23,36 +24,24 @@ const AdminPage = () => {
   let { path } = useRouteMatch();
   const classes = useStyles();
   return (
-    <Grid container direction="row">
-      <Grid item sm={2}>
-        <AdminDrawer />
-      </Grid>
-      <Grid item sm={10}>
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          className={classes.content}
-        >
-          <Route path={`${path}`} exact>
-            <div>Dash Board</div>
-          </Route>
-          <Route path={`${path}/registration`} exact>
-            <AdminRegistration />
-          </Route>
-          <Route path={`${path}/coaching-log`} exact>
-            <AdminCoachingLog />
-          </Route>
-          <Route path={`${path}/teacher-list`} exact>
-            <TeacherList />
-          </Route>
-          <Route path={`${path}/student-list`} exact>
-            <StudentList />
-          </Route>
-        </Grid>
-      </Grid>
-    </Grid>
+    <div className={classes.container}>
+      <AdminDrawer />
+      <Route path={`${path}`} exact>
+        <div>Dash Board</div>
+      </Route>
+      <Route path={`${path}/registration`} exact>
+        <AdminRegistration />
+      </Route>
+      <Route path={`${path}/coaching-log`} exact>
+        <AdminCoachingLog />
+      </Route>
+      <Route path={`${path}/teacher-list`} exact>
+        <TeacherList />
+      </Route>
+      <Route path={`${path}/student-list`} exact>
+        <StudentList />
+      </Route>
+    </div>
   );
 };
 

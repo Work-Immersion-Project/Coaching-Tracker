@@ -1,23 +1,20 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
-import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+import {
+  Drawer,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@material-ui/core";
+// Icons
 import HomeIcon from "@material-ui/icons/Home";
 import HowToRegIcon from "@material-ui/icons/HowToReg";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import FaceIcon from "@material-ui/icons/Face";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import SentimentSatisfiedAltIcon from "@material-ui/icons/SentimentSatisfiedAlt";
+//
+import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -58,21 +55,31 @@ const AdminDrawer = () => {
         anchor="left"
       >
         <div className={classes.toolbar} />
-        <ListItem button key="home">
+        <ListItem button component={Link} to="/admin" key="home">
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItem>
 
-        <ListItem button key="registration">
+        <ListItem
+          button
+          component={Link}
+          to="/admin/registration"
+          key="registration"
+        >
           <ListItemIcon>
             <HowToRegIcon />
           </ListItemIcon>
           <ListItemText primary="Registration" />
         </ListItem>
 
-        <ListItem button key="coaching-log">
+        <ListItem
+          button
+          component={Link}
+          to="/admin/coaching-log"
+          key="coaching-log"
+        >
           <ListItemIcon>
             <AssignmentIndIcon />
           </ListItemIcon>
@@ -82,7 +89,8 @@ const AdminDrawer = () => {
         <ListItem
           button
           key="teacher-list"
-          onClick={() => console.log("profiles")}
+          component={Link}
+          to="/admin/teacher-list"
         >
           <ListItemIcon>
             <FaceIcon />
@@ -90,7 +98,12 @@ const AdminDrawer = () => {
           <ListItemText primary="Teacher List" />
         </ListItem>
 
-        <ListItem button key="student-list">
+        <ListItem
+          button
+          component={Link}
+          to="/admin/student-list"
+          key="student-list"
+        >
           <ListItemIcon>
             <SentimentSatisfiedAltIcon />
           </ListItemIcon>

@@ -18,7 +18,6 @@ export const signIn = () => async (dispatch) => {
     type: SIGN_IN,
   });
 };
-
 export const signOut = () => async (dispatch) => {
   dispatch({
     type: SIGN_OUT,

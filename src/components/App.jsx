@@ -17,8 +17,7 @@ const App = (props) => {
     if (isSignedIn) {
       // Get the current logged in user.
       const currentUser = gapiAuth.currentUser.get();
-      const { access_token, id_token } = currentUser.getAuthResponse();
-
+      const { access_token } = currentUser.getAuthResponse();
       app.auth().onAuthStateChanged(async (user) => {
         if (user) {
           props.signIn();

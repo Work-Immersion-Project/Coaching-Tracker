@@ -79,7 +79,6 @@ const TeacherList = () => {
         className={classes.content}
       >
         <Paper elevation={3} className={classes.tablePaper}>
-          <Typography align="center">Teacher List</Typography>
           <TableContainer className={classes.table}>
             <Table>
               <TableHead>

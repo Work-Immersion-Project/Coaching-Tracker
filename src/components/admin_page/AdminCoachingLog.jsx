@@ -75,7 +75,6 @@ const AdminCoachingLog = () => {
       alignItems="center"
     >
       <Paper className={classes.tablePaper} elevation={3}>
-        <Typography align="center">Coaching Logs</Typography>
         <TableContainer className={classes.table}>
           <Table>
             <TableHead>

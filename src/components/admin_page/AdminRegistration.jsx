@@ -63,7 +63,6 @@ const AdminRegistration = () => {
         alignItems="center"
         className={classes.content}
       >
-        <Typography align="center">Registration Page</Typography>
         <form className={classes.root} noValidate autoComplete="off">
           <Field name="name" component={CustomTextField} label="Full Name" />
           <Field name="email" component={CustomTextField} label="Email" />

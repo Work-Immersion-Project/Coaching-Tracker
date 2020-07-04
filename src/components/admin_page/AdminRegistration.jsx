@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, TextField, Grid, Paper, Typography } from "@material-ui/core";
+import { Button, TextField, Grid, Paper, Typography, Chip, Divider, } from "@material-ui/core";
 import { makeStyles, fade, withStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 150,
   },
   selectEmpty: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(3, 2),
   },
   titlePadding: {
     padding: "10px",
@@ -29,7 +29,14 @@ const useStyles = makeStyles((theme) => ({
   fieldRegPadding: {
     padding: "100px",
   },
+  chip: {
+    margin: theme.spacing(0.5),
+  },
+  section1: {
+    margin: theme.spacing(6, 3),
+  }
 }));
+  
 
 const AdminRegistration = () => {
   const classes = useStyles();
@@ -64,6 +71,7 @@ const AdminRegistration = () => {
               <TextField id="standard-basic" label="Email Address" />
             </form>
 
+            <div classname={classes.section2}>
             <FormControl variant="outlined" className={classes.formControl}>
               <InputLabel id="demo-simple-select-outlined-label">
                 Account Type
@@ -82,8 +90,13 @@ const AdminRegistration = () => {
                 <MenuItem value="student"> Student </MenuItem>
               </Select>
             </FormControl>
+            </div>
 
+              <div class="wrapper">
+            <div classname={classes.section1}>
             <Button variant="contained">Submit</Button>
+            </div>
+            </div>
           </Paper>
         </Grid>
       </Grid>

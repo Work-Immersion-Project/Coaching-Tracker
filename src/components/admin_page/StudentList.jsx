@@ -15,16 +15,16 @@ import {
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import AdminDrawer from "./AdminDrawer";
 
-function createData(teacher, student) {
-  return { teacher, student };
+function createData(studentName, gradeLvl) {
+  return { studentName, gradeLvl};
 }
 
 const rows = [
-  createData("Teacher", 10),
-  createData("Teacher1", 10),
-  createData("Teacher2", 20),
-  createData("Teacher3", 15),
-  createData("Teacher4", 6),
+  createData("Student", "Grade 11"),
+  createData("Student 1", "3rd Year College"),
+  createData("Student 2", "2nd Year College"),
+  createData("Student 4", "Grade 12"),
+  createData("Student 5", "4th Year College"),
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   table: {
-    width: "40vw",
+    width: "60vw",
     backgroundColor: "#222222",
     color: theme.palette.common.white,
   },
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     color: "white",
   },
   tablePaper: {
-    backgroundColor: "#4B4E6D",
+    backgroundColor: "#95A3B3",
     color: "white",
   },
   root: {
@@ -67,14 +67,14 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-const AdminProfiles = () => {
+const StudentList = () => {
   const classes = useStyles();
   return (
     <Grid container direction="row">
-      <Grid item xs={2}>
+      <Grid item sm={"auto"}>
         <AdminDrawer />
       </Grid>
-      <Grid item xs={10}>
+      <Grid item sm={"auto"}container className={classes.root}>
         <Grid
           container
           direction="column"
@@ -83,23 +83,31 @@ const AdminProfiles = () => {
           className={classes.content}
         >
           <Paper elevation={3} className={classes.tablePaper}>
-            <Typography align="center">Profiles</Typography>
-            <TableContainer className={classes.Cell}>
+            <Typography align="center">Student List</Typography>
+            <TableContainer className={classes.table}>
               <Table>
                 <TableHead>
                   <TableRow>
-                    <StyledTableCell> Name of Teachers</StyledTableCell>
-                    <StyledTableCell align="right"> </StyledTableCell>
+                    <StyledTableCell align="center"> Name of Students</StyledTableCell>
+                    <StyledTableCell align="center"> Grade Level </StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {rows.map((row) => (
                     <StyledTableRow key={row.teacher}>
-                      <StyledTableCell component="th" scope="row">
-                        {row.teacher}
+                      <StyledTableCell
+                        component="th"
+                        scope="row"
+                        className={classes.tableCell}
+                        align = "center"
+                      >
+                        {row.studentName}
                       </StyledTableCell>
-                      <StyledTableCell align="right">
-                        {row.student}
+                      <StyledTableCell 
+                        className={classes.tableCell} 
+                        align ="center"
+                      >
+                          {row.gradeLvl}
                       </StyledTableCell>
                     </StyledTableRow>
                   ))}
@@ -113,4 +121,4 @@ const AdminProfiles = () => {
   );
 };
 
-export default AdminProfiles;
+export default StudentList;

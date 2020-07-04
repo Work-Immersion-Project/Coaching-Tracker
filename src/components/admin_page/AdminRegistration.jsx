@@ -56,47 +56,18 @@ const AdminRegistration = () => {
 
   return (
     <Paper elevation={3} className={classes.titlePadding}>
-      <Grid item sm={10}>
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          className={classes.content}
-        >
-          <Typography align="center">Registration Page</Typography>
-          <form className={classes.root} noValidate autoComplete="off">
-            <Field name="name" component={CustomTextField} label="Full Name" />
-            <Field name="email" component={CustomTextField} label="Email" />
-            {/* <TextField id="standard-basic" label="Full Name" />
-              <TextField id="standard-basic" label="Email Address" /> */}
-            {/* <div classname={classes.section2}>
-                <FormControl variant="outlined" className={classes.formControl}>
-                  <InputLabel id="demo-simple-select-outlined-label">
-                    Account Type
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-outlined-label"
-                    id="demo-simple-select-outlined"
-                    value={acctype}
-                    onChange={handleChange}
-                    label="Account Type"
-                  >
-                    <MenuItem value="none">
-                      <em>None</em>{" "}
-                    </MenuItem>
-                    <MenuItem value="teacher"> Teacher </MenuItem>
-                    <MenuItem value="student"> Student </MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-              <div class="wrapper">
-                <div classname={classes.section1}>
-                  <Button variant="contained">Submit</Button>
-                </div>
-              </div> */}
-          </form>
-        </Grid>
+      <Grid
+        container
+        direction="column"
+        justify="center"
+        alignItems="center"
+        className={classes.content}
+      >
+        <Typography align="center">Registration Page</Typography>
+        <form className={classes.root} noValidate autoComplete="off">
+          <Field name="name" component={CustomTextField} label="Full Name" />
+          <Field name="email" component={CustomTextField} label="Email" />
+        </form>
       </Grid>
     </Paper>
   );

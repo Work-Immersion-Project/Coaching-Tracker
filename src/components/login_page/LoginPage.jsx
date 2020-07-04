@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, CircularProgress, Typography } from "@material-ui/core";
@@ -20,35 +20,39 @@ const useStyles = makeStyles({
 const LoginPage = (props) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const classes = useStyles();
-  const location = history.location;
-  const { from } = location.state || { from: { pathName: "/" } };
 
-  const onAuthChange = async (isSignedIn) => {
-    const { gapiAuth } = props;
-    if (!isSignedIn) {
-      try {
-        await gapiAuth.signIn({
-          prompt: "select_account",
-        });
-        const currentUser = gapiAuth.currentUser.get();
-        const { access_token, id_token } = currentUser.getAuthResponse();
-        const credential = firebase.auth.GoogleAuthProvider.credential(
-          id_token
-        );
-        app.auth().onAuthStateChanged(async (user) => {
-          if (user) {
-            props.getUser(user.email, user.uid, access_token);
-          } else {
-            await app.auth().signInWithCredential(credential);
-          }
-        });
-      } catch (error) {
-        setErrorMessage(error);
+  const onAuthChange = useCallback(
+    () => async (isSignedIn) => {
+      const { gapiAuth } = props;
+      if (!isSignedIn) {
+        try {
+          await gapiAuth.signIn({
+            prompt: "select_account",
+          });
+          const currentUser = gapiAuth.currentUser.get();
+          const { access_token, id_token } = currentUser.getAuthResponse();
+          const credential = firebase.auth.GoogleAuthProvider.credential(
+            id_token
+          );
+          app.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+              props.getUser(user.email, user.uid, access_token);
+            } else {
+              await app.auth().signInWithCredential(credential);
+            }
+          });
+        } catch (error) {
+          setErrorMessage(error);
+        }
       }
-    }
-  };
+    },
+    [props]
+  );
 
   useEffect(() => {
+    const location = history.location;
+    const { from } = location.state || { from: { pathName: "/" } };
+
     onAuthChange(props.gapiAuth.isSignedIn.get());
     props.gapiAuth.isSignedIn.listen(onAuthChange);
 
@@ -59,7 +63,7 @@ const LoginPage = (props) => {
         history.replace(from);
       }
     }
-  }, [props.isSignedIn, props.currentUser]);
+  }, [props, onAuthChange]);
 
   const renderContent = () => {
     if (errorMessage) {

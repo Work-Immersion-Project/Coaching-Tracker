@@ -11,7 +11,6 @@ import HomeIcon from "@material-ui/icons/Home";
 import HowToRegIcon from "@material-ui/icons/HowToReg";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import FaceIcon from "@material-ui/icons/Face";
-import DoneAllIcon from "@material-ui/icons/DoneAll";
 import SchoolIcon from "@material-ui/icons/School";
 import { Link } from "react-dom";
 

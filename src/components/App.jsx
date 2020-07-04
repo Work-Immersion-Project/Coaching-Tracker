@@ -1,17 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Route, Switch, Router } from "react-router-dom";
 import { initializeGapiAuth, signIn, getUser } from "../actions";
 import { connect } from "react-redux";
 import LoginPage from "./login_page/LoginPage";
 import AdminPage from "./admin_page/AdminPage";
 import history from "../history";
-import firebase from "firebase";
 import app from "../firebase";
 import PrivateRoute from "./PrivateRoute";
 import "./App.css";
 
 const App = (props) => {
-  const { gapiAuth, currentUser } = props;
+  const { gapiAuth, currentUser, initializeGapiAuth } = props;
   if (gapiAuth && !currentUser) {
     const isSignedIn = gapiAuth.isSignedIn.get();
     if (isSignedIn) {
@@ -26,9 +25,10 @@ const App = (props) => {
       });
     }
   }
+
   useEffect(() => {
-    props.initializeGapiAuth();
-  }, []);
+    initializeGapiAuth();
+  }, [initializeGapiAuth]);
 
   return !props.gapiAuth ? null : (
     <Router history={history}>

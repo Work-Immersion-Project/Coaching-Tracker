@@ -1,8 +1,7 @@
 import React from "react";
-import { Button, TextField, Grid, Switch } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch } from "react-router-dom";
-import AdminUser from "./AdminUser";
 import AdminCoachingLog from "./AdminCoachingLog";
 import AdminRegistration from "./AdminRegistration";
 import TeacherList from "./TeacherList";
@@ -21,7 +20,7 @@ const useStyles = makeStyles({
 });
 
 const AdminPage = () => {
-  let { path, url } = useRouteMatch();
+  let { path } = useRouteMatch();
   const classes = useStyles();
   return (
     <Grid container direction="row">

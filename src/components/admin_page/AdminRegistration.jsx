@@ -41,7 +41,6 @@ const useStyles = makeStyles((theme) => ({
 const AdminRegistration = () => {
   const classes = useStyles();
   const [acctype, setAge] = React.useState("");
-
   const handleChange = (event) => {
     setAge(event.target.value);
   };
@@ -66,9 +65,8 @@ const AdminRegistration = () => {
           <Paper elevation={3} className={classes.fieldRegPadding}>
             <form className={classes.root} noValidate autoComplete="off">
               <TextField id="standard-basic" label="Full Name" />
-            </form>
-            <form className={classes.root} noValidate autoComplete="off">
-              <TextField id="standard-basic" label="Email Address" />
+            
+          <TextField id="standard-basic" label="Email Address" />
             </form>
 
             <div classname={classes.section2}>

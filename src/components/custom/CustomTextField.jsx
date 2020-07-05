@@ -1,6 +1,6 @@
 import React from "react";
 import { InputBase } from "@material-ui/core";
-
+import renderHelperFormText from "../helpers/renderHelperFormText";
 const CustomTextField = ({
   label,
   input,
@@ -8,12 +8,16 @@ const CustomTextField = ({
   ...custom
 }) => {
   return (
-    <InputBase
-      label={label}
-      error={touched && invalid}
-      {...input}
-      {...custom}
-    />
+    <>
+      <InputBase
+        label={label}
+        error={touched && invalid}
+        helperText={touched && error}
+        {...input}
+        {...custom}
+      />
+      {renderHelperFormText({ touched, error })}
+    </>
   );
 };
 export default CustomTextField;

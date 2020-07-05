@@ -1,19 +1,9 @@
 import React from "react";
-import {
-  Button,
-  TextField,
-  Grid,
-  Paper,
-  Typography,
-  Chip,
-  Divider,
-  InputLabel,
-  MenuItem,
-  Select,
-  Card,
-} from "@material-ui/core";
+import { Button, Grid, InputLabel, FormHelperText } from "@material-ui/core";
 import { makeStyles, fade, withStyles } from "@material-ui/core/styles";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import CustomTextField from "../custom/CustomTextField";
+import CustomSelectField from "../custom/CustomSelectField";
 import { Field, reduxForm } from "redux-form";
 
 const useStyles = makeStyles((theme) => ({
@@ -40,9 +30,25 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     borderRadius: "10px",
     width: "100%",
-    border: "2px solid white",
+    borderColor: "white",
+    borderStyle: "solid",
+    borderWidth: 2,
     color: "white",
     paddingLeft: "0.5em",
+    "& input:error": {
+      borderColor: "red",
+      borderWidth: 2,
+    },
+  },
+  selectField: {
+    borderRadius: "10px",
+    color: "white",
+    width: "100%",
+    border: "2px solid white",
+    paddingLeft: "0.5em",
+  },
+  selectValue: {
+    color: "black",
   },
   inputLabel: {
     width: "100%",
@@ -57,11 +63,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AdminRegistration = (props) => {
-  const classes = useStyles();
+const validate = (values) => {
+  const errors = {};
+  const requiredFields = ["firstName", "lastName", "email", "id", "type"];
+  requiredFields.forEach((field) => {
+    if (!values[field]) {
+      errors[field] = "Required";
+    }
+  });
+  if (
+    values.email &&
+    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
+  ) {
+    errors.email = "Invalid email address";
+  }
+  return errors;
+};
 
+const AdminRegistration = () => {
+  const classes = useStyles();
   return (
-    <Grid container className={classes.content} component={Paper} elevation={3}>
+    <Grid container className={classes.content} elevation={3}>
       <Grid
         item
         container
@@ -78,6 +100,7 @@ const AdminRegistration = (props) => {
             className={classes.textField}
             name="firstName"
             id="firstName"
+            required
             component={CustomTextField}
           />
         </Grid>
@@ -96,6 +119,7 @@ const AdminRegistration = (props) => {
             className={classes.textField}
             name="lastName"
             id="lastName"
+            required
             component={CustomTextField}
           />
         </Grid>
@@ -105,6 +129,7 @@ const AdminRegistration = (props) => {
             className={classes.textField}
             name="email"
             id="email"
+            required
             component={CustomTextField}
           />
         </Grid>
@@ -114,8 +139,29 @@ const AdminRegistration = (props) => {
             className={classes.textField}
             name="id"
             id="id"
+            required
             component={CustomTextField}
           />
+        </Grid>
+        <Grid item sm>
+          <InputLabel className={classes.inputLabel}>Type</InputLabel>
+          <Field
+            name="type"
+            id="type"
+            required
+            native
+            disableUnderline
+            component={CustomSelectField}
+            className={classes.selectField}
+          >
+            <option value={""} />
+            <option className={classes.selectValue} value={"teacher"}>
+              Teacher
+            </option>
+            <option className={classes.selectValue} value={"student"}>
+              Student
+            </option>
+          </Field>
         </Grid>
         <Button className={classes.submitButton} variant="contained">
           Submit
@@ -127,4 +173,5 @@ const AdminRegistration = (props) => {
 
 export default reduxForm({
   form: "AdminRegistration",
+  validate,
 })(AdminRegistration);

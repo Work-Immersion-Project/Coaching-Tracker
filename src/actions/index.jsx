@@ -9,6 +9,8 @@ import {
   GET_USER,
   CHECK_USER,
   INITIALIZE_GAPI,
+  OPEN_DRAWER,
+  CLOSE_DRAWER,
 } from "./types";
 const db = app.firestore();
 const userCollection = db.collection("users");
@@ -51,6 +53,7 @@ export const addUser = (userId, email, name, type, userToken) => async (
   });
 };
 
+// This is for handling the authentication process of users
 export const initializeGapiAuth = () => async (dispatch) => {
   window.gapi.load("client:auth2", async () => {
     await window.gapi.client.init({
@@ -64,4 +67,17 @@ export const initializeGapiAuth = () => async (dispatch) => {
       payload: window.gapi.auth2.getAuthInstance(),
     });
   });
+};
+
+// Handle Navigation Drawer
+export const openDrawer = () => {
+  return {
+    type: OPEN_DRAWER,
+  };
+};
+
+export const closeDrawer = () => {
+  return {
+    type: CLOSE_DRAWER,
+  };
 };

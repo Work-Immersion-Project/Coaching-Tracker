@@ -11,3 +11,6 @@ export const CHECK_USER = "CHECK_USER";
 
 //Google Api Client Action Types
 export const INITIALIZE_GAPI = "INITIALIZE_GAPI";
+
+export const OPEN_DRAWER = "OPEN_DRAWER";
+export const CLOSE_DRAWER = "CLOSE_DRAWER";

@@ -1,5 +1,5 @@
 import React from "react";
-import TextField from "@material-ui/core/TextField";
+import { InputBase } from "@material-ui/core";
 
 const CustomTextField = ({
   label,
@@ -8,11 +8,9 @@ const CustomTextField = ({
   ...custom
 }) => {
   return (
-    <TextField
+    <InputBase
       label={label}
-      placeholder={label}
       error={touched && invalid}
-      helperText={touched && error}
       {...input}
       {...custom}
     />

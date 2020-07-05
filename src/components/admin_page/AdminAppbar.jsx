@@ -1,6 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { AppBar, Toolbar, Typography, IconButton } from "@material-ui/core";
+import { useEffect, useState } from "react";
 import MenuIcon from "@material-ui/icons/Menu";
 import { openDrawer, closeDrawer } from "../../actions";
 import { connect } from "react-redux";
@@ -25,8 +26,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AdminAppBar = (props) => {
+  const [title, setTitle] = useState("Admin");
   const classes = useStyles();
-  const { state } = props.location;
+
   const onMenuButtonClick = () => {
     if (props.isDrawerOpen) {
       props.closeDrawer();
@@ -35,13 +37,38 @@ const AdminAppBar = (props) => {
     }
   };
 
+  useEffect(() => {
+    const formattedPath = props.location.pathname.replace("/admin", "");
+
+    switch (formattedPath) {
+      case "/":
+        setTitle("Home");
+        break;
+      case "/registration":
+        setTitle("Registration");
+        break;
+      case "/coaching-log":
+        setTitle("Coaching Log");
+        break;
+      case "/teacher-list":
+        setTitle("Teacher List");
+        break;
+      case "/student-list":
+        setTitle("Student List");
+        break;
+      default:
+        setTitle("Admin");
+        break;
+    }
+  }, [props.location.pathname]);
+
   return (
     <AppBar position="fixed" className={classes.root}>
       <Toolbar>
         <IconButton className={classes.menuButton} onClick={onMenuButtonClick}>
           <MenuIcon />
         </IconButton>
-        <Typography>{state.text}</Typography>
+        <Typography>{title}</Typography>
       </Toolbar>
     </AppBar>
   );

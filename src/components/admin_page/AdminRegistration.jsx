@@ -7,14 +7,13 @@ import {
   Typography,
   Chip,
   Divider,
+  InputLabel,
+  MenuItem,
+  Select,
+  Card,
 } from "@material-ui/core";
 import { makeStyles, fade, withStyles } from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
 import CustomTextField from "../custom/CustomTextField";
-import FormControl from "@material-ui/core/FormControl";
-import AdminDrawer from "./AdminDrawer";
 import { Field, reduxForm } from "redux-form";
 
 const useStyles = makeStyles((theme) => ({
@@ -25,49 +24,86 @@ const useStyles = makeStyles((theme) => ({
   content: {
     height: "100vh",
     width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#4B4E6D",
   },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 150,
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#222222",
+    padding: "1em 2em",
   },
-  selectEmpty: {
-    marginTop: theme.spacing(3, 2),
+  textField: {
+    borderRadius: "10px",
+    border: "2px solid white",
   },
-  titlePadding: {
-    padding: "10px",
+  inputLabel: {
+    width: "100%",
+    color: "white",
+    marginTop: "1em",
+    marginBottom: "1em",
+    textAlign: "start",
   },
-  fieldRegPadding: {
-    padding: "100px",
-  },
-  chip: {
-    margin: theme.spacing(0.5),
-  },
-  section1: {
-    margin: theme.spacing(6, 3),
+  submitButton: {
+    marginTop: "1em",
   },
 }));
 
-const AdminRegistration = () => {
+const AdminRegistration = (props) => {
   const classes = useStyles();
-  const [acctype, setAge] = React.useState("");
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
 
   return (
-    <Paper elevation={3} className={classes.titlePadding}>
-      <Grid
-        container
-        direction="column"
-        justify="center"
-        alignItems="center"
-        className={classes.content}
+    <Paper elevation={3} className={classes.content}>
+      <Card
+        component="form"
+        className={classes.form}
+        noValidate
+        autoComplete="off"
       >
-        <form className={classes.root} noValidate autoComplete="off">
-          <Field name="name" component={CustomTextField} label="Full Name" />
-          <Field name="email" component={CustomTextField} label="Email" />
-        </form>
-      </Grid>
+        <InputLabel className={classes.inputLabel}>First Name</InputLabel>
+        <Field
+          className={classes.textField}
+          name="firstName"
+          id="firstName"
+          component={CustomTextField}
+        />
+        <InputLabel className={classes.inputLabel}>Middle Name</InputLabel>
+        <Field
+          className={classes.textField}
+          name="middleName"
+          id="middleName"
+          component={CustomTextField}
+        />
+        <InputLabel className={classes.inputLabel}>Last Name</InputLabel>
+        <Field
+          className={classes.textField}
+          name="lastName"
+          id="lastName"
+          component={CustomTextField}
+        />
+        <InputLabel className={classes.inputLabel}>Email</InputLabel>
+        <Field
+          className={classes.textField}
+          name="email"
+          id="email"
+          component={CustomTextField}
+        />
+        <InputLabel className={classes.inputLabel}>ID</InputLabel>
+        <Field
+          className={classes.textField}
+          name="id"
+          id="id"
+          component={CustomTextField}
+        />
+        <Button className={classes.submitButton} variant="contained">
+          Submit
+        </Button>
+      </Card>
     </Paper>
   );
 };

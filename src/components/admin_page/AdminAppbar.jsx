@@ -10,12 +10,6 @@ import { withRouter } from "react-router-dom";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    [theme.breakpoints.up("sm")]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-    },
-  },
   menuButton: {
     marginRight: theme.spacing(2),
     [theme.breakpoints.up("sm")]: {
@@ -63,7 +57,7 @@ const AdminAppBar = (props) => {
   }, [props.location.pathname]);
 
   return (
-    <AppBar position="fixed" className={classes.root}>
+    <AppBar position="static">
       <Toolbar>
         <IconButton className={classes.menuButton} onClick={onMenuButtonClick}>
           <MenuIcon />

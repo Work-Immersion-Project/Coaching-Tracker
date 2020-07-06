@@ -18,48 +18,49 @@ const useStyles = makeStyles({
 });
 
 const LoginPage = (props) => {
-  const { isSignedIn, currentUser } = props;
   const [errorMessage, setErrorMessage] = useState(null);
   const classes = useStyles();
 
-  const onAuthChange = useCallback(
-    () => async (isSignedIn) => {
-      const { gapiAuth } = props;
-      if (!isSignedIn) {
-        try {
-          await gapiAuth.signIn({
-            prompt: "select_account",
-          });
-          const currentUser = gapiAuth.currentUser.get();
-          const { access_token, id_token } = currentUser.getAuthResponse();
-          const credential = firebase.auth.GoogleAuthProvider.credential(
-            id_token
-          );
-          app.auth().onAuthStateChanged(async (user) => {
-            if (user) {
-              props.signIn(user.email, user.uid, access_token);
-            } else {
-              await app.auth().signInWithCredential(credential);
-            }
-          });
-        } catch (error) {
-          setErrorMessage(error);
-        }
+  const onAuthChange = async (isSignedIn) => {
+    const { gapiAuth } = props;
+
+    if (!isSignedIn) {
+      try {
+        await gapiAuth.signIn({
+          prompt: "select_account",
+        });
+        const currentUser = gapiAuth.currentUser.get();
+        const { access_token, id_token } = currentUser.getAuthResponse();
+        const credential = firebase.auth.GoogleAuthProvider.credential(
+          id_token
+        );
+        app.auth().onAuthStateChanged(async (user) => {
+          if (user) {
+            props.signIn(user.email, user.uid, access_token);
+          } else {
+            await app.auth().signInWithCredential(credential);
+          }
+        });
+      } catch (error) {
+        setErrorMessage(error);
       }
-    },
-    [props]
-  );
+    }
+  };
 
   useEffect(() => {
     const location = history.location;
     const { from } = location.state || { from: { pathName: "/" } };
+
     onAuthChange(props.gapiAuth.isSignedIn.get());
     props.gapiAuth.isSignedIn.listen(onAuthChange);
-    if (isSignedIn && !_.isEmpty(currentUser)) {
-      if (from.pathName === "/") {
-        history.replace(`${from.pathName}${currentUser.type}`);
-      } else {
-        history.replace(from);
+    if (props.authData) {
+      const { isSignedIn, user } = props.authData;
+      if (isSignedIn && !_.isEmpty(user)) {
+        if (from.pathName === "/") {
+          history.replace(`${from.pathName}${user.type}`);
+        } else {
+          history.replace(from);
+        }
       }
     }
   }, [props, onAuthChange]);
@@ -73,7 +74,7 @@ const LoginPage = (props) => {
       );
     }
 
-    if (props.auth == null && !errorMessage) {
+    if (props.authData == null && !errorMessage) {
       return (
         <Grid
           container
@@ -86,7 +87,7 @@ const LoginPage = (props) => {
           <Typography align="center">Signing In</Typography>
         </Grid>
       );
-    } else if (_.isEmpty(props.auth.user)) {
+    } else if (_.isEmpty(props.authData.user)) {
       return (
         <Typography>
           You are currently not registered. Please ask your administrator on how
@@ -113,8 +114,7 @@ const LoginPage = (props) => {
 const mapStateToProps = (state) => {
   const gapiAuth = state.gapi.gapiAuth;
   return {
-    isSignedIn: state.auth.data?.isSignedIn,
-    currentUser: state.auth.data?.user,
+    authData: state.auth.data,
     gapiAuth,
   };
 };

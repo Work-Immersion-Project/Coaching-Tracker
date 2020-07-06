@@ -107,6 +107,7 @@ const AdminRegistration = (props) => {
 
   const registerUser = (values) => {
     const { id, email, firstName, middleName, lastName, type } = values;
+    reset();
     props.hideModal();
     props.showModal("LOADING_MODAL", {
       onClose: onDialogClose,

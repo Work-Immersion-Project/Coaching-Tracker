@@ -1,11 +1,12 @@
 import {
-  ADD_USER,
   ADD_USER_ERROR,
   ADD_USER_REQUEST,
   ADD_USER_SUCCESS,
+  GET_USER_REQUEST,
+  GET_USER_SUCCESS,
+  GET_USER_ERROR,
   UPDATE_USER,
   REMOVE_USER,
-  GET_USER,
   CHECK_USER,
 } from "../types";
 import app from "../firebase";
@@ -14,11 +15,38 @@ const userCollection = db.collection("users");
 
 // User Actions
 export const getUser = (email, uid, userToken) => async (dispatch) => {
-  const document = await userCollection.doc(uid).get();
-  dispatch({
-    type: GET_USER,
-    payload: { currentUser: { ...document.data() }, userToken },
-  });
+  dispatch(getUserRequest());
+  try {
+    const document = await userCollection.doc(uid).get();
+    dispatch(
+      getUserSuccess({
+        ...document.data(),
+        userToken,
+      })
+    );
+  } catch (error) {
+    dispatch(getUserError(error.message));
+  }
+};
+
+export const getUserRequest = () => {
+  return {
+    type: GET_USER_REQUEST,
+  };
+};
+export const getUserSuccess = (results) => {
+  return {
+    type: GET_USER_SUCCESS,
+    data: results,
+    error: null,
+  };
+};
+export const getUserError = (error) => {
+  return {
+    type: GET_USER_ERROR,
+    data: null,
+    error: error,
+  };
 };
 
 export const addUser = (userId, email, name, type, userToken) => async (

@@ -113,7 +113,7 @@ const LoginPage = (props) => {
 
 const mapStateToProps = (state, ownProps) => {
   const isSignedIn = state.auth.isSignedIn;
-  const currentUser = state.users.currentUser;
+  const currentUser = state.users.data;
   const gapiAuth = state.gapi.gapiAuth;
 
   return {

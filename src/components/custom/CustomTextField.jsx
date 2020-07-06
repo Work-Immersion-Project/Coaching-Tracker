@@ -12,7 +12,6 @@ const CustomTextField = ({
       <InputBase
         label={label}
         error={touched && invalid}
-        helperText={touched && error}
         {...input}
         {...custom}
       />

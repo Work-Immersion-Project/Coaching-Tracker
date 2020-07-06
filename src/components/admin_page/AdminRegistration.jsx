@@ -1,12 +1,21 @@
-import React from "react";
-import { Button, Grid, InputLabel, FormHelperText } from "@material-ui/core";
-import { makeStyles, fade, withStyles } from "@material-ui/core/styles";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import React, { useState } from "react";
+import {
+  Button,
+  Grid,
+  InputLabel,
+  Modal,
+  Typography,
+  CircularProgress,
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import CustomTextField from "../custom/CustomTextField";
 import CustomSelectField from "../custom/CustomSelectField";
+import { connect } from "react-redux";
 import { Field, reduxForm } from "redux-form";
+import { addUser, showModal, hideModal } from "../../actions";
+import CustomAlertDialog from "../custom/CustomAlertDialog";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   buttonStyle: {
     backgroundColor: "red",
     color: "white",
@@ -50,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
   selectValue: {
     color: "black",
   },
+
   inputLabel: {
     width: "100%",
     color: "white",
@@ -80,98 +90,163 @@ const validate = (values) => {
   return errors;
 };
 
-const AdminRegistration = () => {
+const AdminRegistration = (props) => {
   const classes = useStyles();
-  return (
-    <Grid container className={classes.content} elevation={3}>
-      <Grid
-        item
-        container
-        className={classes.form}
-        component="form"
-        direction="column"
-        justify="center"
-        noValidate
-        autoComplete="off"
-      >
-        <Grid item sm>
-          <InputLabel className={classes.inputLabel}>First Name</InputLabel>
-          <Field
-            className={classes.textField}
-            name="firstName"
-            id="firstName"
-            required
-            component={CustomTextField}
-          />
-        </Grid>
-        <Grid item sm>
-          <InputLabel className={classes.inputLabel}>Middle Name</InputLabel>
-          <Field
-            className={classes.textField}
-            name="middleName"
-            id="middleName"
-            component={CustomTextField}
-          />
-        </Grid>
-        <Grid item sm>
-          <InputLabel className={classes.inputLabel}>Last Name</InputLabel>
-          <Field
-            className={classes.textField}
-            name="lastName"
-            id="lastName"
-            required
-            component={CustomTextField}
-          />
-        </Grid>
-        <Grid item sm>
-          <InputLabel className={classes.inputLabel}>Email</InputLabel>
-          <Field
-            className={classes.textField}
-            name="email"
-            id="email"
-            required
-            component={CustomTextField}
-          />
-        </Grid>
-        <Grid item sm>
-          <InputLabel className={classes.inputLabel}>ID</InputLabel>
-          <Field
-            className={classes.textField}
-            name="id"
-            id="id"
-            required
-            component={CustomTextField}
-          />
-        </Grid>
-        <Grid item sm>
-          <InputLabel className={classes.inputLabel}>Type</InputLabel>
-          <Field
-            name="type"
-            id="type"
-            required
-            native
-            disableUnderline
-            component={CustomSelectField}
-            className={classes.selectField}
+  const { handleSubmit, reset, pristine, submitting } = props;
+
+  // if (props.user && !showSuccessDialog && formValues) {
+  //   setLoadingDialogVisibility(false);
+  //   setSuccessDialogVisibility(true);
+
+  //   new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
+  //     setSuccessDialogVisibility(false);
+  //     reset();
+  //     setFormValues(null);
+  //   });
+  // }
+
+  const registerUser = (values) => {
+    const { id, email, firstName, middleName, lastName, type } = values;
+    props.hideModal();
+    props.showModal("LOADING_MODAL", {
+      onClose: onDialogClose,
+    });
+    props.addUser(id, email, `${firstName} ${middleName} ${lastName}`, type);
+  };
+
+  const onSubmit = (values) => {
+    props.showModal("CONFIRMATION_MODAL", {
+      onClose: onDialogClose,
+      title: "Register User",
+      content:
+        "Make sure that you have entered the correct information before proceeding.",
+      actions: (
+        <>
+          <Button onClick={onDialogClose}>Cancel</Button>
+          <Button
+            onClick={() => {
+              registerUser(values);
+            }}
           >
-            <option value={""} />
-            <option className={classes.selectValue} value={"teacher"}>
-              Teacher
-            </option>
-            <option className={classes.selectValue} value={"student"}>
-              Student
-            </option>
-          </Field>
+            Register
+          </Button>
+        </>
+      ),
+    });
+  };
+
+  const onDialogClose = () => {
+    props.hideModal();
+  };
+
+  return (
+    <>
+      <Grid container className={classes.content} elevation={3}>
+        <Grid
+          item
+          container
+          className={classes.form}
+          component="form"
+          direction="column"
+          justify="center"
+          noValidate
+          autoComplete="off"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <Grid item sm>
+            <InputLabel className={classes.inputLabel}>First Name</InputLabel>
+            <Field
+              className={classes.textField}
+              name="firstName"
+              id="firstName"
+              required
+              component={CustomTextField}
+            />
+          </Grid>
+          <Grid item sm>
+            <InputLabel className={classes.inputLabel}>Middle Name</InputLabel>
+            <Field
+              className={classes.textField}
+              name="middleName"
+              id="middleName"
+              component={CustomTextField}
+            />
+          </Grid>
+          <Grid item sm>
+            <InputLabel className={classes.inputLabel}>Last Name</InputLabel>
+            <Field
+              className={classes.textField}
+              name="lastName"
+              id="lastName"
+              required
+              component={CustomTextField}
+            />
+          </Grid>
+          <Grid item sm>
+            <InputLabel className={classes.inputLabel}>Email</InputLabel>
+            <Field
+              className={classes.textField}
+              name="email"
+              id="email"
+              required
+              component={CustomTextField}
+            />
+          </Grid>
+          <Grid item sm>
+            <InputLabel className={classes.inputLabel}>ID</InputLabel>
+            <Field
+              className={classes.textField}
+              name="id"
+              id="id"
+              required
+              component={CustomTextField}
+            />
+          </Grid>
+          <Grid item sm>
+            <InputLabel className={classes.inputLabel}>Type</InputLabel>
+            <Field
+              name="type"
+              id="type"
+              required
+              native
+              disableUnderline
+              component={CustomSelectField}
+              className={classes.selectField}
+            >
+              <option value={""} />
+              <option className={classes.selectValue} value={"teacher"}>
+                Teacher
+              </option>
+              <option className={classes.selectValue} value={"student"}>
+                Student
+              </option>
+            </Field>
+          </Grid>
+          <Button
+            type="submit"
+            className={classes.submitButton}
+            variant="contained"
+            disabled={pristine || submitting}
+          >
+            Submit
+          </Button>
         </Grid>
-        <Button className={classes.submitButton} variant="contained">
-          Submit
-        </Button>
       </Grid>
-    </Grid>
+    </>
   );
 };
 
-export default reduxForm({
+const mapStateToProps = (state) => {
+  return {
+    user: state.users.data,
+  };
+};
+
+const adminRegistrationWithReduxForm = reduxForm({
   form: "AdminRegistration",
   validate,
 })(AdminRegistration);
+
+export default connect(mapStateToProps, { addUser, showModal, hideModal })(
+  adminRegistrationWithReduxForm
+);

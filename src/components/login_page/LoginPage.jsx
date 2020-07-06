@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, CircularProgress, Typography } from "@material-ui/core";
-import { getUser, signIn, signOut } from "../../actions";
+import { signIn } from "../../actions";
 import _ from "lodash";
 import firebase from "firebase";
 import app from "../../firebase";
@@ -19,6 +19,7 @@ const useStyles = makeStyles({
 
 const LoginPage = (props) => {
   const [errorMessage, setErrorMessage] = useState(null);
+
   const classes = useStyles();
 
   const onAuthChange = useCallback(
@@ -36,7 +37,7 @@ const LoginPage = (props) => {
           );
           app.auth().onAuthStateChanged(async (user) => {
             if (user) {
-              props.getUser(user.email, user.uid, access_token);
+              props.signIn(user.email, user.uid, access_token);
             } else {
               await app.auth().signInWithCredential(credential);
             }
@@ -52,15 +53,16 @@ const LoginPage = (props) => {
   useEffect(() => {
     const location = history.location;
     const { from } = location.state || { from: { pathName: "/" } };
-
     onAuthChange(props.gapiAuth.isSignedIn.get());
     props.gapiAuth.isSignedIn.listen(onAuthChange);
-
-    if (props.isSignedIn && !_.isEmpty(props.currentUser)) {
-      if (from.pathName === "/") {
-        history.replace(`${from.pathName}${props.currentUser.type}`);
-      } else {
-        history.replace(from);
+    if (props.auth) {
+      const { isSignedIn, user } = props.auth;
+      if (isSignedIn && !_.isEmpty(user)) {
+        if (from.pathName === "/") {
+          history.replace(`${from.pathName}${user.type}`);
+        } else {
+          history.replace(from);
+        }
       }
     }
   }, [props, onAuthChange]);
@@ -74,7 +76,7 @@ const LoginPage = (props) => {
       );
     }
 
-    if (props.currentUser == null && !errorMessage) {
+    if (props.auth == null && !errorMessage) {
       return (
         <Grid
           container
@@ -87,7 +89,7 @@ const LoginPage = (props) => {
           <Typography align="center">Signing In</Typography>
         </Grid>
       );
-    } else if (_.isEmpty(props.currentUser)) {
+    } else if (_.isEmpty(props.auth.user)) {
       return (
         <Typography>
           You are currently not registered. Please ask your administrator on how
@@ -111,20 +113,14 @@ const LoginPage = (props) => {
   );
 };
 
-const mapStateToProps = (state, ownProps) => {
-  const isSignedIn = state.auth.isSignedIn;
-  const currentUser = state.users.data;
+const mapStateToProps = (state) => {
   const gapiAuth = state.gapi.gapiAuth;
-
   return {
-    isSignedIn,
-    currentUser,
+    auth: state.auth.data,
     gapiAuth,
   };
 };
 
 export default connect(mapStateToProps, {
-  getUser,
   signIn,
-  signOut,
 })(LoginPage);

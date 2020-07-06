@@ -1,26 +1,27 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
+import _ from "lodash";
 import { Route, Switch, Router } from "react-router-dom";
-import { initializeGapiAuth, signIn, getUser } from "../actions";
+import { initializeGapiAuth, signIn } from "../actions";
 import { connect } from "react-redux";
 import LoginPage from "./login_page/LoginPage";
 import AdminPage from "./admin_page/AdminPage";
+import TeacherPage from "./teacher_page/TeacherPage";
 import history from "../history";
 import app from "../firebase";
 import PrivateRoute from "./PrivateRoute";
 import "./App.css";
 
 const App = (props) => {
-  const { gapiAuth, currentUser, initializeGapiAuth } = props;
-  if (gapiAuth && !currentUser) {
+  const { gapiAuth, auth, initializeGapiAuth } = props;
+  if (gapiAuth && !auth) {
     const isSignedIn = gapiAuth.isSignedIn.get();
     if (isSignedIn) {
       // Get the current logged in user.
-      const currentUser = gapiAuth.currentUser.get();
-      const { access_token } = currentUser.getAuthResponse();
+      const gapiCurrentUser = gapiAuth.currentUser.get();
+      const { access_token } = gapiCurrentUser.getAuthResponse();
       app.auth().onAuthStateChanged(async (user) => {
         if (user) {
-          props.signIn();
-          props.getUser(user.email, user.uid, access_token);
+          props.signIn(user.email, user.uid, access_token);
         }
       });
     }
@@ -35,6 +36,7 @@ const App = (props) => {
       <Switch>
         <Route path="/login" component={LoginPage} exact />
         <PrivateRoute path="/admin" component={AdminPage} />
+        <Route path="/teacher" component={TeacherPage} />
         <Route component={LoginPage} />
       </Switch>
     </Router>
@@ -43,13 +45,12 @@ const App = (props) => {
 
 const mapStateToProps = (state) => {
   return {
+    auth: state.auth.data,
     gapiAuth: state.gapi.gapiAuth,
-    currentUser: state.users.currentUser,
   };
 };
 
 export default connect(mapStateToProps, {
   initializeGapiAuth,
   signIn,
-  getUser,
 })(App);

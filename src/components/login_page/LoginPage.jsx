@@ -18,8 +18,8 @@ const useStyles = makeStyles({
 });
 
 const LoginPage = (props) => {
+  const { isSignedIn, currentUser } = props;
   const [errorMessage, setErrorMessage] = useState(null);
-
   const classes = useStyles();
 
   const onAuthChange = useCallback(
@@ -55,14 +55,11 @@ const LoginPage = (props) => {
     const { from } = location.state || { from: { pathName: "/" } };
     onAuthChange(props.gapiAuth.isSignedIn.get());
     props.gapiAuth.isSignedIn.listen(onAuthChange);
-    if (props.auth) {
-      const { isSignedIn, user } = props.auth;
-      if (isSignedIn && !_.isEmpty(user)) {
-        if (from.pathName === "/") {
-          history.replace(`${from.pathName}${user.type}`);
-        } else {
-          history.replace(from);
-        }
+    if (isSignedIn && !_.isEmpty(currentUser)) {
+      if (from.pathName === "/") {
+        history.replace(`${from.pathName}${currentUser.type}`);
+      } else {
+        history.replace(from);
       }
     }
   }, [props, onAuthChange]);
@@ -116,7 +113,8 @@ const LoginPage = (props) => {
 const mapStateToProps = (state) => {
   const gapiAuth = state.gapi.gapiAuth;
   return {
-    auth: state.auth.data,
+    isSignedIn: state.auth.data?.isSignedIn,
+    currentUser: state.auth.data?.user,
     gapiAuth,
   };
 };

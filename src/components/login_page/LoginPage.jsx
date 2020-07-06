@@ -24,7 +24,7 @@ const LoginPage = (props) => {
   const onAuthChange = async (isSignedIn) => {
     const { gapiAuth } = props;
 
-    if (!isSignedIn) {
+    if (!isSignedIn && !errorMessage) {
       try {
         await gapiAuth.signIn({
           prompt: "select_account",

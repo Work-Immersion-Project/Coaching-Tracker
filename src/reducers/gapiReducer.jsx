@@ -1,4 +1,4 @@
-import { INITIALIZE_GAPI } from "../actions/types";
+import { INITIALIZE_GAPI } from "../types";
 
 const INITIAL_STATE = {
   gapiAuth: null,

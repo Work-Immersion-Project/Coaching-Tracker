@@ -1,4 +1,4 @@
-import { GET_USER, ADD_USER } from "../actions/types";
+import { GET_USER, ADD_USER } from "../types";
 
 const INITIAL_STATE = {
   currentUser: null,

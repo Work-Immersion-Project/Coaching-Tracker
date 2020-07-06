@@ -1,4 +1,4 @@
-import { CLOSE_DRAWER, OPEN_DRAWER } from "../actions/types";
+import { CLOSE_DRAWER, OPEN_DRAWER } from "../types";
 
 export default (state = false, action) => {
   switch (action.type) {

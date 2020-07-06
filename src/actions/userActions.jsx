@@ -10,18 +10,18 @@ import {
   CHECK_USER,
 } from "../types";
 import app from "../firebase";
+import { showModal, hideModal } from "./";
 const db = app.firestore();
 const userCollection = db.collection("users");
 
 // User Actions
-export const getUser = (email, uid, userToken) => async (dispatch) => {
+export const getUser = (email, uid) => async (dispatch) => {
   dispatch(getUserRequest());
   try {
     const document = await userCollection.doc(uid).get();
     dispatch(
       getUserSuccess({
         ...document.data(),
-        userToken,
       })
     );
   } catch (error) {
@@ -54,12 +54,23 @@ export const addUser = (userId, email, name, type, userToken) => async (
 ) => {
   dispatch(addUserRequest());
   try {
-    await userCollection.doc(userId).set({
+    await userCollection.doc(email).set({
       userId: userId,
       email: email,
       name: name,
       type: type,
     });
+    dispatch(hideModal());
+    dispatch(
+      showModal("SUCCESS_MODAL", {
+        title: "Register Success!",
+        content: "The user has been registered successfully! ✔",
+      })
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    dispatch(hideModal());
+
     dispatch(
       addUserSuccess({
         userId,

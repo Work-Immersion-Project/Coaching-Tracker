@@ -9,6 +9,7 @@ import TeacherPage from "./teacher_page/TeacherPage";
 import history from "../history";
 import app from "../firebase";
 import PrivateRoute from "./PrivateRoute";
+import ModalRoot from "./ModalRoot";
 import "./App.css";
 
 const App = (props) => {
@@ -32,14 +33,17 @@ const App = (props) => {
   }, [initializeGapiAuth]);
 
   return !props.gapiAuth ? null : (
-    <Router history={history}>
-      <Switch>
-        <Route path="/login" component={LoginPage} exact />
-        <PrivateRoute path="/admin" component={AdminPage} />
-        <Route path="/teacher" component={TeacherPage} />
-        <Route component={LoginPage} />
-      </Switch>
-    </Router>
+    <>
+      <Router history={history}>
+        <Switch>
+          <Route path="/login" component={LoginPage} exact />
+          <Route path="/teacher" component={TeacherPage} />
+          <PrivateRoute path="/admin" component={AdminPage} />
+          <Route component={LoginPage} />
+        </Switch>
+      </Router>
+      <ModalRoot />
+    </>
   );
 };
 

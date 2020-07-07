@@ -94,17 +94,6 @@ const AdminRegistration = (props) => {
   const classes = useStyles();
   const { handleSubmit, reset, pristine, submitting } = props;
 
-  // if (props.user && !showSuccessDialog && formValues) {
-  //   setLoadingDialogVisibility(false);
-  //   setSuccessDialogVisibility(true);
-
-  //   new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
-  //     setSuccessDialogVisibility(false);
-  //     reset();
-  //     setFormValues(null);
-  //   });
-  // }
-
   const registerUser = (values) => {
     const { id, email, firstName, middleName, lastName, type } = values;
     reset();
@@ -112,7 +101,12 @@ const AdminRegistration = (props) => {
     props.showModal("LOADING_MODAL", {
       onClose: onDialogClose,
     });
-    props.addUser(id, email, `${firstName} ${middleName} ${lastName}`, type);
+
+    if (middleName) {
+      props.addUser(id, email, `${firstName} ${middleName} ${lastName}`, type);
+    } else {
+      props.addUser(id, email, `${firstName} ${lastName}`, type);
+    }
   };
 
   const onSubmit = (values) => {
@@ -147,11 +141,9 @@ const AdminRegistration = (props) => {
           item
           container
           className={classes.form}
-          component="form"
           direction="column"
           justify="center"
-          noValidate
-          autoComplete="off"
+          component="form"
           onSubmit={handleSubmit(onSubmit)}
         >
           <Grid item sm>

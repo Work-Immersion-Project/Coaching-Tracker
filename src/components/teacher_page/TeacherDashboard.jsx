@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Grid,
   Typography,
@@ -10,6 +10,8 @@ import {
   TableRow,
   Paper,
 } from "@material-ui/core";
+import "react-calendar/dist/Calendar.css";
+import Calendar from "react-calendar";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import TeacherDrawer from "./TeacherDrawer";
 
@@ -19,9 +21,18 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     backgroundColor: "#4B4E6D",
   },
+  calendarHead: {
+    backgroundColor: "#95A3B3",
+    color: "white",
+  },
 }));
 
-const TeacherDash = () => {
+const TeacherDashboard = () => {
+  const [date, setDate] = useState(new Date());
+  const onChange = (date) => {
+    setDate(date);
+  };
+
   const classes = useStyles();
   return (
     <Grid
@@ -30,6 +41,16 @@ const TeacherDash = () => {
       direction="column"
       justify="center"
       alignItems="center"
-    ></Grid>
+    >
+      <Grid>
+        <Calendar
+          className={classes.calendarHead}
+          onChange={onChange}
+          value={date}
+        />
+      </Grid>
+    </Grid>
   );
 };
+
+export default TeacherDashboard;

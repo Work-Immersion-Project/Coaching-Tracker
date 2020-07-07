@@ -1,9 +1,6 @@
 import React from "react";
 import {
-  Button,
-  TextField,
   Grid,
-  Typography,
   Paper,
   Table,
   TableBody,
@@ -34,9 +31,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#4B4E6D",
   },
   table: {
-    width: "60vw",
+    width: "80vw",
     backgroundColor: "#222222",
-    color: theme.palette.common.white,
+    color: "white",
   },
   tableCell: {
     color: "white",
@@ -94,7 +91,10 @@ const StudentList = () => {
                     className={classes.tableCell}
                     align="center"
                   >
-                    {row.studentName}
+                    {row.studentFirstName}
+                  </StyledTableCell>
+                  <StyledTableCell className={classes.tableCell} align="center">
+                    {row.studentLastName}
                   </StyledTableCell>
                   <StyledTableCell className={classes.tableCell} align="center">
                     {row.gradeLvl}

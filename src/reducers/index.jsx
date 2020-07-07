@@ -20,5 +20,5 @@ export default combineReducers({
   modal: modalReducer,
   errors: errorReducer,
   calendar: calendarReducer,
-  isDrawerOpen: drawerReducer,
+  drawer: drawerReducer,
 });

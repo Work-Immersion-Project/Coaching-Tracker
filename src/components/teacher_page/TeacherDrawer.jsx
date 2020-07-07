@@ -6,17 +6,16 @@ import {
   ListItemIcon,
   ListItemText,
   Hidden,
+  Button,
 } from "@material-ui/core";
 // Icons
 import HomeIcon from "@material-ui/icons/Home";
-import HowToRegIcon from "@material-ui/icons/HowToReg";
-import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
-import FaceIcon from "@material-ui/icons/Face";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import SchoolIcon from "@material-ui/icons/School";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { closeDrawer } from "../../actions";
+import { signOut, showModal, hideModal, closeDrawer } from "../../actions";
 
 const drawerWidth = 240;
 
@@ -36,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
 }));
 
-const TeacherDrawer = ({ isDrawerOpen, closeDrawer }) => {
+const TeacherDrawer = (props) => {
   const classes = useStyles();
   const drawerItems = [
     {
@@ -47,15 +46,39 @@ const TeacherDrawer = ({ isDrawerOpen, closeDrawer }) => {
     {
       text: "Student List",
       icon: <SchoolIcon />,
-      path: "",
+      path: "/student-list",
     },
     {
       text: "Schedules",
       icon: <CalendarTodayIcon />,
-      path: "",
+      path: "/schedules",
     },
   ];
+  const onDialogClose = () => {
+    props.hideModal();
+  };
 
+  const handleSignoutButton = () => {
+    props.showModal("SIGN_OUT_CONFIRMATION_MODAL", {
+      onClose: onDialogClose,
+      title: "Sign Out",
+      content: "Are you sure you want to sign out?",
+      actions: (
+        <>
+          <Button onClick={onDialogClose}>Cancel</Button>
+          <Button
+            onClick={() => {
+              props.signOut();
+
+              onDialogClose();
+            }}
+          >
+            Confirm
+          </Button>
+        </>
+      ),
+    });
+  };
   const renderListItems = () => {
     return drawerItems.map((item) => {
       const { path, text, icon } = item;
@@ -63,7 +86,7 @@ const TeacherDrawer = ({ isDrawerOpen, closeDrawer }) => {
         <ListItem
           button
           component={Link}
-          to={{ pathname: `/admin${path}`, state: { text: text } }}
+          to={{ pathname: `/teacher${path}`, state: { text: text } }}
           key={text}
         >
           <ListItemIcon>{icon}</ListItemIcon>
@@ -82,7 +105,7 @@ const TeacherDrawer = ({ isDrawerOpen, closeDrawer }) => {
           classes={{
             paper: classes.drawerPaper,
           }}
-          open={isDrawerOpen}
+          open={props.isDrawerOpen}
           onClose={closeDrawer}
           anchor="left"
           ModalProps={{
@@ -91,6 +114,12 @@ const TeacherDrawer = ({ isDrawerOpen, closeDrawer }) => {
         >
           <div className={classes.toolbar} />
           {renderListItems()}
+          <ListItem button onClick={handleSignoutButton}>
+            <ListItemIcon>
+              <ExitToAppIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sign Out" />
+          </ListItem>
         </Drawer>
       </Hidden>
       <Hidden xsDown>
@@ -104,6 +133,12 @@ const TeacherDrawer = ({ isDrawerOpen, closeDrawer }) => {
         >
           <div className={classes.toolbar} />
           {renderListItems()}
+          <ListItem button onClick={handleSignoutButton}>
+            <ListItemIcon>
+              <ExitToAppIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sign Out" />
+          </ListItem>
         </Drawer>
       </Hidden>
     </>
@@ -112,10 +147,13 @@ const TeacherDrawer = ({ isDrawerOpen, closeDrawer }) => {
 
 const mapStateToProps = (state) => {
   return {
-    isDrawerOpen: state.isDrawerOpen,
+    isDrawerOpen: state.drawer.isDrawerOpen,
   };
 };
 
 export default connect(mapStateToProps, {
   closeDrawer,
+  signOut,
+  showModal,
+  hideModal,
 })(TeacherDrawer);

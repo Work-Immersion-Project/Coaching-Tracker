@@ -61,7 +61,7 @@ const TeacherList = (props) => {
 
   useEffect(() => {
     props.getTeachers();
-  }, []);
+  }, [props]);
 
   const renderContent = () => {
     if (props.teachers) {

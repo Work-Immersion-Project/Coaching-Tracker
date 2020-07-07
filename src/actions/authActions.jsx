@@ -8,16 +8,16 @@ import {
 } from "../types";
 import _ from "lodash";
 import app from "../firebase";
+import firebase from "firebase";
 // Authentication Actions.
 const db = app.firestore();
 const userCollection = db.collection("users");
 
-export const signIn = (email, uid, userToken) => async (dispatch) => {
-  dispatch(signInRequest());
-
-  try {
-    const document = await userCollection.doc(uid).get();
-
+export const checkAuth = (gapiAuth) => async (dispatch) => {
+  const currentUser = app.auth().currentUser;
+  if (currentUser) {
+    const { access_token } = gapiAuth.currentUser.get().getAuthResponse();
+    const document = await userCollection.doc(currentUser.uid).get();
     if (_.isEmpty(document.data())) {
       dispatch(signInError("User is not registered"));
     } else {
@@ -25,10 +25,44 @@ export const signIn = (email, uid, userToken) => async (dispatch) => {
         signInSuccess({
           isSignedIn: true,
           user: document.data(),
-          userToken,
+          userToken: access_token,
         })
       );
     }
+  } else {
+    dispatch(signIn(gapiAuth));
+  }
+};
+
+export const signIn = (gapiAuth) => async (dispatch) => {
+  dispatch(signInRequest());
+  try {
+    await gapiAuth.signIn({
+      prompt: "select_account",
+    });
+
+    const currentUser = gapiAuth.currentUser.get();
+    const { access_token, id_token } = currentUser.getAuthResponse();
+    const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+
+    app.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        const document = await userCollection.doc(user.uid).get();
+        if (_.isEmpty(document.data())) {
+          dispatch(signInError("User is not registered"));
+        } else {
+          dispatch(
+            signInSuccess({
+              isSignedIn: true,
+              user: document.data(),
+              userToken: access_token,
+            })
+          );
+        }
+      } else {
+        await app.auth().signInWithCredential(credential);
+      }
+    });
   } catch (error) {
     dispatch(signInError(error.message));
   }
@@ -52,6 +86,7 @@ export const signInError = (error) => {
 export const signOut = () => async (dispatch) => {
   dispatch(signOutRequest);
   try {
+    await app.auth().signOut();
     dispatch(
       signOutSuccess({
         isSignedIn: false,

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import _ from "lodash";
 import { Route, Switch, Router } from "react-router-dom";
-import { initializeGapiAuth, signIn } from "../actions";
+import { initializeGapiAuth, checkAuth } from "../actions";
 import { connect } from "react-redux";
 import LoginPage from "./login_page/LoginPage";
 import AdminPage from "./admin_page/AdminPage";
@@ -13,19 +13,10 @@ import ModalRoot from "./ModalRoot";
 import "./App.css";
 
 const App = (props) => {
-  const { gapiAuth, auth, initializeGapiAuth } = props;
-  if (gapiAuth && !auth) {
-    const isSignedIn = gapiAuth.isSignedIn.get();
-    if (isSignedIn) {
-      // Get the current logged in user.
-      const gapiCurrentUser = gapiAuth.currentUser.get();
-      const { access_token } = gapiCurrentUser.getAuthResponse();
-      app.auth().onAuthStateChanged(async (user) => {
-        if (user) {
-          props.signIn(user.email, user.uid, access_token);
-        }
-      });
-    }
+  const { gapiAuth, checkAuth, initializeGapiAuth } = props;
+
+  if (gapiAuth) {
+    checkAuth(gapiAuth);
   }
 
   useEffect(() => {
@@ -56,5 +47,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   initializeGapiAuth,
-  signIn,
+  checkAuth,
 })(App);

@@ -4,7 +4,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, CircularProgress, Typography } from "@material-ui/core";
 import { signIn } from "../../actions";
 import _ from "lodash";
-import firebase from "firebase";
 import app from "../../firebase";
 import history from "../../history";
 
@@ -18,52 +17,31 @@ const useStyles = makeStyles({
 });
 
 const LoginPage = (props) => {
-  const [errorMessage, setErrorMessage] = useState(null);
   const classes = useStyles();
-
-  const onAuthChange = async (isSignedIn) => {
-    const { gapiAuth } = props;
-
-    if (!isSignedIn && !errorMessage) {
-      try {
-        await gapiAuth.signIn({
-          prompt: "select_account",
-        });
-        const currentUser = gapiAuth.currentUser.get();
-        const { access_token, id_token } = currentUser.getAuthResponse();
-        const credential = firebase.auth.GoogleAuthProvider.credential(
-          id_token
-        );
-        app.auth().onAuthStateChanged(async (user) => {
-          if (user) {
-            props.signIn(user.email, user.uid, access_token);
-          } else {
-            await app.auth().signInWithCredential(credential);
-          }
-        });
-      } catch (error) {
-        setErrorMessage(error);
-      }
-    }
-  };
 
   useEffect(() => {
     const location = history.location;
     const { from } = location.state || { from: { pathName: "/" } };
 
-    onAuthChange(props.gapiAuth.isSignedIn.get());
-    props.gapiAuth.isSignedIn.listen(onAuthChange);
+    const currentUser = app.auth().currentUser;
+
+    if (!currentUser) {
+      props.signIn(props.gapiAuth);
+    }
+
     if (props.authData) {
       const { isSignedIn, user } = props.authData;
-      if (isSignedIn && !_.isEmpty(user)) {
-        if (from.pathName === "/") {
-          history.replace(`${from.pathName}${user.type}`);
-        } else {
-          history.replace(from);
+      if (isSignedIn) {
+        if (!_.isEmpty(user) && user) {
+          if (from.pathName === "/") {
+            history.replace(`${from.pathName}${user.type}`);
+          } else {
+            history.replace(from);
+          }
         }
       }
     }
-  }, [props, onAuthChange]);
+  }, [props]);
 
   const renderContent = () => {
     if (errorMessage) {

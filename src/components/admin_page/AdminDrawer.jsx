@@ -6,16 +6,18 @@ import {
   ListItemIcon,
   ListItemText,
   Hidden,
+  Button,
 } from "@material-ui/core";
+import { signOut, showModal, hideModal, closeDrawer } from "../../actions";
+import { connect } from "react-redux";
 // Icons
 import HomeIcon from "@material-ui/icons/Home";
 import HowToRegIcon from "@material-ui/icons/HowToReg";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import FaceIcon from "@material-ui/icons/Face";
 import SchoolIcon from "@material-ui/icons/School";
-import { connect } from "react-redux";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { Link } from "react-router-dom";
-import { closeDrawer } from "../../actions";
 
 const drawerWidth = 240;
 
@@ -35,8 +37,9 @@ const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
 }));
 
-const AdminDrawer = ({ isDrawerOpen, closeDrawer }) => {
+const AdminDrawer = (props) => {
   const classes = useStyles();
+
   const drawerItems = [
     {
       text: "Home",
@@ -82,6 +85,33 @@ const AdminDrawer = ({ isDrawerOpen, closeDrawer }) => {
     });
   };
 
+  const onDialogClose = () => {
+    props.hideModal();
+  };
+
+  const handleSignoutButton = () => {
+    props.showModal("SIGN_OUT_CONFIRMATION_MODAL", {
+      onClose: onDialogClose,
+      title: "Sign Out",
+      content: "Are you sure you want to sign out?",
+      actions: (
+        <>
+          <Button onClick={onDialogClose}>Cancel</Button>
+          <Button
+            onClick={() => {
+              props.gapiAuth.signOut();
+              props.signOut();
+
+              onDialogClose();
+            }}
+          >
+            Confirm
+          </Button>
+        </>
+      ),
+    });
+  };
+
   return (
     <>
       <Hidden smUp>
@@ -91,8 +121,8 @@ const AdminDrawer = ({ isDrawerOpen, closeDrawer }) => {
           classes={{
             paper: classes.drawerPaper,
           }}
-          open={isDrawerOpen}
-          onClose={closeDrawer}
+          open={props.isDrawerOpen}
+          onClose={props.closeDrawer}
           anchor="left"
           ModalProps={{
             keepMounted: true,
@@ -100,6 +130,12 @@ const AdminDrawer = ({ isDrawerOpen, closeDrawer }) => {
         >
           <div className={classes.toolbar} />
           {renderListItems()}
+          <ListItem button>
+            <ListItemIcon>
+              <ExitToAppIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sign Out" />
+          </ListItem>
         </Drawer>
       </Hidden>
       <Hidden xsDown>
@@ -113,6 +149,12 @@ const AdminDrawer = ({ isDrawerOpen, closeDrawer }) => {
         >
           <div className={classes.toolbar} />
           {renderListItems()}
+          <ListItem button onClick={handleSignoutButton}>
+            <ListItemIcon>
+              <ExitToAppIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sign Out" />
+          </ListItem>
         </Drawer>
       </Hidden>
     </>
@@ -122,9 +164,13 @@ const AdminDrawer = ({ isDrawerOpen, closeDrawer }) => {
 const mapStateToProps = (state) => {
   return {
     isDrawerOpen: state.isDrawerOpen,
+    gapiAuth: state.gapi.gapiAuth,
   };
 };
 
 export default connect(mapStateToProps, {
   closeDrawer,
+  signOut,
+  showModal,
+  hideModal,
 })(AdminDrawer);

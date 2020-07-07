@@ -16,6 +16,7 @@ const userCollection = db.collection("users");
 export const checkAuth = () => async (dispatch, getState) => {
   const gapiAuth = getState().gapi.gapiAuth;
   const currentUser = app.auth().currentUser;
+  console.log(currentUser);
   if (currentUser) {
     const { access_token } = gapiAuth.currentUser.get().getAuthResponse();
     const document = await userCollection.doc(currentUser.uid).get();
@@ -47,26 +48,25 @@ export const signIn = () => async (dispatch, getState) => {
     const { access_token, id_token } = currentUser.getAuthResponse();
     const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
 
-    app.auth().onAuthStateChanged(async (user) => {
-      if (user) {
-        const document = await userCollection.doc(user.uid).get();
-        if (_.isEmpty(document.data())) {
-          dispatch(signInError("User is not registered"));
-        } else {
-          dispatch(
-            signInSuccess({
-              isSignedIn: true,
-              user: document.data(),
-              userToken: access_token,
-            })
-          );
-        }
-      } else {
-        await app.auth().signInWithCredential(credential);
-      }
-    });
+    await app.auth().signInWithCredential(credential);
+
+    const user = app.auth().currentUser;
+    const document = await userCollection.doc(user.uid).get();
+    if (_.isEmpty(document.data())) {
+      dispatch({
+        error: "User is not registered",
+      });
+    } else {
+      dispatch(
+        signInSuccess({
+          isSignedIn: true,
+          user: document.data(),
+          userToken: access_token,
+        })
+      );
+    }
   } catch (error) {
-    dispatch(signInError(error.message));
+    dispatch({ ...error, type: "SIGN_IN_ERROR" });
   }
 };
 
@@ -85,9 +85,12 @@ export const signInError = (error) => {
   return { type: SIGN_IN_ERROR, data: null, error: error };
 };
 
-export const signOut = () => async (dispatch) => {
+export const signOut = () => async (dispatch, getState) => {
+  const gapiAuth = getState().gapi.gapiAuth;
   dispatch(signOutRequest);
+
   try {
+    await gapiAuth.signOut();
     await app.auth().signOut();
     dispatch(
       signOutSuccess({

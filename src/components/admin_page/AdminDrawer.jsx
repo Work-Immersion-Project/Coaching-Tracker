@@ -99,7 +99,6 @@ const AdminDrawer = (props) => {
           <Button onClick={onDialogClose}>Cancel</Button>
           <Button
             onClick={() => {
-              props.gapiAuth.signOut();
               props.signOut();
 
               onDialogClose();
@@ -164,7 +163,6 @@ const AdminDrawer = (props) => {
 const mapStateToProps = (state) => {
   return {
     isDrawerOpen: state.isDrawerOpen,
-    gapiAuth: state.gapi.gapiAuth,
   };
 };
 

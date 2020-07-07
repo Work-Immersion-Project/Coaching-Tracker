@@ -17,17 +17,12 @@ const useStyles = makeStyles({
 });
 
 const LoginPage = (props) => {
+  const { errorMessage } = props;
   const classes = useStyles();
 
   useEffect(() => {
     const location = history.location;
     const { from } = location.state || { from: { pathName: "/" } };
-
-    const currentUser = app.auth().currentUser;
-
-    if (!currentUser) {
-      props.signIn(props.gapiAuth);
-    }
 
     if (props.authData) {
       const { isSignedIn, user } = props.authData;
@@ -41,7 +36,7 @@ const LoginPage = (props) => {
         }
       }
     }
-  }, [props]);
+  }, [props.authData]);
 
   const renderContent = () => {
     if (errorMessage) {
@@ -94,6 +89,7 @@ const mapStateToProps = (state) => {
   return {
     authData: state.auth.data,
     gapiAuth,
+    errorMessage: state.errors.error,
   };
 };
 

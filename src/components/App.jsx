@@ -13,10 +13,10 @@ import ModalRoot from "./ModalRoot";
 import "./App.css";
 
 const App = (props) => {
-  const { gapiAuth, checkAuth, initializeGapiAuth } = props;
+  const { gapiAuth, authData, checkAuth, initializeGapiAuth } = props;
 
-  if (gapiAuth) {
-    checkAuth(gapiAuth);
+  if (gapiAuth && !authData) {
+    checkAuth();
   }
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const App = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    auth: state.auth.data,
+    authData: state.auth.data,
     gapiAuth: state.gapi.gapiAuth,
   };
 };

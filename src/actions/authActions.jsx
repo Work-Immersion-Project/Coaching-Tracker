@@ -13,7 +13,8 @@ import firebase from "firebase";
 const db = app.firestore();
 const userCollection = db.collection("users");
 
-export const checkAuth = (gapiAuth) => async (dispatch) => {
+export const checkAuth = () => async (dispatch, getState) => {
+  const gapiAuth = getState().gapi.gapiAuth;
   const currentUser = app.auth().currentUser;
   if (currentUser) {
     const { access_token } = gapiAuth.currentUser.get().getAuthResponse();
@@ -34,7 +35,8 @@ export const checkAuth = (gapiAuth) => async (dispatch) => {
   }
 };
 
-export const signIn = (gapiAuth) => async (dispatch) => {
+export const signIn = () => async (dispatch, getState) => {
+  const gapiAuth = getState().gapi.gapiAuth;
   dispatch(signInRequest());
   try {
     await gapiAuth.signIn({

@@ -17,6 +17,6 @@ export default combineReducers({
   students: studentReducer,
   gapi: gapiReducer,
   modal: modalReducer,
-  error: errorReducer,
+  errors: errorReducer,
   isDrawerOpen: drawerReducer,
 });

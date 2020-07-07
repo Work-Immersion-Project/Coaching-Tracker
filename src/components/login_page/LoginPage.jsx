@@ -60,11 +60,17 @@ const LoginPage = (props) => {
           <Typography align="center">Signing In</Typography>
         </Grid>
       );
-    } else if (_.isEmpty(props.authData.user)) {
+    } else if (_.isEmpty(props.authData.user) && props.authData.isSignedIn) {
       return (
         <Typography>
           You are currently not registered. Please ask your administrator on how
           to register.
+        </Typography>
+      );
+    } else if (!props.authData.isSignedIn) {
+      return (
+        <Typography>
+          You are currently Logged out. Please refresh to sign in again.
         </Typography>
       );
     } else {

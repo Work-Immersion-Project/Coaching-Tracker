@@ -5,3 +5,4 @@ export * from "./gapiActions";
 export * from "./modalActions";
 export * from "./teacherActions";
 export * from "./studentActions";
+export * from "./calendarActions";

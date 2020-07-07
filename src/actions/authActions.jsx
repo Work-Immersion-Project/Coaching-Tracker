@@ -16,7 +16,7 @@ const userCollection = db.collection("users");
 export const checkAuth = () => async (dispatch, getState) => {
   const gapiAuth = getState().gapi.gapiAuth;
   const currentUser = app.auth().currentUser;
-  console.log(currentUser);
+
   if (currentUser) {
     const { access_token } = gapiAuth.currentUser.get().getAuthResponse();
     const document = await userCollection.doc(currentUser.uid).get();

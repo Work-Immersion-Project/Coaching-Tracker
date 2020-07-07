@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { getCalendarEvents } from "../../actions";
+import { connect } from "react-redux";
 import {
   Grid,
   Typography,
@@ -9,38 +11,84 @@ import {
   TableHead,
   TableRow,
   Paper,
+  CircularProgress,
 } from "@material-ui/core";
-import Calendar from "react-calendar";
+import { ViewState } from "@devexpress/dx-react-scheduler";
+import {
+  Scheduler,
+  DayView,
+  WeekView,
+  MonthView,
+  TodayButton,
+  Toolbar,
+  DateNavigator,
+  Appointments,
+  AppointmentTooltip,
+} from "@devexpress/dx-react-scheduler-material-ui";
+
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import TeacherDrawer from "./TeacherDrawer";
 
 const useStyles = makeStyles((theme) => ({
   content: {
-    height: "100vh",
+    height: "100%",
     width: "100%",
+    padding: "0 1em",
     backgroundColor: "#4B4E6D",
+  },
+  scheduler: {
+    height: "50%",
+    width: "100%",
   },
 }));
 
-const [value, setValue] = useState(new Date());
-
-function onChange(nextValue) {
-  setValue(nextValue);
-}
-
-return <Calendar onChange={onChange} value={value} />;
-
-const TeacherSched = () => {
+const TeacherSchedules = (props) => {
   const classes = useStyles();
+  const today = new Date();
+  const currentDate =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+
+  useEffect(() => {
+    props.getCalendarEvents();
+  }, []);
+
+  const renderContent = () => {
+    if (props.calendarEvents) {
+      return (
+        <Paper>
+          <Scheduler data={props.calendarEvents}>
+            <ViewState defaultCurrentDate={currentDate} />
+            <MonthView />
+            <Toolbar />
+            <DateNavigator />
+            <TodayButton />
+            <Appointments />
+            <AppointmentTooltip />
+          </Scheduler>
+        </Paper>
+      );
+    }
+    return <CircularProgress />;
+  };
+
   return (
     <Grid
-      className={classes.content}
       container
-      direction="column"
       justify="center"
       alignItems="center"
-    ></Grid>
+      className={classes.content}
+    >
+      {renderContent()}
+    </Grid>
   );
 };
 
-export default TeacherDash;
+const mapStateToProps = (state) => {
+  return {
+    calendarEvents: state.calendar.data,
+  };
+};
+
+export default connect(mapStateToProps, {
+  getCalendarEvents,
+})(TeacherSchedules);

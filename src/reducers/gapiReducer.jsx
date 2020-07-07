@@ -8,7 +8,7 @@ export default (state = INITIAL_STATE, action) => {
   if (action.type === INITIALIZE_GAPI) {
     return {
       ...state,
-      gapiAuth: action.payload,
+      ...action.payload,
     };
   }
   return state;

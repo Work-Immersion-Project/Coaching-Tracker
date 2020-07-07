@@ -162,7 +162,7 @@ const AdminDrawer = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    isDrawerOpen: state.isDrawerOpen,
+    isDrawerOpen: state.drawer.isDrawerOpen,
   };
 };
 

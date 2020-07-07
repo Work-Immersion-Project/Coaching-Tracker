@@ -10,10 +10,6 @@ import StudentList from "./StudentList";
 import AdminDrawer from "./AdminDrawer";
 
 const useStyles = makeStyles({
-  buttonStyle: {
-    backgroundColor: "red",
-    color: "white",
-  },
   container: {
     display: "flex",
     flexDirection: "row",

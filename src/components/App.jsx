@@ -28,7 +28,7 @@ const App = (props) => {
       <Router history={history}>
         <Switch>
           <Route path="/login" component={LoginPage} exact />
-          <Route path="/teacher" component={TeacherPage} />
+          <PrivateRoute path="/teacher" component={TeacherPage} />
           <PrivateRoute path="/admin" component={AdminPage} />
           <Route component={LoginPage} />
         </Switch>

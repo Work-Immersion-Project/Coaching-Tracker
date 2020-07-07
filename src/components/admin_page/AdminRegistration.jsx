@@ -139,6 +139,29 @@ const AdminRegistration = (props) => {
     props.hideModal();
   };
 
+  const renderTeacherForms = () => {
+    return <div>Teacher Form!</div>;
+  };
+
+  const renderStudentForms = () => {
+    return <div>Student Form!</div>;
+  };
+
+  const renderForms = () => {
+    if (
+      props.formValues &&
+      props.formValues.type &&
+      props.formValues.type !== ""
+    ) {
+      const { type } = props.formValues;
+      if (type === "student") {
+        return renderStudentForms();
+      } else if (type === "teacher") {
+        return renderTeacherForms();
+      }
+    }
+    return null;
+  };
   return (
     <>
       <Grid container className={classes.content} elevation={3}>
@@ -220,6 +243,7 @@ const AdminRegistration = (props) => {
               </option>
             </Field>
           </Grid>
+          {renderForms()}
           <Button
             type="submit"
             className={classes.submitButton}
@@ -237,6 +261,7 @@ const AdminRegistration = (props) => {
 const mapStateToProps = (state) => {
   return {
     user: state.users.data,
+    formValues: state.form.AdminRegistration?.values,
   };
 };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   TextField,
@@ -11,21 +11,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  CircularProgress,
 } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { getStudents } from "../../actions";
+import { connect } from "react-redux";
 import AdminDrawer from "./AdminDrawer";
-
-function createData(studentName, gradeLvl) {
-  return { studentName, gradeLvl };
-}
-
-const rows = [
-  createData("Student", "Grade 11"),
-  createData("Student 1", "3rd Year College"),
-  createData("Student 2", "2nd Year College"),
-  createData("Student 4", "Grade 12"),
-  createData("Student 5", "4th Year College"),
-];
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -65,8 +56,56 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-const StudentList = () => {
+const StudentList = (props) => {
   const classes = useStyles();
+
+  useEffect(() => {
+    props.getStudents();
+  });
+
+  const renderContent = () => {
+    if (props.students) {
+      const students = Object.values(props.students);
+      return (
+        <Paper elevation={3} className={classes.tablePaper}>
+          <TableContainer className={classes.table}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell align="center">
+                    Name of Students
+                  </StyledTableCell>
+                  <StyledTableCell align="center">Grade Level</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {students.map((student) => (
+                  <StyledTableRow key={student.email}>
+                    <StyledTableCell
+                      component="th"
+                      scope="row"
+                      className={classes.tableCell}
+                      align="center"
+                    >
+                      {student.name}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      className={classes.tableCell}
+                      align="center"
+                    >
+                      12
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      );
+    }
+    return <CircularProgress />;
+  };
+
   return (
     <Grid
       container
@@ -75,40 +114,17 @@ const StudentList = () => {
       alignItems="center"
       className={classes.content}
     >
-      <Paper elevation={3} className={classes.tablePaper}>
-        <TableContainer className={classes.table}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell align="center">
-                  {" "}
-                  Name of Students
-                </StyledTableCell>
-                <StyledTableCell align="center"> Grade Level </StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <StyledTableRow key={row.teacher}>
-                  <StyledTableCell
-                    component="th"
-                    scope="row"
-                    className={classes.tableCell}
-                    align="center"
-                  >
-                    {row.studentName}
-                  </StyledTableCell>
-                  <StyledTableCell className={classes.tableCell} align="center">
-                    {row.gradeLvl}
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+      {renderContent()}
     </Grid>
   );
 };
 
-export default StudentList;
+const mapStateToProps = (state) => {
+  return {
+    students: state.students?.data,
+  };
+};
+
+export default connect(mapStateToProps, {
+  getStudents,
+})(StudentList);

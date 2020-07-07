@@ -5,7 +5,7 @@ const INITIAL_STATE = {
   isOpen: false,
 };
 
-export const errorReducer = (state = INITIAL_STATE, action) => {
+export default (state = INITIAL_STATE, action) => {
   const { error } = action;
 
   if (error) {

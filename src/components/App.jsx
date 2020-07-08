@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
-import _ from "lodash";
 import { Route, Switch, Router } from "react-router-dom";
 import { initializeGapiAuth, checkAuth } from "../actions";
 import { connect } from "react-redux";
+import DateFnsUtils from "@date-io/date-fns";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import LoginPage from "./login_page/LoginPage";
 import AdminPage from "./admin_page/AdminPage";
 import TeacherPage from "./teacher_page/TeacherPage";
 import history from "../history";
-import app from "../firebase";
 import PrivateRoute from "./PrivateRoute";
 import ModalRoot from "./ModalRoot";
 import "./App.css";
@@ -24,7 +24,7 @@ const App = (props) => {
   }, [initializeGapiAuth]);
 
   return !props.gapiAuth ? null : (
-    <>
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Router history={history}>
         <Switch>
           <Route path="/login" component={LoginPage} exact />
@@ -34,7 +34,7 @@ const App = (props) => {
         </Switch>
       </Router>
       <ModalRoot />
-    </>
+    </MuiPickersUtilsProvider>
   );
 };
 

@@ -1,10 +1,10 @@
 import React from "react";
 import { Grid, Paper } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Route, useRouteMatch } from "react-router-dom";
+
 import { Typography } from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   content: {
     height: "100vh",
     width: "100%",

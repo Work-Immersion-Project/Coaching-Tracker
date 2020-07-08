@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import { Typography } from "@material-ui/core";
 import AccessRestriction from "./AccessRestriction";
 
 const PrivateRoute = ({ component: RouteComponent, ...props }) => {

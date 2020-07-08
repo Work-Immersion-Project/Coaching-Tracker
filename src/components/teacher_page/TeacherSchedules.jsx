@@ -1,22 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { getCalendarEvents } from "../../actions";
 import { connect } from "react-redux";
-import {
-  Grid,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  CircularProgress,
-} from "@material-ui/core";
-
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { Grid, Paper, CircularProgress } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import TeacherScheduler from "./components/TeacherScheduler";
-import TeacherDrawer from "./TeacherDrawer";
 
 const useStyles = makeStyles((theme) => ({
   content: {

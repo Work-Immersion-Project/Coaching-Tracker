@@ -36,7 +36,7 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         addEventDrawer: {
           isOpen: true,
-          selectedData: action.payload,
+          selectedDate: action.payload,
         },
       };
     case CLOSE_EVENT_DRAWER:
@@ -44,7 +44,7 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         addEventDrawer: {
           isOpen: false,
-          selectedData: null,
+          selectedDate: null,
         },
       };
     default:

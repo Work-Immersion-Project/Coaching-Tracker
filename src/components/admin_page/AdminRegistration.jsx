@@ -1,19 +1,11 @@
-import React, { useState } from "react";
-import {
-  Button,
-  Grid,
-  InputLabel,
-  Modal,
-  Typography,
-  CircularProgress,
-} from "@material-ui/core";
+import React from "react";
+import { Button, Grid, InputLabel } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CustomTextField from "../custom/CustomTextField";
 import CustomSelectField from "../custom/CustomSelectField";
 import { connect } from "react-redux";
 import { Field, reduxForm } from "redux-form";
 import { addUser, showModal, hideModal } from "../../actions";
-import CustomAlertDialog from "../custom/CustomAlertDialog";
 
 const useStyles = makeStyles(() => ({
   buttonStyle: {

@@ -1,5 +1,4 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
@@ -15,12 +14,6 @@ import {
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { connect, useDispatch } from "react-redux";
 import { openAddEventDrawer } from "../../../actions";
-
-const useStyles = makeStyles((theme) => ({
-  scheduler: {
-    height: "100%",
-  },
-}));
 
 const handleCellOnClick = (cellValues) => {
   console.log(cellValues);
@@ -64,7 +57,6 @@ const MonthTableCell = (props) => {
 };
 
 const TeacherScheduler = ({ calendarEvents, openAddEventDrawer }) => {
-  const classes = useStyles();
   const today = new Date();
   const currentDate =
     today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();

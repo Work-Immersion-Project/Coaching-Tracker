@@ -10,7 +10,6 @@ import {
   TableRow,
 } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import TeacherDrawer from "./TeacherDrawer";
 
 function createData(studentFirstName, studentLastName, gradeLvl) {
   return { studentFirstName, studentLastName, gradeLvl };

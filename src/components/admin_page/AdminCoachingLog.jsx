@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Grid,
-  Typography,
   Table,
   TableBody,
   TableCell,
@@ -11,7 +10,6 @@ import {
   Paper,
 } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import AdminDrawer from "./AdminDrawer";
 
 function createData(teacher, student, date, time_in, time_out) {
   return { teacher, student, date, time_in, time_out };
@@ -19,7 +17,7 @@ function createData(teacher, student, date, time_in, time_out) {
 
 const rows = [
   createData("Teacher", 10, "5/5/2020", "8:00 AM", "6:00 PM"),
-  ,
+
   createData("Teacher1", 10, "5/5/2020", "9:00 AM", "6:00 PM"),
   createData("Teacher2", 20, "5/5/2020", "8:00 AM", "6:00 PM"),
   createData("Teacher3", 15, "5/5/2020", "8:00 AM", "6:00 PM"),

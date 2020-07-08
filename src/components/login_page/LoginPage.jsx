@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, CircularProgress, Typography } from "@material-ui/core";
 import { signIn } from "../../actions";
 import _ from "lodash";
-import app from "../../firebase";
 import history from "../../history";
 
 const useStyles = makeStyles({

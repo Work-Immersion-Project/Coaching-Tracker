@@ -1,9 +1,6 @@
 import React, { useEffect } from "react";
 import {
-  Button,
-  TextField,
   Grid,
-  Typography,
   Paper,
   Table,
   TableBody,
@@ -16,7 +13,6 @@ import {
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { getStudents } from "../../actions";
 import { connect } from "react-redux";
-import AdminDrawer from "./AdminDrawer";
 
 const useStyles = makeStyles((theme) => ({
   content: {

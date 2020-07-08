@@ -6,3 +6,4 @@ export * from "./modalTypes";
 export * from "./teacherTypes";
 export * from "./studentTypes";
 export * from "./calendarTypes";
+export * from "./coachingTypes";

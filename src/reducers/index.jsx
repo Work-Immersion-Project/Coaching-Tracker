@@ -9,6 +9,7 @@ import modalReducer from "./modalReducer";
 import teacherReducer from "./teacherReducer";
 import studentReducer from "./studentReducer";
 import calendarReducer from "./calendarReducer";
+import coachingReducer from "./coachingReducer";
 
 export default combineReducers({
   auth: authReducer,
@@ -21,4 +22,5 @@ export default combineReducers({
   errors: errorReducer,
   calendar: calendarReducer,
   drawer: drawerReducer,
+  coaching: coachingReducer,
 });

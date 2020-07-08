@@ -23,10 +23,13 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     width: "100%",
     padding: "1em",
+    overflow: "hidden",
     backgroundColor: "#4B4E6D",
   },
   scheduler: {
     height: "100%",
+    width: "100%",
+    overflow: "hidden",
   },
 }));
 
@@ -41,7 +44,10 @@ const TeacherSchedules = (props) => {
     if (props.calendarEvents) {
       return (
         <Paper className={classes.scheduler}>
-          <TeacherScheduler calendarEvents={props.calendarEvents} />
+          <TeacherScheduler
+            className={classes.scheduler}
+            calendarEvents={props.calendarEvents}
+          />
         </Paper>
       );
     }

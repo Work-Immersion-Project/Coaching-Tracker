@@ -1,19 +1,12 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
-import Typography from "@material-ui/core/Typography";
-import HomeIcon from "@material-ui/icons/Home";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-
+import { Drawer, Typography, Grid } from "@material-ui/core";
+import { KeyboardDatePicker, KeyboardTimePicker } from "@material-ui/pickers";
+import CustomDatePicker from "../../custom/CustomDatePicker";
+import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
 import { closeAddEventDrawer } from "../../../actions";
+import CustomTimePicker from "../../custom/CustomTimePicker";
 
 const drawerWidth = 240;
 
@@ -31,22 +24,66 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
+    baccolor: "#95A3B3",
   },
-  // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing(3),
   },
+  formpads: {
+    margin: "10px",
+  },
 }));
-const ScheduleDrawer = ({ isAddEventDrawerOpen, closeAddEventDrawer }) => {
+
+const ScheduleDrawer = ({ addEventDrawerData, closeAddEventDrawer }) => {
+  const { isOpen, selectedDate } = addEventDrawerData;
   const classes = useStyles();
+
+  const renderContent = () => {
+    if (selectedDate) {
+      return (
+        <Grid>
+          <form>
+            <Field
+              label="Start Date"
+              name="startDate"
+              dateFormat="MM/dd/yyyy"
+              component={CustomDatePicker}
+              className={classes.formpads}
+            />
+            <Field
+              label="End Date"
+              name="endDate"
+              dateFormat="MM/dd/yyyy"
+              component={CustomDatePicker}
+              className={classes.formpads}
+            />
+            <Field
+              label="Start Time"
+              name="startTime"
+              component={CustomTimePicker}
+              className={classes.formpads}
+            />
+            <Field
+              label="End Time"
+              name="endTime"
+              component={CustomTimePicker}
+              className={classes.formpads}
+            />
+          </form>
+        </Grid>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className={classes.root}>
       <Drawer
         className={classes.drawer}
-        open={isAddEventDrawerOpen}
+        open={isOpen}
         variant="temporary"
         classes={{
           paper: classes.drawerPaper,
@@ -58,21 +95,30 @@ const ScheduleDrawer = ({ isAddEventDrawerOpen, closeAddEventDrawer }) => {
         anchor="right"
       >
         <div className={classes.toolbar} />
-        <ListItem button key="home">
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <ListItemText primary="Home" />
-        </ListItem>
+        {renderContent()}
       </Drawer>
     </div>
   );
 };
 const mapStateToProps = (state) => {
+  const selectedDate = state.drawer.addEventDrawer.selectedDate;
+
   return {
-    isAddEventDrawerOpen: state.drawer.addEventDrawer.isOpen,
+    addEventDrawerData: state.drawer.addEventDrawer,
+    initialValues: {
+      startDate: selectedDate?.startDate,
+      endDate: selectedDate?.endDate,
+      startTime: selectedDate?.startDate,
+      endTime: selectedDate?.endDate,
+    },
   };
 };
+
+const ScheduleDrawerWithReduxForm = reduxForm({
+  form: "AddEventDrawerForm",
+  enableReinitialize: true,
+})(ScheduleDrawer);
+
 export default connect(mapStateToProps, {
   closeAddEventDrawer,
-})(ScheduleDrawer);
+})(ScheduleDrawerWithReduxForm);

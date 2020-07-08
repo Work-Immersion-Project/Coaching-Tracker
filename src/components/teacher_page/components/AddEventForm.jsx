@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
 import { makeStyles, styled } from "@material-ui/core/styles";
-import {getStudents} from "../../../actions";
+import { getStudents, coachingListStudentAdd } from "../../../actions";
 import {
   TextField,
   createMuiTheme,
@@ -11,13 +11,9 @@ import {
   InputLabel,
   Divider,
   CircularProgress,
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText,
-  IconButton,
 } from "@material-ui/core";
-import CloseIcon from '@material-ui/icons/Close';
+import AddEventStudentList from "./AddEventStudentList";
+import CloseIcon from "@material-ui/icons/Close";
 import AutoComplete from "@material-ui/lab/Autocomplete";
 import CustomDatePicker from "../../custom/CustomDatePicker";
 import CustomTimePicker from "../../custom/CustomTimePicker";
@@ -31,9 +27,9 @@ const useStyles = makeStyles(() => ({
   addStudentsField: {
     margin: "1em 0",
   },
-  addedStudentsList:{
+  addedStudentsList: {
     width: "100%",
-  }
+  },
 }));
 
 const validateDates = (values) => {
@@ -128,46 +124,29 @@ const StyledAddTitle = styled(TextField)({
 
 const AddEventForm = (props) => {
   const [isOpen, setOpen] = useState(false);
-  const [addedStudents, setAddedStudents] = useState([]);
+
   const classes = useStyles();
   const loading = props.students === null && isOpen;
 
   useEffect(() => {
-   if(isOpen){
-    props.getStudents();
-   }
-
+    if (isOpen) {
+      props.getStudents();
+    }
   }, [isOpen, props.student]);
-  const handleStudentRemove = (studentToBeRemove) => {
-    setAddedStudents(addedStudents.filter((student) => student.email !== studentToBeRemove.email))
-  }
 
   const handleOnStudentClick = (student) => {
-    setAddedStudents([...addedStudents, student]);
-  }
-  const renderStudentsAdded = () => {
-    return addedStudents.map((student) => {
-    return <ListItem dense key={student.email}>
-      <ListItemText>{student.email}</ListItemText>
-      <ListItemSecondaryAction>
-        <IconButton onClick={() => {handleStudentRemove((student))}}>
-          <CloseIcon/>
-        </IconButton>
-      </ListItemSecondaryAction>
-    </ListItem>;
-    });
-  }
-
-
+    props.coachingListStudentAdd(student);
+  };
 
   return (
     <ThemeProvider theme={formTheme}>
       <form>
-        <TextField  label="Add Title" className={classes.textField}/>
+        <TextField label="Add Title" className={classes.textField} />
         <Divider />
         <Field
           label="Start Date"
-          name="startDate"d
+          name="startDate"
+          d
           dateFormat="MM/dd/yyyy"
           inputComponent={StyledDatePicker}
           component={CustomDatePicker}
@@ -193,35 +172,39 @@ const AddEventForm = (props) => {
         />
         <Divider />
         <AutoComplete
-        className={classes.addStudentsField}
-          onOpen={()=> {
+          className={classes.addStudentsField}
+          onOpen={() => {
             setOpen(true);
           }}
           onClose={() => {
             setOpen(false);
           }}
           loading={loading}
-          options={(props.students) ? props.students: []}
+          options={props.students ? props.students : []}
           onChange={(event, value, reason) => {
-            if(reason === "select-option"){
+            if (reason === "select-option") {
               handleOnStudentClick(value);
             }
           }}
-          getOptionSelected={(option,value) => option.email === value.email}
+          getOptionSelected={(option, value) => option.email === value.email}
           getOptionLabel={(option) => option.email}
-          renderInput={(params) => <TextField {...params} variant="outlined" InputProps={{
-            ...params.InputProps,
-            endAdornment: (
-              <>
-              {(loading ? <CircularProgress/> : null)}
-              {params.InputProps.endAdornment}
-              </>
-            )
-          }}/>}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="outlined"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {loading ? <CircularProgress /> : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              }}
+            />
+          )}
         />
-  <List className={classes.addedStudentsList}>
-    {renderStudentsAdded()}
-  </List>
+        <AddEventStudentList />
         <Divider />
       </form>
     </ThemeProvider>
@@ -231,8 +214,8 @@ const AddEventForm = (props) => {
 const mapStateToProps = (state) => {
   return {
     students: state.students.data,
-  }
-}
+  };
+};
 
 const AddEventFormWithReduxForm = reduxForm({
   form: "AddEventDrawerForm",
@@ -240,6 +223,7 @@ const AddEventFormWithReduxForm = reduxForm({
   enableReinitialize: true,
 })(AddEventForm);
 
-export default connect(mapStateToProps,{
+export default connect(mapStateToProps, {
   getStudents,
+  coachingListStudentAdd,
 })(AddEventFormWithReduxForm);

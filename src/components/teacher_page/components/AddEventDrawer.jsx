@@ -10,7 +10,7 @@ import {
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import AddEventForm from "./AddEventForm";
-import { closeAddEventDrawer } from "../../../actions";
+import { closeAddEventDrawer, coachingListStudentAdd } from "../../../actions";
 
 const drawerWidth = 280;
 

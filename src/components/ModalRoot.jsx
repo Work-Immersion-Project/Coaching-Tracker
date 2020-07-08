@@ -1,13 +1,17 @@
 import React from "react";
-import LoadingDialog from "./dialogs/LoadingDialog";
+import { LoadingDialog, ConfirmationDialog } from "./dialogs";
 import { connect } from "react-redux";
-import CustomAlertDialog from "./custom/CustomAlertDialog";
 
 const ModalRoot = ({ modalType, modalProps }) => {
-  if (modalType === "LOADING_MODAL") {
-    return <LoadingDialog open={modalType ? true : false} {...modalProps} />;
+  const openModal = modalType ? true : false;
+  switch (modalType) {
+    case "LOADING_MODAL":
+      return <LoadingDialog open={openModal} {...modalProps} />;
+    case "CONFIRMATION_MODAL":
+      return <ConfirmationDialog open={openModal} {...modalProps} />;
+    default:
+      return null;
   }
-  return <CustomAlertDialog open={modalType ? true : false} {...modalProps} />;
 };
 
 const mapStateToProps = (state) => {

@@ -15,13 +15,15 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const LoadingDialog = ({ onClose, open }) => {
+export const LoadingDialog = ({ onDialogClose, open }) => {
   const classes = useStyles();
   return (
-    <Modal className={classes.loadingDialog} open={open} onClose={onClose}>
+    <Modal
+      className={classes.loadingDialog}
+      open={open}
+      onClose={onDialogClose}
+    >
       <CircularProgress className={classes.loadingIndicator} />
     </Modal>
   );
 };
-
-export default LoadingDialog;

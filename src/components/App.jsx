@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { Route, Switch, Router } from "react-router-dom";
 import { initializeGapiAuth, checkAuth } from "../actions";
 import { connect } from "react-redux";
-import DateFnsUtils from "@date-io/date-fns";
-import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from "@material-ui/pickers/adapter/date-fns";
+import { LocalizationProvider } from "@material-ui/pickers";
 import LoginPage from "./login_page/LoginPage";
 import AdminPage from "./admin_page/AdminPage";
 import TeacherPage from "./teacher_page/TeacherPage";
@@ -24,7 +24,7 @@ const App = (props) => {
   }, [initializeGapiAuth]);
 
   return !props.gapiAuth ? null : (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <LocalizationProvider dateAdapter={DateFnsUtils}>
       <Router history={history}>
         <Switch>
           <Route path="/login" component={LoginPage} exact />
@@ -34,7 +34,7 @@ const App = (props) => {
         </Switch>
       </Router>
       <ModalRoot />
-    </MuiPickersUtilsProvider>
+    </LocalizationProvider>
   );
 };
 

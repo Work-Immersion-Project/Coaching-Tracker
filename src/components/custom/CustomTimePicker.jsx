@@ -4,8 +4,9 @@ import renderHelperFormText from "../helpers/renderHelperFormText";
 
 const CustomTimePicker = ({
   input: { value, onBlur, ...inputProps },
-  meta: { touched, error },
+  meta: { error, invalid },
   label,
+  inputComponent: InputComponent,
   ...custom
 }) => {
   const onChange = (date) => {
@@ -18,10 +19,15 @@ const CustomTimePicker = ({
     <TimePicker
       {...inputProps}
       {...custom}
+      renderInput={(props) => (
+        <InputComponent
+          {...props}
+          label={label}
+          error={error && invalid}
+          onBlur={() => onBlur(value ? new Date(value).toISOString() : null)}
+        />
+      )}
       value={value ? new Date(value) : null}
-      onBlur={() => onBlur(value ? new Date(value).toISOString() : null)}
-      label={label}
-      error={error && touched}
       onChange={onChange}
     />
   );

@@ -6,7 +6,7 @@ import TeacherAppBar from "./components/TeacherAppBar";
 import TeacherDrawer from "./TeacherDrawer";
 import TeacherSchedules from "./TeacherSchedules";
 import TeacherStudentList from "./TeacherStudentList";
-import ScheduleDrawer from "./components/ScheduleDrawer";
+import AddEventDrawer from "./components/AddEventDrawer";
 
 const useStyles = makeStyles({
   container: {
@@ -44,7 +44,7 @@ const TeacherPage = () => {
           <TeacherStudentList />
         </Route>
       </div>
-      <ScheduleDrawer />
+      <AddEventDrawer />
     </div>
   );
 };

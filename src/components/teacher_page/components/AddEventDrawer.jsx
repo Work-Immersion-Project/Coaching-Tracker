@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ScheduleDrawer = ({ addEventDrawerData, closeAddEventDrawer }) => {
+const AddEventDrawer = ({ addEventDrawerData, closeAddEventDrawer }) => {
   const { isOpen, selectedDate } = addEventDrawerData;
   const classes = useStyles();
 
@@ -56,7 +56,7 @@ const ScheduleDrawer = ({ addEventDrawerData, closeAddEventDrawer }) => {
         endTime: selectedDate.endDate,
       };
       return (
-        <Grid container className={classes.content} >
+        <Grid container className={classes.content}>
           <Typography variant="h6" align="center">
             ADD EVENT
           </Typography>
@@ -96,4 +96,4 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   closeAddEventDrawer,
-})(ScheduleDrawer);
+})(AddEventDrawer);

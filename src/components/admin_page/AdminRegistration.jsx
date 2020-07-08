@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import CustomTextField from "../custom/CustomTextField";
 import CustomSelectField from "../custom/CustomSelectField";
 import { connect } from "react-redux";
-import { Field, reduxForm } from "redux-form";
+import { Field, reduxForm, registerField } from "redux-form";
 import { addUser, showModal, hideModal } from "../../actions";
 
 const useStyles = makeStyles(() => ({
@@ -108,22 +108,12 @@ const AdminRegistration = (props) => {
 
   const onSubmit = (values) => {
     props.showModal("CONFIRMATION_MODAL", {
-      onClose: onDialogClose,
+      onDialogClose: onDialogClose,
       title: "Register User",
       content:
         "Make sure that you have entered the correct information before proceeding.",
-      actions: (
-        <>
-          <Button onClick={onDialogClose}>Cancel</Button>
-          <Button
-            onClick={() => {
-              registerUser(values);
-            }}
-          >
-            Register
-          </Button>
-        </>
-      ),
+      onNegativeClick: onDialogClose,
+      onPositiveClick: () => registerUser(values),
     });
   };
 

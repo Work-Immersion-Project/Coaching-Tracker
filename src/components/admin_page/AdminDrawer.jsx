@@ -90,24 +90,15 @@ const AdminDrawer = (props) => {
   };
 
   const handleSignoutButton = () => {
-    props.showModal("SIGN_OUT_CONFIRMATION_MODAL", {
-      onClose: onDialogClose,
+    props.showModal("CONFIRMATION_MODAL", {
+      onDialogClose: onDialogClose,
       title: "Sign Out",
       content: "Are you sure you want to sign out?",
-      actions: (
-        <>
-          <Button onClick={onDialogClose}>Cancel</Button>
-          <Button
-            onClick={() => {
-              props.signOut();
-
-              onDialogClose();
-            }}
-          >
-            Confirm
-          </Button>
-        </>
-      ),
+      onNegativeClick: onDialogClose,
+      onPositiveClick: () => {
+        props.signOut();
+        onDialogClose();
+      },
     });
   };
 

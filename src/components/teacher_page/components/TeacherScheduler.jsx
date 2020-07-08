@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 
 const handleCellOnClick = (cellValues) => {
   console.log(cellValues);
-  cellValues.dispatch(openAddEventDrawer());
+  cellValues.dispatch(openAddEventDrawer(cellValues));
 };
 
 const WeekTableCell = (props) => {
@@ -40,22 +40,24 @@ const WeekTableCell = (props) => {
 };
 
 const DayTableCell = (props) => {
+  const dispatch = useDispatch();
   return (
     <DayView.TimeTableCell
       {...props}
       onClick={() => {
-        handleCellOnClick(props);
+        handleCellOnClick({ ...props, dispatch });
       }}
     />
   );
 };
 
 const MonthTableCell = (props) => {
+  const dispatch = useDispatch();
   return (
     <MonthView.TimeTableCell
       {...props}
       onClick={() => {
-        handleCellOnClick(props);
+        handleCellOnClick({ ...props, dispatch });
       }}
     />
   );
@@ -67,7 +69,7 @@ const TeacherScheduler = ({ calendarEvents, openAddEventDrawer }) => {
   const currentDate =
     today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
   return (
-    <Scheduler data={calendarEvents}>
+    <Scheduler height="auto" data={calendarEvents}>
       <Toolbar />
       <ViewState
         defaultCurrentDate={currentDate}

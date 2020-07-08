@@ -18,9 +18,10 @@ export const closeDrawer = () => {
   };
 };
 
-export const openAddEventDrawer = () => {
+export const openAddEventDrawer = (eventData) => {
   return {
     type: OPEN_EVENT_DRAWER,
+    payload: eventData,
   };
 };
 

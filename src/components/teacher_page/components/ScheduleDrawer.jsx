@@ -70,7 +70,7 @@ const ScheduleDrawer = ({ isAddEventDrawerOpen, closeAddEventDrawer }) => {
 };
 const mapStateToProps = (state) => {
   return {
-    isAddEventDrawerOpen: state.drawer.isAddEventDrawerOpen,
+    isAddEventDrawerOpen: state.drawer.addEventDrawer.isOpen,
   };
 };
 export default connect(mapStateToProps, {

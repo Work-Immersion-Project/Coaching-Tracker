@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     height: "100%",
     width: "100%",
+    padding: "1em",
     backgroundColor: "#4B4E6D",
   },
   scheduler: {
@@ -40,10 +41,7 @@ const TeacherSchedules = (props) => {
     if (props.calendarEvents) {
       return (
         <Paper className={classes.scheduler}>
-          <TeacherScheduler
-            calendarEvents={props.calendarEvents}
-            className={classes.scheduler}
-          />
+          <TeacherScheduler calendarEvents={props.calendarEvents} />
         </Paper>
       );
     }
@@ -52,10 +50,10 @@ const TeacherSchedules = (props) => {
 
   return (
     <Grid
+      className={classes.content}
       container
       justify="center"
       alignItems="center"
-      className={classes.content}
     >
       {renderContent()}
     </Grid>

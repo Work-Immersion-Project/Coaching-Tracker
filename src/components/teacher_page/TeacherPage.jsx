@@ -31,7 +31,6 @@ const TeacherPage = () => {
     <div className={classes.container}>
       <TeacherDrawer />
       <div className={classes.content}>
-        <TeacherAppBar />
         <Route path={`${path}`} exact>
           <div>Dash Board</div>
         </Route>

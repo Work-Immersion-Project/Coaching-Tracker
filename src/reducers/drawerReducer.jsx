@@ -6,20 +6,47 @@ import {
 } from "../types";
 
 const INITIAL_STATE = {
-  isDrawerOpen: false,
-  isAddEventDrawerOpen: false,
+  navigationDrawer: {
+    isOpen: false,
+  },
+  addEventDrawer: {
+    isOpen: false,
+    selectedDate: false,
+  },
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case OPEN_DRAWER:
-      return { ...state, isDrawerOpen: true };
+      return {
+        ...state,
+        navigationDrawer: {
+          isOpen: true,
+        },
+      };
     case CLOSE_DRAWER:
-      return { ...state, isDrawerOpen: false };
+      return {
+        ...state,
+        navigationDrawer: {
+          isOpen: false,
+        },
+      };
     case OPEN_EVENT_DRAWER:
-      return { ...state, isAddEventDrawerOpen: true };
+      return {
+        ...state,
+        addEventDrawer: {
+          isOpen: true,
+          selectedData: action.payload,
+        },
+      };
     case CLOSE_EVENT_DRAWER:
-      return { ...state, isAddEventDrawerOpen: false };
+      return {
+        ...state,
+        addEventDrawer: {
+          isOpen: false,
+          selectedData: null,
+        },
+      };
     default:
       return state;
   }

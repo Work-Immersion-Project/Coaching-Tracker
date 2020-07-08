@@ -147,7 +147,7 @@ const TeacherDrawer = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    isDrawerOpen: state.drawer.isDrawerOpen,
+    isDrawerOpen: state.drawer.navigationDrawer.isOpen,
   };
 };
 

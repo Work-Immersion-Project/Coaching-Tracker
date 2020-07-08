@@ -30,12 +30,10 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth,
     backgroundColor: "#95A3B3",
   },
-
   toolbar: theme.mixins.toolbar,
   content: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
+    width: "100%",
+    padding: "1em",
   },
   timePicker: {
     margin: "1em",
@@ -58,9 +56,9 @@ const ScheduleDrawer = ({ addEventDrawerData, closeAddEventDrawer }) => {
         endTime: selectedDate.endDate,
       };
       return (
-        <Grid>
+        <Grid container className={classes.content} >
           <Typography variant="h6" align="center">
-            Add Event
+            ADD EVENT
           </Typography>
           <AddEventForm initialValues={initialValues} />
         </Grid>

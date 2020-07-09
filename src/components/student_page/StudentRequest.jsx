@@ -122,28 +122,7 @@ const AdminRegistration = (props) => {
   };
 
   const renderTeacherForms = () => {
-    return (
-      <Grid item sm>
-        <InputLabel className={classes.inputLabel}>Type</InputLabel>
-        <Field
-          name="type"
-          id="type"
-          required
-          native
-          disableUnderline
-          component={CustomSelectField}
-          className={classes.selectField}
-        >
-          <option value={""} />
-          <option className={classes.selectValue} value={"teacher"}>
-            Teacher
-          </option>
-          <option className={classes.selectValue} value={"student"}>
-            Student
-          </option>
-        </Field>
-      </Grid>
-    );
+    return <div>Teacher Form!</div>;
   };
 
   const renderStudentForms = () => {

@@ -1,5 +1,6 @@
 import React from "react";
 import { TimePicker } from "@material-ui/pickers";
+
 import renderHelperFormText from "../helpers/renderHelperFormText";
 
 const CustomTimePicker = ({
@@ -9,26 +10,14 @@ const CustomTimePicker = ({
   inputComponent: InputComponent,
   ...custom
 }) => {
-  const onChange = (date) => {
-    Date.parse(date)
-      ? inputProps.onChange(date.toISOString())
-      : inputProps.onChange(null);
-  };
-
   return (
     <TimePicker
       {...inputProps}
       {...custom}
+      value={value}
       renderInput={(props) => (
-        <InputComponent
-          {...props}
-          label={label}
-          error={error && invalid}
-          onBlur={() => onBlur(value ? new Date(value).toISOString() : null)}
-        />
+        <InputComponent {...props} label={label} error={error && invalid} />
       )}
-      value={value ? new Date(value) : null}
-      onChange={onChange}
     />
   );
 };

@@ -10,12 +10,6 @@ const CustomDatePicker = ({
   dateFormat,
   ...custom
 }) => {
-  const onChange = (date) => {
-    Date.parse(date)
-      ? inputProps.onChange(date.toISOString())
-      : inputProps.onChange(null);
-  };
-
   return (
     <DatePicker
       {...inputProps}
@@ -27,7 +21,6 @@ const CustomDatePicker = ({
       onBlur={() => onBlur(value ? new Date(value).toISOString() : null)}
       format={dateFormat}
       error={error && touched}
-      onChange={onChange}
     />
   );
 };

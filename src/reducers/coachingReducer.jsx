@@ -1,29 +1,69 @@
 import {
-  COACHING_LIST_CLEAR,
-  COACHING_LIST_STUDENT_ADD,
-  COACHING_LIST_STUDENT_REMOVE,
+  ADD_COACHING_ATTENDEE,
+  REMOVE_COACHING_ATTENDEE,
+  CLEAR_COACHING_ATTENDEES,
+  ADD_COACHING_SCHEDULE_REQUEST,
+  ADD_COACHING_SCHEDULE_SUCCESS,
+  GET_COACHING_SCHEDULES_REQUEST,
+  GET_COACHING_SCHEDULES_SUCCESS,
+  GET_COACHING_SCHEDULE_REQUEST,
+  GET_COACHING_SCHEDULE_SUCCESS,
+  REMOVE_COACHING_SCHEDULE_REQUEST,
+  REMOVE_COACHING_SCHEDULE_SUCCESS,
 } from "../types";
 
 const INITIAL_STATE = {
-  coachingList: [],
+  coachingSchedules: [],
+  selectedStudentAttendees: [],
+  selectedCoachingSchedule: {},
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case COACHING_LIST_STUDENT_ADD:
+    case ADD_COACHING_ATTENDEE:
       return {
         ...state,
-        coachingList: [...state.coachingList, action.payload],
+        selectedStudentAttendees: [
+          ...state.selectedStudentAttendees,
+          action.data,
+        ],
       };
-    case COACHING_LIST_STUDENT_REMOVE:
+    case REMOVE_COACHING_ATTENDEE:
       return {
         ...state,
-        coachingList: state.coachingList.filter(
-          (student) => student.name !== action.payload.name
+        selectedStudentAttendees: state.selectedStudentAttendees.filter(
+          (student) => student.name !== action.data.name
         ),
       };
-    case COACHING_LIST_CLEAR:
-      return INITIAL_STATE;
+    case CLEAR_COACHING_ATTENDEES:
+      return {
+        ...state,
+        selectedStudentAttendees: [],
+      };
+    case GET_COACHING_SCHEDULES_REQUEST:
+      return {
+        ...state,
+      };
+    case GET_COACHING_SCHEDULES_SUCCESS:
+      return {
+        ...state,
+        coachingSchedules: action.data,
+      };
+    case ADD_COACHING_SCHEDULE_REQUEST:
+      return {
+        ...state,
+      };
+    case ADD_COACHING_SCHEDULE_SUCCESS: {
+      return {
+        ...state,
+      };
+    }
+    case REMOVE_COACHING_SCHEDULE_REQUEST: {
+      return { ...state };
+    }
+    case REMOVE_COACHING_SCHEDULE_SUCCESS: {
+      return { ...state };
+    }
     default:
       return state;
   }

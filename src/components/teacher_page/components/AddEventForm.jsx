@@ -18,6 +18,7 @@ import AutoComplete from "@material-ui/lab/Autocomplete";
 import CustomDatePicker from "../../custom/CustomDatePicker";
 import CustomTimePicker from "../../custom/CustomTimePicker";
 import CustomTextField from "../../custom/CustomTextField";
+import { set } from "lodash";
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -124,7 +125,7 @@ const StyledAddTitle = styled(TextField)({
 
 const AddEventForm = (props) => {
   const [isOpen, setOpen] = useState(false);
-
+  const [addStudentFieldValue, setAddStudentFieldValue] = useState("");
   const classes = useStyles();
   const loading = props.students === null && isOpen;
 
@@ -135,6 +136,7 @@ const AddEventForm = (props) => {
   }, [isOpen, props.student]);
 
   const handleOnStudentClick = (student) => {
+    setAddStudentFieldValue("");
     props.coachingListStudentAdd(student);
   };
 
@@ -176,17 +178,34 @@ const AddEventForm = (props) => {
           onOpen={() => {
             setOpen(true);
           }}
-          onClose={() => {
+          onClose={(_, reason) => {
+            if (reason === "select-option") {
+              setAddStudentFieldValue("");
+            }
             setOpen(false);
           }}
+          inputValue={addStudentFieldValue}
+          onInputChange={(_, input, reason) => {
+            if (reason === "input") {
+              setAddStudentFieldValue(input);
+            }
+          }}
           loading={loading}
-          options={props.students ? props.students : []}
-          onChange={(event, value, reason) => {
+          options={
+            props.students
+              ? props.students.filter(
+                  (student) =>
+                    props.addedStudents.filter(
+                      (addedStudent) => student.email === addedStudent.email
+                    ).length === 0
+                )
+              : []
+          }
+          onChange={(_, value, reason) => {
             if (reason === "select-option") {
               handleOnStudentClick(value);
             }
           }}
-          getOptionSelected={(option, value) => option.email === value.email}
           getOptionLabel={(option) => option.email}
           renderInput={(params) => (
             <TextField
@@ -214,6 +233,7 @@ const AddEventForm = (props) => {
 const mapStateToProps = (state) => {
   return {
     students: state.students.data,
+    addedStudents: state.coaching.coachingList,
   };
 };
 

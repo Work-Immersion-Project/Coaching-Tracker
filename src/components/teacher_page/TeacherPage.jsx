@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch } from "react-router-dom";
 import TeacherDashboard from "./TeacherDashboard";
@@ -7,6 +7,8 @@ import TeacherDrawer from "./TeacherDrawer";
 import TeacherSchedules from "./TeacherSchedules";
 import TeacherStudentList from "./TeacherStudentList";
 import AddEventDrawer from "./components/AddEventDrawer";
+import { getCoachingSchedules } from "../../actions";
+import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles({
   container: {
@@ -26,17 +28,19 @@ const useStyles = makeStyles({
 const TeacherPage = () => {
   let { path } = useRouteMatch();
   const classes = useStyles();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getCoachingSchedules());
+  }, []);
   return (
     <div className={classes.container}>
       <TeacherDrawer />
       <div className={classes.content}>
         <TeacherAppBar />
         <Route path={`${path}`} exact>
-          <div>Dash Board</div>
-        </Route>
-        <Route path={`${path}/dashboard`} exact>
           <TeacherDashboard />
         </Route>
+
         <Route path={`${path}/schedules`} exact>
           <TeacherSchedules />
         </Route>

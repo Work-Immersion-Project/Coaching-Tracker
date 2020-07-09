@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { getCalendarEvents } from "../../actions";
+import { getCoachingSchedules } from "../../actions";
 import { connect } from "react-redux";
 import { Grid, Paper, CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -23,12 +23,8 @@ const useStyles = makeStyles((theme) => ({
 const TeacherSchedules = (props) => {
   const classes = useStyles();
 
-  useEffect(() => {
-    props.getCalendarEvents();
-  }, []);
-
   const renderContent = () => {
-    if (props.calendarEvents) {
+    if (props.coachingSchedules) {
       return (
         <Paper className={classes.scheduler}>
           <TeacherScheduler
@@ -55,10 +51,10 @@ const TeacherSchedules = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    calendarEvents: state.calendar.data,
+    coachingSchedules: state.coaching.coachingSchedules,
   };
 };
 
 export default connect(mapStateToProps, {
-  getCalendarEvents,
+  getCoachingSchedules,
 })(TeacherSchedules);

@@ -13,6 +13,7 @@ import HomeIcon from "@material-ui/icons/Home";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import SchoolIcon from "@material-ui/icons/School";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
+import history from "../../history";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { signOut, showModal, hideModal, closeDrawer } from "../../actions";

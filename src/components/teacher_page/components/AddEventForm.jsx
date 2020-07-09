@@ -2,23 +2,29 @@ import React, { useState, useEffect } from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
 import { makeStyles, styled } from "@material-ui/core/styles";
-import { getStudents, coachingListStudentAdd } from "../../../actions";
+import {
+  getStudents,
+  addCoachingAttendee,
+  addCoachingSchedule,
+  showModal,
+  hideModal,
+  closeAddEventDrawer,
+} from "../../../actions";
 import {
   TextField,
   createMuiTheme,
   ThemeProvider,
   Grid,
   InputLabel,
+  Button,
   Divider,
   CircularProgress,
 } from "@material-ui/core";
 import AddEventStudentList from "./AddEventStudentList";
-import CloseIcon from "@material-ui/icons/Close";
 import AutoComplete from "@material-ui/lab/Autocomplete";
 import CustomDatePicker from "../../custom/CustomDatePicker";
 import CustomTimePicker from "../../custom/CustomTimePicker";
-import CustomTextField from "../../custom/CustomTextField";
-import { set } from "lodash";
+import CustomMaterialTextField from "../../custom/CustomMaterialTextField";
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -126,6 +132,7 @@ const StyledAddTitle = styled(TextField)({
 const AddEventForm = (props) => {
   const [isOpen, setOpen] = useState(false);
   const [addStudentFieldValue, setAddStudentFieldValue] = useState("");
+  const { handleSubmit, reset, pristine, submitting } = props;
   const classes = useStyles();
   const loading = props.students === null && isOpen;
 
@@ -137,27 +144,45 @@ const AddEventForm = (props) => {
 
   const handleOnStudentClick = (student) => {
     setAddStudentFieldValue("");
-    props.coachingListStudentAdd(student);
+    props.addCoachingAttendee(student);
+  };
+
+  const onDialogClose = () => {
+    props.hideModal();
+  };
+
+  const addCoachingEvent = (values) => {
+    props.addCoachingSchedule(values);
+    props.hideModal();
+    props.closeAddEventDrawer();
+  };
+
+  const handleOnSubmit = (values) => {
+    props.showModal("CONFIRMATION_MODAL", {
+      onDialogClose: onDialogClose,
+      title: "Schedule Coaching?",
+      content:
+        "Make sure that you have entered the correct information before proceeding.",
+      onNegativeClick: onDialogClose,
+      onPositiveClick: () => addCoachingEvent(values),
+    });
   };
 
   return (
     <ThemeProvider theme={formTheme}>
-      <form>
-        <TextField label="Add Title" className={classes.textField} />
+      <form onSubmit={handleSubmit(handleOnSubmit)}>
+        <Field
+          label="Add Title"
+          name="title"
+          component={CustomMaterialTextField}
+        />
+
         <Divider />
         <Field
           label="Start Date"
           name="startDate"
-          d
           dateFormat="MM/dd/yyyy"
           inputComponent={StyledDatePicker}
-          component={CustomDatePicker}
-        />
-        <Field
-          inputComponent={StyledDatePicker}
-          label="End Date"
-          name="endDate"
-          dateFormat="MM/dd/yyyy"
           component={CustomDatePicker}
         />
         <Field
@@ -165,6 +190,14 @@ const AddEventForm = (props) => {
           label="Start Time"
           name="startTime"
           component={CustomTimePicker}
+        />
+        <Divider />
+        <Field
+          inputComponent={StyledDatePicker}
+          label="End Date"
+          name="endDate"
+          dateFormat="MM/dd/yyyy"
+          component={CustomDatePicker}
         />
         <Field
           inputComponent={StyledTimePicker}
@@ -190,6 +223,7 @@ const AddEventForm = (props) => {
               setAddStudentFieldValue(input);
             }
           }}
+          disableClearable
           loading={loading}
           options={
             props.students
@@ -207,10 +241,11 @@ const AddEventForm = (props) => {
             }
           }}
           getOptionLabel={(option) => option.email}
+          noOptionsText="No Students Found"
           renderInput={(params) => (
             <TextField
               {...params}
-              variant="outlined"
+              label="Add Students"
               InputProps={{
                 ...params.InputProps,
                 endAdornment: (
@@ -223,8 +258,14 @@ const AddEventForm = (props) => {
             />
           )}
         />
-        <AddEventStudentList />
+        <AddEventStudentList className={classes.addedStudentsList} />
         <Divider />
+        <Button
+          type="submit"
+          disabled={pristine || (submitting && props.addedStudents.length == 0)}
+        >
+          Create Coaching Schedule
+        </Button>
       </form>
     </ThemeProvider>
   );
@@ -233,7 +274,7 @@ const AddEventForm = (props) => {
 const mapStateToProps = (state) => {
   return {
     students: state.students.data,
-    addedStudents: state.coaching.coachingList,
+    addedStudents: state.coaching.selectedStudentAttendees,
   };
 };
 
@@ -245,5 +286,9 @@ const AddEventFormWithReduxForm = reduxForm({
 
 export default connect(mapStateToProps, {
   getStudents,
-  coachingListStudentAdd,
+  addCoachingAttendee,
+  addCoachingSchedule,
+  showModal,
+  hideModal,
+  closeAddEventDrawer,
 })(AddEventFormWithReduxForm);

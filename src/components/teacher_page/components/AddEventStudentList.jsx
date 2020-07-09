@@ -9,18 +9,16 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";
-import { coachingListStudentRemove } from "../../../actions";
+import { removeCoachingAttendee } from "../../../actions";
 
 const AddEventStudentList = (props) => {
   const renderStudentList = () => {
     return props.addedStudents.map((student) => {
       return (
-        <ListItem key={student.email}>
+        <ListItem key={student.email} dense>
           <ListItemText>{student.email}</ListItemText>
           <ListItemSecondaryAction>
-            <IconButton
-              onClick={() => props.coachingListStudentRemove(student)}
-            >
+            <IconButton onClick={() => props.removeCoachingAttendee(student)}>
               <CloseIcon />
             </IconButton>
           </ListItemSecondaryAction>
@@ -29,15 +27,15 @@ const AddEventStudentList = (props) => {
     });
   };
 
-  return <List>{renderStudentList()}</List>;
+  return <List dense>{renderStudentList()}</List>;
 };
 
 const mapStateToProps = (state) => {
   return {
-    addedStudents: state.coaching.coachingList,
+    addedStudents: state.coaching.selectedStudentAttendees,
   };
 };
 
 export default connect(mapStateToProps, {
-  coachingListStudentRemove,
+  removeCoachingAttendee,
 })(AddEventStudentList);

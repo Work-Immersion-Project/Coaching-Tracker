@@ -5,5 +5,5 @@ export * from "./userTypes";
 export * from "./modalTypes";
 export * from "./teacherTypes";
 export * from "./studentTypes";
-
+export * from "./registrationTypes";
 export * from "./coachingTypes";

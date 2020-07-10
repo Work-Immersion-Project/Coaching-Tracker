@@ -7,6 +7,7 @@ import { LocalizationProvider } from "@material-ui/pickers";
 import LoginPage from "./login_page/LoginPage";
 import AdminPage from "./admin_page/AdminPage";
 import TeacherPage from "./teacher_page/TeacherPage";
+import StudentPage from "./student_page/StudentPage";
 import history from "../history";
 import PrivateRoute from "./PrivateRoute";
 import ModalRoot from "./ModalRoot";
@@ -30,6 +31,7 @@ const App = (props) => {
           <Route path="/login" component={LoginPage} exact />
           <PrivateRoute path="/teacher" component={TeacherPage} />
           <PrivateRoute path="/admin" component={AdminPage} />
+          <PrivateRoute path="/student" component={StudentPage} />
           <Route component={LoginPage} />
         </Switch>
       </Router>

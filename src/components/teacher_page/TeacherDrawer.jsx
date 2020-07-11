@@ -98,7 +98,7 @@ const TeacherDrawer = (props) => {
             paper: classes.drawerPaper,
           }}
           open={props.isDrawerOpen}
-          onClose={closeDrawer}
+          onClose={props.closeDrawer}
           anchor="left"
           ModalProps={{
             keepMounted: true,

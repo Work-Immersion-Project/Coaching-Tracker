@@ -39,7 +39,6 @@ const CustomAppbar = (props) => {
 
     const splittedPath = formattedPath.split("/");
     let appbarTitle = "";
-    console.log(formattedPath);
 
     if (
       formattedPath !== "" &&

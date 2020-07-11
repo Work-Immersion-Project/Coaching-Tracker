@@ -11,7 +11,7 @@ import {
 // Icons
 import HomeIcon from "@material-ui/icons/Home";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import ChatIcon from '@material-ui/icons/Chat';
+import ChatIcon from "@material-ui/icons/Chat";
 import FaceIcon from "@material-ui/icons/Face";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import history from "../../history";
@@ -51,9 +51,9 @@ const StudentDrawer = (props) => {
       path: "/schedules",
     },
     {
-        text: "Teacher List",
-        icon: <FaceIcon />,
-        path: "/teacher-list",
+      text: "Teacher List",
+      icon: <FaceIcon />,
+      path: "/teacher-list",
     },
   ];
   const onDialogClose = () => {
@@ -99,7 +99,7 @@ const StudentDrawer = (props) => {
             paper: classes.drawerPaper,
           }}
           open={props.isDrawerOpen}
-          onClose={closeDrawer}
+          onClose={props.closeDrawer}
           anchor="left"
           ModalProps={{
             keepMounted: true,

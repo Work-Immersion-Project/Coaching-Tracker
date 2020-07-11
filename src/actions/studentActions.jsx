@@ -9,9 +9,7 @@ import {
   GET_STUDENT_ERROR,
   GET_STUDENT_REQUEST,
 } from "../types";
-
-import app from "../firebase";
-const db = app.firestore();
+import { db } from "../firebase";
 const userCollection = db.collection("users");
 
 export const getStudent = (studentEmail) => async (dispatch) => {

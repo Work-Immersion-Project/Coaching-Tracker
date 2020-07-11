@@ -9,9 +9,9 @@ import {
   REMOVE_USER,
   CHECK_USER,
 } from "../types";
-import app from "../firebase";
+import { db } from "../firebase";
 import { showModal, hideModal } from "./";
-const db = app.firestore();
+
 const userCollection = db.collection("users");
 
 // User Actions

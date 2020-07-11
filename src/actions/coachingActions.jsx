@@ -19,9 +19,9 @@ import {
   getHours,
   getMinutes,
 } from "date-fns";
-import app from "../firebase";
 
-const db = app.firestore();
+import { db } from "../firebase";
+
 const coachingLogsCollection = db.collection("coachingLogs");
 
 export const addCoachingAttendee = (student) => {

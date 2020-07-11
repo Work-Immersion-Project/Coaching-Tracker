@@ -9,8 +9,8 @@ import {
   ADD_TEACHER_REQUEST,
   ADD_TEACHER_SUCCESS,
 } from "../types";
-import app from "../firebase";
-const db = app.firestore();
+import { db } from "../firebase";
+
 const usersCollection = db.collection("users");
 
 export const getTeacher = (teacherEmail) => async (dispatch) => {

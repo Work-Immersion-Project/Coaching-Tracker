@@ -4,7 +4,6 @@ import {
 } from "../types";
 import app from "../firebase";
 const db = app.firestore();
-const 
 
 export const getRegistrationFields = () => async (dispatch) => {};
 

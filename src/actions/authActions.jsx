@@ -7,10 +7,9 @@ import {
   SIGN_OUT_REQUEST,
 } from "../types";
 import _ from "lodash";
-import app from "../firebase";
+import app, { db } from "../firebase";
 import firebase from "firebase";
 // Authentication Actions.
-const db = app.firestore();
 const userCollection = db.collection("users");
 
 export const checkAuth = () => async (dispatch, getState) => {

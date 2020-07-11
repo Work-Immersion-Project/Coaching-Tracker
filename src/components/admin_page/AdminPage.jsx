@@ -3,9 +3,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch } from "react-router-dom";
 import AdminCoachingLog from "./AdminCoachingLog";
 import AdminRegistration from "./AdminRegistration";
-import AdminAppBar from "./AdminAppbar";
+
 import TeacherList from "./TeacherList";
 import StudentList from "./StudentList";
+import CustomAppbar from "../custom/CustomAppbar";
 import AdminDrawer from "./AdminDrawer";
 
 const useStyles = makeStyles({
@@ -30,7 +31,7 @@ const AdminPage = () => {
     <div className={classes.container}>
       <AdminDrawer />
       <div className={classes.content}>
-        <AdminAppBar />
+        <CustomAppbar />
         <Route path={`${path}`} exact>
           <div>Dash Board</div>
         </Route>

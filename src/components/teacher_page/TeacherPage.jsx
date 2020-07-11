@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch } from "react-router-dom";
+import CustomAppbar from "../custom/CustomAppbar";
 import TeacherDashboard from "./TeacherDashboard";
-import TeacherAppBar from "./components/TeacherAppBar";
+
 import TeacherDrawer from "./TeacherDrawer";
 import TeacherSchedules from "./TeacherSchedules";
 import TeacherStudentList from "./TeacherStudentList";
@@ -36,11 +37,10 @@ const TeacherPage = () => {
     <div className={classes.container}>
       <TeacherDrawer />
       <div className={classes.content}>
-        <TeacherAppBar />
+        <CustomAppbar />
         <Route path={`${path}`} exact>
           <TeacherDashboard />
         </Route>
-
         <Route path={`${path}/schedules`} exact>
           <TeacherSchedules />
         </Route>

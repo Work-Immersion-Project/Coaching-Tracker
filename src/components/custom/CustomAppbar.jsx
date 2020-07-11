@@ -6,6 +6,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import { openDrawer, closeDrawer } from "../../actions";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
+import _, { split } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -17,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AdminAppBar = (props) => {
+const CustomAppbar = (props) => {
   const [title, setTitle] = useState("Admin");
   const classes = useStyles();
 
@@ -30,28 +31,35 @@ const AdminAppBar = (props) => {
   };
 
   useEffect(() => {
-    const formattedPath = props.location.pathname.replace("/admin", "");
+    const formattedPath = props.location.pathname
+      .replace("/admin/", "/")
+      .replace("/teacher/", "/")
+      .replace("/student/", "/")
+      .replace("/", "");
 
-    switch (formattedPath) {
-      case "/":
-        setTitle("Home");
-        break;
-      case "/registration":
-        setTitle("Registration");
-        break;
-      case "/coaching-log":
-        setTitle("Coaching Log");
-        break;
-      case "/teacher-list":
-        setTitle("Teacher List");
-        break;
-      case "/student-list":
-        setTitle("Student List");
-        break;
-      default:
-        setTitle("Admin");
-        break;
+    const splittedPath = formattedPath.split("/");
+    let appbarTitle = "";
+    console.log(formattedPath);
+
+    if (
+      formattedPath !== "" &&
+      formattedPath !== "teacher" &&
+      formattedPath !== "student" &&
+      formattedPath !== "admin"
+    ) {
+      if (splittedPath.length > 1) {
+        appbarTitle = _.reduce(formattedPath.split("-"), (current, next) => {
+          return (
+            _.startCase(_.toLower(current)) + " " + _.startCase(_.toLower(next))
+          );
+        });
+      } else {
+        appbarTitle = _.startCase(_.toLower(splittedPath[0]));
+      }
+    } else {
+      appbarTitle = "Dashboard";
     }
+    setTitle(appbarTitle);
   }, [props.location.pathname]);
 
   return (
@@ -76,5 +84,5 @@ export default withRouter(
   connect(mapStateToProps, {
     openDrawer,
     closeDrawer,
-  })(AdminAppBar)
+  })(CustomAppbar)
 );

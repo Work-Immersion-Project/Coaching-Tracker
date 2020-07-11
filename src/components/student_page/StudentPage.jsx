@@ -2,10 +2,11 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch } from "react-router-dom";
 import StudentDashboard from "./StudentDashboard";
-import StudentAppBar from "./components/StudentAppbar";
 import StudentDrawer from "./StudentDrawer";
 import StudentSchedules from "./StudentSchedules";
 import StudentTeacherList from "./StudentTeacherList";
+import CustomDrawer from "../custom/CustomAppbar";
+import CustomAppbar from "../custom/CustomAppbar";
 // import AddEventDrawer from "./components/AddEventDrawer";
 
 const useStyles = makeStyles({
@@ -30,16 +31,16 @@ const StudentPage = () => {
     <div className={classes.container}>
       <StudentDrawer />
       <div className={classes.content}>
-        <StudentAppBar />
-      <Route path={`${path}`} exact>
+        <CustomAppbar />
+        <Route path={`${path}`} exact>
           <StudentDashboard />
-      </Route>
-      <Route path={`${path}/schedules`} exact>
-        <StudentSchedules />
-      </Route>
-      <Route path={`${path}/teacher-list`} exact>
-        <StudentTeacherList />
-      </Route>
+        </Route>
+        <Route path={`${path}/schedules`} exact>
+          <StudentSchedules />
+        </Route>
+        <Route path={`${path}/teacher-list`} exact>
+          <StudentTeacherList />
+        </Route>
       </div>
       {/* <AddEventDrawer /> */}
     </div>

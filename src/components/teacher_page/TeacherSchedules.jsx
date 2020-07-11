@@ -3,7 +3,7 @@ import { getCoachingSchedules } from "../../actions";
 import { connect } from "react-redux";
 import { Grid, Paper, CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import TeacherScheduler from "./components/TeacherScheduler";
+import CustomScheduler from "../custom/CustomScheduler";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -27,7 +27,7 @@ const TeacherSchedules = (props) => {
     if (props.coachingSchedules) {
       return (
         <Paper className={classes.scheduler}>
-          <TeacherScheduler
+          <CustomScheduler
             className={classes.scheduler}
             calendarEvents={props.calendarEvents}
           />

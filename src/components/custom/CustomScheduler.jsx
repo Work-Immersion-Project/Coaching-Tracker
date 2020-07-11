@@ -1,5 +1,6 @@
 import React from "react";
-import { ViewState, GroupingState } from "@devexpress/dx-react-scheduler";
+import { ViewState } from "@devexpress/dx-react-scheduler";
+import { connectProps } from "@devexpress/dx-react-core";
 import { Grid, Typography, Button, IconButton } from "@material-ui/core";
 import DuoIcon from "@material-ui/icons/Duo";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -23,13 +24,9 @@ import {
   removeCoachingSchedule,
   showModal,
   hideModal,
-} from "../../../actions";
+} from "../../actions";
 import classNames from "clsx";
-import _ from "lodash";
-
-const handleCellOnClick = (cellValues) => {
-  cellValues.dispatch(openAddEventDrawer(cellValues));
-};
+import _, { rest } from "lodash";
 
 const appointmentStyles = {
   pendingCell: {
@@ -43,38 +40,35 @@ const appointmentStyles = {
   },
 };
 
-const WeekTableCell = withStyles(appointmentStyles)((props) => {
-  const dispatch = useDispatch();
+const WeekTableCell = withStyles({})(({ onCellClick, ...restProps }) => {
   return (
     <WeekView.TimeTableCell
-      {...props}
       onClick={() => {
-        handleCellOnClick({ ...props, dispatch });
+        onCellClick(restProps);
       }}
+      {...restProps}
     />
   );
 });
 
-const DayTableCell = withStyles(appointmentStyles)((props) => {
-  const dispatch = useDispatch();
+const DayTableCell = withStyles({})(({ onCellClick, ...restProps }) => {
   return (
     <DayView.TimeTableCell
-      {...props}
       onClick={() => {
-        handleCellOnClick({ ...props, dispatch });
+        onCellClick(restProps);
       }}
+      {...restProps}
     />
   );
 });
 
-const MonthTableCell = withStyles(appointmentStyles)((props) => {
-  const dispatch = useDispatch();
+const MonthTableCell = withStyles({})(({ onCellClick, ...restProps }) => {
   return (
     <MonthView.TimeTableCell
-      {...props}
       onClick={() => {
-        handleCellOnClick({ ...props, dispatch });
+        onCellClick(restProps);
       }}
+      {...restProps}
     />
   );
 });
@@ -162,42 +156,59 @@ const AppointmentTooltipContent = withStyles({
   );
 });
 
-const AppointmentContent = withStyles(appointmentStyles)(
-  ({ classes, data, formatDate, ...restProps }) => {
-    return (
-      <Appointments.AppointmentContent
-        {...restProps}
-        className={classNames({
-          [classes.pendingCell]: data.status === "pending",
-          [classes.finishedCell]: data.status === "finished",
-          [classes.overDueCell]: data.status === "overdue",
-        })}
-        formatDate={formatDate}
-        data={data}
-      >
-        <Grid container alignItems="center">
-          <Typography>{data.title}</Typography>
-          <Typography>
-            {formatDate(data.startDate.toString(), {
-              hour: "numeric",
-              minute: "numeric",
-            })}
-          </Typography>
-          <Typography>{" - "}</Typography>
-          <Typography>
-            {formatDate(data.endDate.toString(), {
-              hour: "numeric",
-              minute: "numeric",
-            })}
-          </Typography>
-        </Grid>
-      </Appointments.AppointmentContent>
-    );
-  }
-);
+// const AppointmentContent = withStyles(appointmentStyles)(
+//   ({ classes, data, formatDate, ...restProps }) => {
+//     return (
+//       <Appointments.AppointmentContent
+//         {...restProps}
+//         className={classNames({
+//           [classes.pendingCell]: data.status === "pending",
+//           [classes.finishedCell]: data.status === "finished",
+//           [classes.overDueCell]: data.status === "overdue",
+//         })}
+//         formatDate={formatDate}
+//         data={data}
+//       >
+//         <Grid container alignItems="center">
+//           <Typography>{data.title}</Typography>
+//           <Typography>
+//             {formatDate(data.startDate.toString(), {
+//               hour: "numeric",
+//               minute: "numeric",
+//             })}
+//           </Typography>
+//           <Typography>{" - "}</Typography>
+//           <Typography>
+//             {formatDate(data.endDate.toString(), {
+//               hour: "numeric",
+//               minute: "numeric",
+//             })}
+//           </Typography>
+//         </Grid>
+//       </Appointments.AppointmentContent>
+//     );
+//   }
+// );
 
-const TeacherScheduler = ({ coachingSchedules, openAddEventDrawer }) => {
+const CustomScheduler = ({ coachingSchedules, openAddEventDrawer }) => {
   const today = new Date();
+  const weekTableCell = connectProps(WeekTableCell, () => {
+    return {
+      onCellClick: openAddEventDrawer,
+    };
+  });
+
+  const monthTableCell = connectProps(MonthTableCell, () => {
+    return {
+      onCellClick: openAddEventDrawer,
+    };
+  });
+
+  const dayTableCell = connectProps(DayTableCell, () => {
+    return {
+      onCellClick: openAddEventDrawer,
+    };
+  });
 
   const statuses = [
     {
@@ -227,7 +238,11 @@ const TeacherScheduler = ({ coachingSchedules, openAddEventDrawer }) => {
   const currentDate =
     today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
   return (
-    <Scheduler height="auto" data={coachingSchedules}>
+    <Scheduler
+      height="auto"
+      data={coachingSchedules}
+      onCellClick={openAddEventDrawer}
+    >
       <Toolbar />
       <ViewState
         defaultCurrentDate={currentDate}
@@ -235,21 +250,17 @@ const TeacherScheduler = ({ coachingSchedules, openAddEventDrawer }) => {
       />
 
       <ViewSwitcher />
-      <MonthView
-        onCellClick={openAddEventDrawer}
-        timeTableCellComponent={MonthTableCell}
-      />
+      <MonthView timeTableCellComponent={monthTableCell} />
       <DayView
         startDayHour={1}
         endDayHour={24}
-        onCellClick={openAddEventDrawer}
-        timeTableCellComponent={DayTableCell}
+        timeTableCellComponent={dayTableCell}
       />
       <WeekView
         startDayHour={1}
         endDayHour={24}
         onCellClick={openAddEventDrawer}
-        timeTableCellComponent={WeekTableCell}
+        timeTableCellComponent={weekTableCell}
       />
       <DateNavigator />
       <TodayButton />
@@ -270,4 +281,4 @@ const mapStateToProps = (state) => {
 };
 export default connect(mapStateToProps, {
   openAddEventDrawer,
-})(TeacherScheduler);
+})(CustomScheduler);

@@ -7,3 +7,5 @@ export * from "./teacherActions";
 export * from "./studentActions";
 export * from "./adminActions";
 export * from "./coachingActions";
+export * from "./coursesActions";
+export * from "./subjectsActions";

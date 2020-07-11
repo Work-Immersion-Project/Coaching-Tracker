@@ -8,3 +8,5 @@ export * from "./studentTypes";
 export * from "./registrationTypes";
 export * from "./coachingTypes";
 export * from "./adminTypes";
+export * from "./coursesTypes";
+export * from "./subjectsTypes";

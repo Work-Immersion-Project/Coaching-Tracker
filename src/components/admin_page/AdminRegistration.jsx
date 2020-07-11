@@ -1,10 +1,17 @@
 import React from "react";
-import { Button, Grid, InputLabel } from "@material-ui/core";
+import {
+  Button,
+  Grid,
+  InputLabel,
+  TextField,
+  InputBase,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CustomTextField from "../custom/CustomTextField";
 import CustomSelectField from "../custom/CustomSelectField";
 import { connect } from "react-redux";
-import { Field, reduxForm, registerField } from "redux-form";
+import { Field, reduxForm, FieldArray } from "redux-form";
+import _ from "lodash";
 import {
   addUser,
   showModal,
@@ -12,6 +19,7 @@ import {
   addStudent,
   addTeacher,
 } from "../../actions";
+import CustomAutoComplete from "../custom/CustomAutocomplete";
 
 const useStyles = makeStyles(() => ({
   buttonStyle: {
@@ -54,6 +62,12 @@ const useStyles = makeStyles(() => ({
     border: "2px solid white",
     paddingLeft: "0.5em",
   },
+  subjectField: {
+    borderRadius: "10px",
+    color: "white",
+    border: "2px solid white",
+    paddingLeft: "0.5em",
+  },
   selectValue: {
     color: "black",
   },
@@ -73,9 +87,16 @@ const useStyles = makeStyles(() => ({
 
 const validate = (values) => {
   const errors = {};
-  const requiredFields = ["firstName", "lastName", "email", "id", "type"];
+  const requiredFields = [
+    "firstName",
+    "lastName",
+    "email",
+    "id",
+    "type",
+    "subjects",
+  ];
   requiredFields.forEach((field) => {
-    if (!values[field]) {
+    if (!values[field] && _.isEmpty(values[field])) {
       errors[field] = "Required";
     }
   });
@@ -96,6 +117,13 @@ const validate = (values) => {
 const AdminRegistration = (props) => {
   const classes = useStyles();
   const { handleSubmit, reset, pristine, submitting } = props;
+
+  const sampleOptions = [
+    { title: "abc" },
+    { title: "def" },
+    { title: "ghi" },
+    { title: "jkl" },
+  ];
 
   const registerUser = (values) => {
     reset();
@@ -126,10 +154,10 @@ const AdminRegistration = (props) => {
   const renderTeacherForms = () => {
     return (
       <Grid item sm>
-        <InputLabel className={classes.inputLabel}>Type</InputLabel>
+        <InputLabel className={classes.inputLabel}>Subject</InputLabel>
         <Field
-          name="type"
-          id="type"
+          name="subject"
+          id="subject"
           required
           native
           disableUnderline
@@ -137,11 +165,8 @@ const AdminRegistration = (props) => {
           className={classes.selectField}
         >
           <option value={""} />
-          <option className={classes.selectValue} value={"teacher"}>
-            Teacher
-          </option>
-          <option className={classes.selectValue} value={"student"}>
-            Student
+          <option className={classes.selectValue} value={"subject1"}>
+            Subject1
           </option>
         </Field>
       </Grid>
@@ -149,7 +174,25 @@ const AdminRegistration = (props) => {
   };
 
   const renderStudentForms = () => {
-    return <div>Student Form!</div>;
+    return (
+      <Grid item sm>
+        <InputLabel className={classes.inputLabel}>Course</InputLabel>
+        <Field
+          name="subject"
+          id="subject"
+          required
+          native
+          disableUnderline
+          component={CustomSelectField}
+          className={classes.selectField}
+        >
+          <option value={""} />
+          <option className={classes.selectValue} value={"subject1"}>
+            Subject1
+          </option>
+        </Field>
+      </Grid>
+    );
   };
 
   const renderForms = () => {
@@ -247,6 +290,18 @@ const AdminRegistration = (props) => {
                 Student
               </option>
             </Field>
+          </Grid>
+          <Grid item sm>
+            <InputLabel className={classes.inputLabel}>Subjects</InputLabel>
+            <FieldArray
+              name="subjects"
+              multiple={true}
+              getOptionLabel={(option) => option.title}
+              component={CustomAutoComplete}
+              inputComponent={InputBase}
+              options={sampleOptions}
+              className={classes.subjectField}
+            />
           </Grid>
           {renderForms()}
           <Button

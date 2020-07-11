@@ -20,7 +20,10 @@ const PrivateRoute = ({ component: RouteComponent, ...props }) => {
           );
         } else {
           const { user } = props;
-          if (!routeProps.location.pathname.includes(user.type)) {
+          if (
+            !routeProps.location.pathname.includes(user.type) &&
+            user.type !== "admin"
+          ) {
             return <AccessRestriction user={user} />;
           }
           return <RouteComponent {...routeProps} />;

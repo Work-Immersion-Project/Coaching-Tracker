@@ -1,5 +1,5 @@
 import React from "react";
-import { LoadingDialog, ConfirmationDialog } from "./dialogs";
+import { LoadingDialog, ConfirmationDialog, SuccessDialog } from "./dialogs";
 import { connect } from "react-redux";
 
 const ModalRoot = ({ modalType, modalProps }) => {
@@ -9,6 +9,8 @@ const ModalRoot = ({ modalType, modalProps }) => {
       return <LoadingDialog open={openModal} {...modalProps} />;
     case "CONFIRMATION_MODAL":
       return <ConfirmationDialog open={openModal} {...modalProps} />;
+    case "SUCCESS_MODAL":
+      return <SuccessDialog open={openModal} {...modalProps} />;
     default:
       return null;
   }

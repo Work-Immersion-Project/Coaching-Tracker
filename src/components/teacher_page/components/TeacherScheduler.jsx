@@ -216,11 +216,7 @@ const TeacherScheduler = ({ coachingSchedules, openAddEventDrawer }) => {
       color: "red",
     },
   ];
-  const grouping = [
-    {
-      resourceName: "status",
-    },
-  ];
+
   const resources = [
     {
       fieldName: "status",
@@ -237,7 +233,7 @@ const TeacherScheduler = ({ coachingSchedules, openAddEventDrawer }) => {
         defaultCurrentDate={currentDate}
         defaultCurrentViewName="Week"
       />
-      <GroupingState grouping={grouping} />
+
       <ViewSwitcher />
       <MonthView
         onCellClick={openAddEventDrawer}

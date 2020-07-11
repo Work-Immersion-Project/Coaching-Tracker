@@ -49,37 +49,14 @@ export const getUserError = (error) => {
   };
 };
 
-export const addUser = (userId, email, name, type, userToken) => async (
-  dispatch
-) => {
+export const addUser = ({ email, type }) => async (dispatch) => {
   dispatch(addUserRequest());
   try {
     await userCollection.doc(email).set({
-      userId: userId,
-      email: email,
-      name: name,
       type: type,
     });
-    dispatch(hideModal());
-    dispatch(
-      showModal("SUCCESS_MODAL", {
-        title: "Register Success!",
-        content: "The user has been registered successfully! ✔",
-      })
-    );
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    dispatch(hideModal());
-
-    dispatch(
-      addUserSuccess({
-        userId,
-        email,
-        name,
-        type,
-        userToken,
-      })
-    );
+    dispatch(addUserSuccess());
   } catch (error) {
     dispatch(addUserError(error.message));
   }
@@ -91,11 +68,9 @@ export const addUserRequest = () => {
   };
 };
 
-export const addUserSuccess = (results) => {
+export const addUserSuccess = () => {
   return {
     type: ADD_USER_SUCCESS,
-    data: results,
-    error: null,
   };
 };
 export const addUserError = (error) => {

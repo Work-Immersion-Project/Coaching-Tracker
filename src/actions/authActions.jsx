@@ -70,7 +70,7 @@ export const signIn = () => async (dispatch, getState) => {
     await app.auth().signInWithCredential(credential);
 
     const user = app.auth().currentUser;
-    const document = await userCollection.doc(user.uid).get();
+    const document = await userCollection.doc(user.email).get();
     if (_.isEmpty(document.data())) {
       dispatch({
         error: "User is not registered",
@@ -79,13 +79,13 @@ export const signIn = () => async (dispatch, getState) => {
       let userDocument = null;
       switch (document.data().type) {
         case "admin":
-          userDocument = await adminsCollection.doc(currentUser.email).get();
+          userDocument = await adminsCollection.doc(user.email).get();
           break;
         case "teacher":
-          userDocument = await teachersCollection.doc(currentUser.email).get();
+          userDocument = await teachersCollection.doc(user.email).get();
           break;
         case "student":
-          userDocument = await studentCollection.doc(currentUser.email).get();
+          userDocument = await studentCollection.doc(user.email).get();
           break;
         default:
           userDocument = null;

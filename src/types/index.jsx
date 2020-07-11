@@ -7,3 +7,4 @@ export * from "./teacherTypes";
 export * from "./studentTypes";
 export * from "./registrationTypes";
 export * from "./coachingTypes";
+export * from "./adminTypes";

@@ -5,7 +5,13 @@ import CustomTextField from "../custom/CustomTextField";
 import CustomSelectField from "../custom/CustomSelectField";
 import { connect } from "react-redux";
 import { Field, reduxForm, registerField } from "redux-form";
-import { addUser, showModal, hideModal } from "../../actions";
+import {
+  addUser,
+  showModal,
+  hideModal,
+  addStudent,
+  addTeacher,
+} from "../../actions";
 
 const useStyles = makeStyles(() => ({
   buttonStyle: {
@@ -92,17 +98,13 @@ const AdminRegistration = (props) => {
   const { handleSubmit, reset, pristine, submitting } = props;
 
   const registerUser = (values) => {
-    const { id, email, firstName, middleName, lastName, type } = values;
     reset();
-    props.hideModal();
-    props.showModal("LOADING_MODAL", {
-      onClose: onDialogClose,
-    });
-
-    if (middleName) {
-      props.addUser(id, email, `${firstName} ${middleName} ${lastName}`, type);
-    } else {
-      props.addUser(id, email, `${firstName} ${lastName}`, type);
+    const createdAt = new Date();
+    props.addUser(values);
+    if (values.type === "student") {
+      props.addStudent({ ...values, createdAt });
+    } else if (values.type === "teacher") {
+      props.addTeacher({ ...values, createdAt });
     }
   };
 
@@ -273,6 +275,10 @@ const adminRegistrationWithReduxForm = reduxForm({
   validate,
 })(AdminRegistration);
 
-export default connect(mapStateToProps, { addUser, showModal, hideModal })(
-  adminRegistrationWithReduxForm
-);
+export default connect(mapStateToProps, {
+  addUser,
+  showModal,
+  hideModal,
+  addStudent,
+  addTeacher,
+})(adminRegistrationWithReduxForm);

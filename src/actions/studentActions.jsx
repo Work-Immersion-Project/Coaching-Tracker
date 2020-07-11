@@ -9,11 +9,12 @@ import {
   GET_STUDENT_ERROR,
   GET_STUDENT_REQUEST,
 } from "../types";
+import { hideModal, showModal } from ".";
 import { db } from "../firebase";
-const userCollection = db.collection("users");
+const studentsCollection = db.collection("students");
 
 export const getStudent = (studentEmail) => async (dispatch) => {
-  const studentDocument = await userCollection.doc(studentEmail).get();
+  const studentDocument = await studentsCollection.doc(studentEmail).get();
 };
 
 export const getStudentRequest = () => {
@@ -39,7 +40,7 @@ export const getStudentError = (error) => {
 
 export const getStudents = () => async (dispatch, getState) => {
   dispatch(getStudentsRequest());
-  userCollection.where("type", "==", "student").onSnapshot((snapshot) => {
+  studentsCollection.onSnapshot((snapshot) => {
     dispatch(getStudentsSuccess(snapshot.docs.map((doc) => doc.data())));
   });
 };
@@ -56,12 +57,51 @@ export const getStudentsError = (error) => {
   return { type: GET_STUDENT_ERROR, data: null, error: error };
 };
 
-export const addStudent = (values) => async (dispatch) => {};
+export const addStudent = ({
+  id,
+  firstName = "",
+  middleName = "",
+  lastName = "",
+  email,
+  createdAt,
+}) => async (dispatch) => {
+  dispatch(hideModal());
+  dispatch(showModal("LOADING_MODAL"));
+  dispatch(addStudentRequest());
+  try {
+    const metadata = {
+      firstName,
+      middleName,
+      lastName,
+      createdAt,
+    };
+    await studentsCollection.doc(email).set({
+      metadata,
+      email,
+      id,
+    });
+
+    dispatch(
+      showModal("SUCCESS_MODAL", {
+        onDialogClose: () => dispatch(hideModal()),
+        title: "Student Added!",
+        content: `You have successfully added ${firstName} ${lastName}`,
+      })
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    dispatch(hideModal());
+    dispatch(addStudentSuccess());
+  } catch (error) {
+    console.log(error);
+    dispatch(hideModal());
+  }
+};
 
 export const addStudentRequest = () => {
   return { type: ADD_STUDENT_REQUEST };
 };
-export const addStudentSuccess = (results) => {
+export const addStudentSuccess = () => {
   return { type: ADD_STUDENT_SUCCESS };
 };
 export const addStudentError = (error) => {

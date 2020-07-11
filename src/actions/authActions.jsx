@@ -9,7 +9,11 @@ import {
 import _ from "lodash";
 import app, { db } from "../firebase";
 import firebase from "firebase";
+
 // Authentication Actions.
+const studentCollection = db.collection("students");
+const teachersCollection = db.collection("teachers");
+const adminsCollection = db.collection("admins");
 const userCollection = db.collection("users");
 
 export const checkAuth = () => async (dispatch, getState) => {
@@ -18,14 +22,31 @@ export const checkAuth = () => async (dispatch, getState) => {
 
   if (currentUser) {
     const { access_token } = gapiAuth.currentUser.get().getAuthResponse();
-    const document = await userCollection.doc(currentUser.uid).get();
+    const document = await userCollection.doc(currentUser.email).get();
+
     if (_.isEmpty(document.data())) {
       dispatch(signInError("User is not registered"));
     } else {
+      let userDocument = null;
+      switch (document.data().type) {
+        case "admin":
+          userDocument = await adminsCollection.doc(currentUser.email).get();
+          break;
+        case "teacher":
+          userDocument = await teachersCollection.doc(currentUser.email).get();
+          break;
+        case "student":
+          userDocument = await studentCollection.doc(currentUser.email).get();
+          break;
+        default:
+          userDocument = null;
+          break;
+      }
+
       dispatch(
         signInSuccess({
           isSignedIn: true,
-          user: document.data(),
+          user: { ...userDocument.data(), type: document.data().type },
           userToken: access_token,
         })
       );
@@ -46,7 +67,6 @@ export const signIn = () => async (dispatch, getState) => {
     const currentUser = gapiAuth.currentUser.get();
     const { access_token, id_token } = currentUser.getAuthResponse();
     const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
-
     await app.auth().signInWithCredential(credential);
 
     const user = app.auth().currentUser;
@@ -56,10 +76,26 @@ export const signIn = () => async (dispatch, getState) => {
         error: "User is not registered",
       });
     } else {
+      let userDocument = null;
+      switch (document.data().type) {
+        case "admin":
+          userDocument = await adminsCollection.doc(currentUser.email).get();
+          break;
+        case "teacher":
+          userDocument = await teachersCollection.doc(currentUser.email).get();
+          break;
+        case "student":
+          userDocument = await studentCollection.doc(currentUser.email).get();
+          break;
+        default:
+          userDocument = null;
+          break;
+      }
+
       dispatch(
         signInSuccess({
           isSignedIn: true,
-          user: document.data(),
+          user: { ...userDocument.data(), type: document.data().type },
           userToken: access_token,
         })
       );

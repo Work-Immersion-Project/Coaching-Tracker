@@ -57,7 +57,7 @@ const StudentList = (props) => {
 
   useEffect(() => {
     props.getStudents();
-  }, [props]);
+  }, []);
 
   const renderContent = () => {
     if (props.students) {
@@ -75,15 +75,15 @@ const StudentList = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {students.map((student) => (
-                  <StyledTableRow key={student.email}>
+                {students.map(({ email, metadata }) => (
+                  <StyledTableRow key={email}>
                     <StyledTableCell
                       component="th"
                       scope="row"
                       className={classes.tableCell}
                       align="center"
                     >
-                      {student.name}
+                      {`${metadata.firstName} ${metadata.lastName}`}
                     </StyledTableCell>
                     <StyledTableCell
                       className={classes.tableCell}

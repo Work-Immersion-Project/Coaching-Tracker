@@ -57,7 +57,7 @@ const TeacherList = (props) => {
 
   useEffect(() => {
     props.getTeachers();
-  }, [props]);
+  }, []);
 
   const renderContent = () => {
     if (props.teachers) {
@@ -74,17 +74,16 @@ const TeacherList = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {teachers.map((teacher) => {
-                  console.log(teacher);
+                {teachers.map(({ email, metadata }) => {
                   return (
-                    <StyledTableRow key={teacher.email}>
+                    <StyledTableRow key={email}>
                       <StyledTableCell
                         component="th"
                         scope="row"
                         className={classes.tableCell}
                         align="left"
                       >
-                        {teacher.name}
+                        {`${metadata.firstName} ${metadata.lastName}`}
                       </StyledTableCell>
                     </StyledTableRow>
                   );

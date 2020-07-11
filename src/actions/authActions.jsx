@@ -15,6 +15,11 @@ const studentCollection = db.collection("students");
 const teachersCollection = db.collection("teachers");
 const adminsCollection = db.collection("admins");
 const userCollection = db.collection("users");
+const collections = {
+  admin: db.collection("admins"),
+  teacher: db.collection("teachers"),
+  student: db.collection("students"),
+};
 
 export const checkAuth = () => async (dispatch, getState) => {
   const gapiAuth = getState().gapi.gapiAuth;
@@ -27,21 +32,14 @@ export const checkAuth = () => async (dispatch, getState) => {
     if (_.isEmpty(document.data())) {
       dispatch(signInError("User is not registered"));
     } else {
-      let userDocument = null;
-      switch (document.data().type) {
-        case "admin":
-          userDocument = await adminsCollection.doc(currentUser.email).get();
-          break;
-        case "teacher":
-          userDocument = await teachersCollection.doc(currentUser.email).get();
-          break;
-        case "student":
-          userDocument = await studentCollection.doc(currentUser.email).get();
-          break;
-        default:
-          userDocument = null;
-          break;
-      }
+      const userDocumentRef = collections[document.data().type].doc(
+        currentUser.email
+      );
+      const currentDate = new Date();
+      await userDocumentRef.update({
+        "metadata.lastLoggedIn": currentDate,
+      });
+      const userDocument = await userDocumentRef.get();
 
       dispatch(
         signInSuccess({
@@ -76,22 +74,12 @@ export const signIn = () => async (dispatch, getState) => {
         error: "User is not registered",
       });
     } else {
-      let userDocument = null;
-      switch (document.data().type) {
-        case "admin":
-          userDocument = await adminsCollection.doc(user.email).get();
-          break;
-        case "teacher":
-          userDocument = await teachersCollection.doc(user.email).get();
-          break;
-        case "student":
-          userDocument = await studentCollection.doc(user.email).get();
-          break;
-        default:
-          userDocument = null;
-          break;
-      }
-
+      const userDocumentRef = collections[document.data().type].doc(user.email);
+      const currentDate = new Date();
+      await userDocumentRef.update({
+        "metadata.lastLoggedIn": currentDate,
+      });
+      const userDocument = await userDocumentRef.get();
       dispatch(
         signInSuccess({
           isSignedIn: true,

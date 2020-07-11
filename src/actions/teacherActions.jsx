@@ -61,7 +61,7 @@ export const addTeacher = ({
   lastName,
   id,
   createdAt,
-}) => async (dispatch, getState) => {
+}) => async (dispatch) => {
   dispatch(hideModal());
   dispatch(showModal("LOADING_MODAL"));
   dispatch(addTeacherRequest());
@@ -71,6 +71,7 @@ export const addTeacher = ({
       middleName,
       lastName,
       createdAt,
+      lastLoggedIn: null,
     };
     await teachersCollection.doc(email).set({
       metadata,

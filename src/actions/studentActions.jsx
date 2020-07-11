@@ -74,6 +74,7 @@ export const addStudent = ({
       middleName,
       lastName,
       createdAt,
+      lastLoggedIn: null,
     };
     await studentsCollection.doc(email).set({
       metadata,

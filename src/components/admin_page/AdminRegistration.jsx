@@ -5,6 +5,7 @@ import {
   InputLabel,
   TextField,
   InputBase,
+  Chip,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CustomTextField from "../custom/CustomTextField";
@@ -210,6 +211,23 @@ const AdminRegistration = (props) => {
     }
     return null;
   };
+
+  const renderSubjectChips = (fields) => {
+    const values = fields.getAll();
+    if (values) {
+      return values.map((subject, index) => {
+        return (
+          <Chip
+            key={subject.title}
+            label={subject.title}
+            onDelete={() => fields.remove(index)}
+          />
+        );
+      });
+    }
+    return null;
+  };
+
   return (
     <>
       <Grid container className={classes.content} elevation={3}>
@@ -295,9 +313,11 @@ const AdminRegistration = (props) => {
             <InputLabel className={classes.inputLabel}>Subjects</InputLabel>
             <FieldArray
               name="subjects"
-              multiple={true}
+              renderValues={renderSubjectChips}
               getOptionLabel={(option) => option.title}
               component={CustomAutoComplete}
+              variant="outlined"
+              clearOnBlur
               inputComponent={InputBase}
               options={sampleOptions}
               className={classes.subjectField}

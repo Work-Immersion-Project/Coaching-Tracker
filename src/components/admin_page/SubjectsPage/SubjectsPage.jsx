@@ -1,10 +1,10 @@
 import React from "react";
-import { styled, makeStyles } from "@material-ui/core/styles";
-import { Card, Grid, Typography, Divider, IconButton } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { Card, Grid, Typography, Paper } from "@material-ui/core";
 import { hideModal, showModal } from "../../../actions";
 import { connect } from "react-redux";
 import AddIcon from "@material-ui/icons/Add";
-import MaterialTable, { MTableToolbar } from "material-table";
+import MaterialTable, { MTableBody } from "material-table";
 import SubjectsList from "./SubjectsList";
 import AddSubjectForm from "./AddSubjectForm";
 
@@ -12,15 +12,15 @@ const useStyles = makeStyles(() => ({
   root: {
     height: "100%",
     width: "100%",
-    margin: "1em",
+    padding: "1em",
   },
-  toolbar: {
+  tableContainer: {
+    height: "100%",
     width: "100%",
-  },
-  toolbarWrapper: {
     display: "flex",
-    justifyContent: "space-evenly",
-    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
 }));
 
@@ -47,19 +47,25 @@ const AdminSubjectsPage = (props) => {
   };
 
   return (
-    <MaterialTable
+    <Grid
       className={classes.root}
-      title="Subjects"
-      columns={[{ title: "Subject Name", field: "subject-name" }]}
-      actions={[
-        {
-          icon: "add",
-          tooltip: "Add Subject",
-          isFreeAction: true,
-          onClick: handleAddSubjectButton,
-        },
-      ]}
-    />
+      container
+      direction="column"
+      justify="center"
+    >
+      <MaterialTable
+        title="Subjects"
+        columns={[{ title: "Subject Name", field: "subject-name" }]}
+        actions={[
+          {
+            icon: "add",
+            tooltip: "Add Subject",
+            isFreeAction: true,
+            onClick: handleAddSubjectButton,
+          },
+        ]}
+      />
+    </Grid>
   );
 };
 

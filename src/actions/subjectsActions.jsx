@@ -13,7 +13,9 @@ const subjectsCollection = db.collection("subjects");
 export const addSubject = (values) => async (dispatch) => {
   dispatch(addSubjectRequest());
   try {
-    subjectsCollection.doc(values.subject_name).set(values);
+    subjectsCollection
+      .doc(values.subject_name)
+      .set({ ...values, enrolledStudents: [], teachers: [] });
     dispatch(addSubjectSuccess());
   } catch (error) {}
 };
@@ -34,7 +36,28 @@ export const getSubjects = () => async (dispatch) => {
   dispatch(getSubjectsRequest());
 
   subjectsCollection.onSnapshot((snapshot) => {
-    dispatch(getSubjectsSuccess(snapshot.docs.map((doc) => doc.data())));
+    dispatch(
+      getSubjectsSuccess(
+        snapshot.docs.map((doc) => {
+          const documentData = doc.data();
+          return {
+            subject_name: documentData.subject_name,
+            enrolledStudents:
+              documentData.enrolledStudents.length === 0
+                ? ""
+                : documentData.enrolledStudents.reduce(
+                    (prevValue, currValue) => `${prevValue}, ${currValue}`
+                  ),
+            teachers:
+              documentData.teachers.length === 0
+                ? ""
+                : documentData.teachers.reduce(
+                    (prevValue, currValue) => `${prevValue}, ${currValue}`
+                  ),
+          };
+        })
+      )
+    );
   });
 };
 

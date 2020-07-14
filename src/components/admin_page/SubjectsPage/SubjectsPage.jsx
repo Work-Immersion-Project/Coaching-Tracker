@@ -84,7 +84,11 @@ const AdminSubjectsPage = (props) => {
       <MaterialTable
         data={props.subjects ? props.subjects : []}
         title="Subjects"
-        columns={[{ title: "Subject Name", field: "subject_name" }]}
+        columns={[
+          { title: "Subject Name", field: "subject_name" },
+          { title: "Assigned Teacher", field: "teachers" },
+          { title: "Enrolled Students", field: "enrolledStudents" },
+        ]}
         isLoading={!props.subjects}
         actions={[
           {

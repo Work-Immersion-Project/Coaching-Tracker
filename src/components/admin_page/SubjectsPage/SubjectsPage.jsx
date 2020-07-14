@@ -1,12 +1,36 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Card, Grid, Typography, Paper } from "@material-ui/core";
-import { hideModal, showModal } from "../../../actions";
+import {
+  Card,
+  Grid,
+  Typography,
+  Paper,
+  CircularProgress,
+} from "@material-ui/core";
+import {
+  hideModal,
+  showModal,
+  addSubject,
+  getSubjects,
+} from "../../../actions";
+import _ from "lodash";
 import { connect } from "react-redux";
 import AddIcon from "@material-ui/icons/Add";
 import MaterialTable, { MTableBody } from "material-table";
 import SubjectsList from "./SubjectsList";
 import AddSubjectForm from "./AddSubjectForm";
+
+const sampleData = [
+  {
+    name: "English",
+  },
+  {
+    name: "English",
+  },
+  {
+    name: "English",
+  },
+];
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -27,6 +51,10 @@ const useStyles = makeStyles(() => ({
 const AdminSubjectsPage = (props) => {
   const classes = useStyles();
 
+  useEffect(() => {
+    props.getSubjects();
+  }, []);
+
   const onDialogClose = () => {
     props.hideModal();
   };
@@ -34,7 +62,7 @@ const AdminSubjectsPage = (props) => {
   const handleOnSubmit = (values) => {
     // TODO: Integrate Add Subject functionality here.
     props.hideModal();
-    console.log(values);
+    props.addSubject(values);
   };
 
   const handleAddSubjectButton = () => {
@@ -54,8 +82,10 @@ const AdminSubjectsPage = (props) => {
       justify="center"
     >
       <MaterialTable
+        data={props.subjects ? props.subjects : []}
         title="Subjects"
-        columns={[{ title: "Subject Name", field: "subject-name" }]}
+        columns={[{ title: "Subject Name", field: "subject_name" }]}
+        isLoading={!props.subjects}
         actions={[
           {
             icon: "add",
@@ -69,7 +99,15 @@ const AdminSubjectsPage = (props) => {
   );
 };
 
-export default connect(null, {
+const mapStateToProps = (state) => {
+  return {
+    subjects: state.subjects.data,
+  };
+};
+
+export default connect(mapStateToProps, {
   hideModal,
   showModal,
+  addSubject,
+  getSubjects,
 })(AdminSubjectsPage);

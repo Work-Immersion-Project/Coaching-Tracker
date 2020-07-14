@@ -24,7 +24,7 @@ const AddSubjectFormDialog = ({
       <form onSubmit={handleSubmit(onPositiveClick)}>
         <DialogContent>
           <Field
-            name="subject-name"
+            name="subject_name"
             label="Subject Name"
             component={CustomMaterialTextField}
           />

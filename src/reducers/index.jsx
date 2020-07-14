@@ -20,6 +20,7 @@ export default combineReducers({
   students: studentReducer,
   gapi: gapiReducer,
   modal: modalReducer,
+  subjects: subjectsReducer,
   errors: errorReducer,
   drawer: drawerReducer,
   coaching: coachingReducer,

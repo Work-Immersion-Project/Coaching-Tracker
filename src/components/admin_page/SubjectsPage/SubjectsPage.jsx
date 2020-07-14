@@ -6,6 +6,7 @@ import {
   Typography,
   Paper,
   CircularProgress,
+  Chip,
 } from "@material-ui/core";
 import {
   hideModal,
@@ -45,6 +46,12 @@ const useStyles = makeStyles(() => ({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+  },
+  teacherChip: {
+    margin: "0 0.25em",
+  },
+  studentChip: {
+    margin: "0 0.25em",
   },
 }));
 
@@ -86,8 +93,22 @@ const AdminSubjectsPage = (props) => {
         title="Subjects"
         columns={[
           { title: "Subject Name", field: "subject_name" },
-          { title: "Assigned Teacher", field: "teachers" },
-          { title: "Enrolled Students", field: "enrolledStudents" },
+          {
+            title: "Assigned Teacher",
+            field: "teachers",
+            render: (rowData) =>
+              rowData.teachers.map((teacher) => (
+                <Chip className={classes.teacherChip} label={teacher} />
+              )),
+          },
+          {
+            title: "Enrolled Students",
+            field: "enrolledStudents",
+            render: (rowData) =>
+              rowData.enrolledStudents.map((student) => (
+                <Chip className={classes.studentChip} label={student} />
+              )),
+          },
         ]}
         isLoading={!props.subjects}
         actions={[

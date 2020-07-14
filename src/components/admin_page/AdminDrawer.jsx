@@ -52,15 +52,11 @@ const AdminDrawer = (props) => {
       path: "/registration",
     },
     {
-      text: "Add Subjects",
+      text: "Manage Subjects",
       icon: <SchoolIcon />,
-      path: "/add-subjects",
+      path: "/manage-subjects",
     },
-    {
-      text: "Add Courses",
-      icon: <SchoolIcon />,
-      path: "/add-courses",
-    },
+
     {
       text: "Coaching Log",
       icon: <AssignmentIndIcon />,

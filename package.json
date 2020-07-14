@@ -19,6 +19,7 @@
     "google-auth-library": "^6.0.2",
     "googleapis-common": "^4.4.0",
     "lodash": "^4.17.15",
+    "material-table": "^1.65.0",
     "react": "^16.13.1",
     "react-cookie": "^4.0.3",
     "react-dom": "^16.13.1",

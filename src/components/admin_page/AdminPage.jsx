@@ -1,6 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch } from "react-router-dom";
+import AdminSubjectsPage from "./SubjectsPage/SubjectsPage";
 import AdminCoachingLog from "./AdminCoachingLog";
 import AdminRegistration from "./AdminRegistration";
 
@@ -37,6 +38,9 @@ const AdminPage = () => {
         </Route>
         <Route path={`${path}/registration`} exact>
           <AdminRegistration />
+        </Route>
+        <Route path={`${path}/manage-subjects`} exact>
+          <AdminSubjectsPage />
         </Route>
         <Route path={`${path}/coaching-log`} exact>
           <AdminCoachingLog />

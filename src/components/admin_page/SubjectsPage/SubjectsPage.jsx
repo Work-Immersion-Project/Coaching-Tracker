@@ -1,6 +1,8 @@
 import React from "react";
 import { styled, makeStyles } from "@material-ui/core/styles";
 import { Card, Grid, Typography, Divider, IconButton } from "@material-ui/core";
+import { hideModal, showModal } from "../../../actions";
+import { connect } from "react-redux";
 import AddIcon from "@material-ui/icons/Add";
 import MaterialTable, { MTableToolbar } from "material-table";
 import SubjectsList from "./SubjectsList";
@@ -24,6 +26,26 @@ const useStyles = makeStyles(() => ({
 
 const AdminSubjectsPage = (props) => {
   const classes = useStyles();
+
+  const onDialogClose = () => {
+    props.hideModal();
+  };
+
+  const handleOnSubmit = (values) => {
+    // TODO: Integrate Add Subject functionality here.
+    props.hideModal();
+    console.log(values);
+  };
+
+  const handleAddSubjectButton = () => {
+    props.showModal("ADD_SUBJECT_FORM_MODAL", {
+      onDialogClose: onDialogClose,
+      title: "Add Subject",
+      onNegativeClick: onDialogClose,
+      onPositiveClick: (values) => handleOnSubmit(values),
+    });
+  };
+
   return (
     <MaterialTable
       className={classes.root}
@@ -34,11 +56,14 @@ const AdminSubjectsPage = (props) => {
           icon: "add",
           tooltip: "Add Subject",
           isFreeAction: true,
-          onClick: (event) => console.log(event),
+          onClick: handleAddSubjectButton,
         },
       ]}
     />
   );
 };
 
-export default AdminSubjectsPage;
+export default connect(null, {
+  hideModal,
+  showModal,
+})(AdminSubjectsPage);

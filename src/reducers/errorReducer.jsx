@@ -1,22 +1,17 @@
 import { HIDE_ERROR } from "../types/errorTypes";
 
 const INITIAL_STATE = {
-  error: null,
-  isOpen: false,
+  errorMessage: null,
 };
 
 export default (state = INITIAL_STATE, action) => {
   const { error } = action;
   if (error) {
     return {
-      error: error,
-      isOpen: true,
+      errorMessage: error,
     };
   } else if (action.type === HIDE_ERROR) {
-    return {
-      error: null,
-      isOpen: false,
-    };
+    return INITIAL_STATE;
   }
   return state;
 };

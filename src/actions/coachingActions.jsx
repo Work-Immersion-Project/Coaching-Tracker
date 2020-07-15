@@ -19,7 +19,7 @@ import {
   getHours,
   getMinutes,
 } from "date-fns";
-
+import { showNotification } from "../actions";
 import { db } from "../firebase";
 
 const coachingLogsCollection = db.collection("coachingLogs");
@@ -179,6 +179,7 @@ export const addCoachingSchedule = (coachingDetails) => async (
     });
 
     dispatch(addCoachingScheduleSuccess());
+    dispatch(showNotification("SUCCESS", "Coaching Schedule Added!"));
   } catch (error) {}
 };
 export const addCoachingScheduleRequest = () => {

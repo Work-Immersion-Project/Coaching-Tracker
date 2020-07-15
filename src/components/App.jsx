@@ -11,7 +11,7 @@ import StudentPage from "./student_page/StudentPage";
 import history from "../history";
 import PrivateRoute from "./PrivateRoute";
 import ModalRoot from "./ModalRoot";
-import ErrorNotification from "./ErrorNotification";
+import NotificationRoot from "./NotificationRoot";
 import "./App.css";
 
 const App = (props) => {
@@ -37,7 +37,7 @@ const App = (props) => {
         </Switch>
       </Router>
       <ModalRoot />
-      <ErrorNotification />
+      <NotificationRoot />
     </LocalizationProvider>
   );
 };

@@ -11,16 +11,15 @@ import { makeStyles } from "@material-ui/core/styles";
 import CustomTextField from "../custom/CustomTextField";
 import CustomSelectField from "../custom/CustomSelectField";
 import { connect } from "react-redux";
-import { Field, reduxForm, FieldArray } from "redux-form";
+import { Field, reduxForm } from "redux-form";
 import _ from "lodash";
 import {
-  addUser,
   showModal,
   hideModal,
   addStudent,
   addTeacher,
+  registerUser,
 } from "../../actions";
-import CustomAutoComplete from "../custom/CustomAutocomplete";
 
 const useStyles = makeStyles(() => ({
   buttonStyle: {
@@ -81,6 +80,7 @@ const useStyles = makeStyles(() => ({
     textAlign: "start",
   },
   submitButton: {
+    backgroundColor: "#84DCC6",
     marginTop: "1em",
     margin: "0 5em",
   },
@@ -119,15 +119,10 @@ const AdminRegistration = (props) => {
   const classes = useStyles();
   const { handleSubmit, reset, pristine, submitting } = props;
 
-  const registerUser = (values) => {
+  const handleRegisterUser = (values) => {
     reset();
     const createdAt = new Date();
-    props.addUser(values);
-    if (values.type === "student") {
-      props.addStudent({ ...values, createdAt });
-    } else if (values.type === "teacher") {
-      props.addTeacher({ ...values, createdAt });
-    }
+    props.registerUser({ ...values, createdAt });
   };
 
   const onSubmit = (values) => {
@@ -137,7 +132,7 @@ const AdminRegistration = (props) => {
       content:
         "Make sure that you have entered the correct information before proceeding.",
       onNegativeClick: onDialogClose,
-      onPositiveClick: () => registerUser(values),
+      onPositiveClick: () => handleRegisterUser(values),
     });
   };
 
@@ -181,30 +176,16 @@ const AdminRegistration = (props) => {
           className={classes.selectField}
         >
           <option value={""} />
-          <option
-            className={classes.selectValue}
-            value={"bachelor-of-multimedia-arts"}
-          >
+          <option className={classes.selectValue} value={"bma"}>
             Bachelor of Multiedia Arts
           </option>
-          <option
-            className={classes.selectValue}
-            value={"bachelor-of-fine-arts"}
-          >
+          <option className={classes.selectValue} value={"bfa"}>
             Bachelor of Fine Arts
           </option>
-          <option
-            className={classes.selectValue}
-            value={"bachelor-of-science-in-computer-science"}
-          >
+          <option className={classes.selectValue} value={"bscs"}>
             Bachelor of Science in Computer Science
           </option>
-          <option
-            className={classes.selectValue}
-            value={
-              "bachelor-of-science-in-entertainment-and-multimedia-computing"
-            }
-          >
+          <option className={classes.selectValue} value={"bsemc"}>
             Bachelor of Science in Entertainment and Multimedia Computing
           </option>
         </Field>
@@ -327,8 +308,8 @@ const AdminRegistration = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.users.data,
     formValues: state.form.AdminRegistration?.values,
+    error: state.errors.errorMessage,
   };
 };
 
@@ -338,9 +319,9 @@ const adminRegistrationWithReduxForm = reduxForm({
 })(AdminRegistration);
 
 export default connect(mapStateToProps, {
-  addUser,
   showModal,
   hideModal,
   addStudent,
   addTeacher,
+  registerUser,
 })(adminRegistrationWithReduxForm);

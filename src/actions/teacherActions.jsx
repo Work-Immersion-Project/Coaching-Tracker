@@ -80,11 +80,17 @@ export const addTeacher = ({
       createdAt,
       lastLoggedIn: null,
     };
+    const coachingStats = {
+      pending: 0,
+      finished: 0,
+      canceled: 0,
+    };
     await teachersCollection.doc(email).set({
       metadata,
       email,
       id,
       handledSubjects: [],
+      coachingStats,
     });
 
     dispatch(

@@ -110,11 +110,18 @@ export const addStudent = ({
       createdAt,
       lastLoggedIn: null,
     };
+    const coachingStats = {
+      pending: 0,
+      finished: 0,
+      canceled: 0,
+    };
+
     await studentsCollection.doc(email).set({
       metadata,
       email,
       id,
       enrolledSubjects: [],
+      coachingStats,
     });
 
     dispatch(hideModal());

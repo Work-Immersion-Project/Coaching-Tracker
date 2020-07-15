@@ -10,19 +10,27 @@ import {
   ADD_COACHING_SCHEDULE_SUCCESS,
   REMOVE_COACHING_SCHEDULE_REQUEST,
   REMOVE_COACHING_SCHEDULE_SUCCESS,
+  GET_STUDENT_COACHING_SCHEDULES_REQUEST,
+  GET_STUDENT_COACHING_SCHEDULES_SUCCESS,
+  GET_TEACHER_COACHING_SCHEDULES_REQUEST,
+  GET_TEACHER_COACHING_SCHEDULES_SUCCESS,
 } from "../types";
 import {
   add,
   formatRFC3339,
-  differenceInHours,
-  differenceInMinutes,
+  formatISO,
   getHours,
   getMinutes,
+  sub,
 } from "date-fns";
-import { showNotification } from "../actions";
+import { showNotification, showModal, hideModal } from "../actions";
+import { normalizeDate } from "../utils";
+import firebase from "firebase";
 import { db } from "../firebase";
 
 const coachingLogsCollection = db.collection("coachingLogs");
+const teacherCollection = db.collection("teachers");
+const studentCollection = db.collection("students");
 
 export const addCoachingAttendee = (student) => {
   return {
@@ -46,15 +54,27 @@ export const clearCoachingAttendees = () => {
 
 export const getCoachingSchedules = () => async (dispatch, getState) => {
   const currentUserEmail = getState().auth.data.user.email;
+  const currentUserType = getState().auth.data.user.type;
+  console.log(currentUserType, currentUserEmail);
   dispatch(getCoachingSchedulesRequest());
   try {
-    coachingLogsCollection
-      .where("teacher", "==", currentUserEmail)
-      .onSnapshot((snapshot) => {
-        dispatch(
-          getCoachingSchedulesSuccess(snapshot.docs.map((doc) => doc.data()))
-        );
-      });
+    if (currentUserType === "student") {
+      coachingLogsCollection
+        .where("studentAttendees", "array-contains", currentUserEmail)
+        .onSnapshot((snapshot) => {
+          dispatch(
+            getCoachingScheduleSuccess(snapshot.docs.map((doc) => doc.data()))
+          );
+        });
+    } else {
+      coachingLogsCollection
+        .where("teacher", "==", currentUserEmail)
+        .onSnapshot((snapshot) => {
+          dispatch(
+            getCoachingSchedulesSuccess(snapshot.docs.map((doc) => doc.data()))
+          );
+        });
+    }
   } catch (error) {}
 };
 
@@ -96,22 +116,16 @@ export const addCoachingSchedule = (coachingDetails) => async (
   const { gapiCalendar } = getState().gapi;
   const { startDate, startTime, endDate, endTime, title } = coachingDetails;
   const studentAttendees = getState().coaching.selectedStudentAttendees.map(
-    (student) => {
+    (attendee) => {
       return {
-        email: student.email,
+        email: attendee.email,
       };
     }
   );
+
   const randomRequestId =
     Math.random().toString(36).substring(2, 15) +
     Math.random().toString(36).substring(2, 15);
-  const startHourDiff = Math.abs(
-    differenceInHours(new Date(startDate), new Date(startTime))
-  );
-  const startMinuteDiff = Math.abs(
-    differenceInMinutes(new Date(startDate), new Date(startTime))
-  );
-
   const convertedEndTime = {
     hours: getHours(endTime),
     minutes: getMinutes(endTime),
@@ -122,14 +136,18 @@ export const addCoachingSchedule = (coachingDetails) => async (
     minutes: getMinutes(startTime),
   };
 
+  const convertedStartDate = normalizeDate(startDate);
+  const convertedEndDate = normalizeDate(endDate);
+
   const adjustedStartingDate = formatRFC3339(
-    add(new Date(startDate), convertedStartTime)
+    add(convertedStartDate, convertedStartTime)
   );
 
   const adjustedEndingDate = formatRFC3339(
-    add(new Date(endDate), convertedEndTime)
+    add(convertedEndDate, convertedEndTime)
   );
 
+  console.log({ adjustedStartingDate, adjustedEndingDate });
   const event = {
     summary: title,
     description: title,
@@ -150,8 +168,9 @@ export const addCoachingSchedule = (coachingDetails) => async (
     },
   };
 
+  dispatch(hideModal());
   dispatch(addCoachingScheduleRequest());
-
+  dispatch(showModal("LOADING_MODAL"));
   try {
     const results = await gapiCalendar.events
       .insert({
@@ -161,12 +180,12 @@ export const addCoachingSchedule = (coachingDetails) => async (
       .then((event) => {
         return event.result;
       });
-
     const googleMeetsLink = results.conferenceData.entryPoints[0].uri;
     const eventId = results.id;
     const creatorEmail = results.creator.email;
-
-    await coachingLogsCollection.doc(eventId).set({
+    const coachingSessionRef = coachingLogsCollection.doc(eventId);
+    const teacherRef = teacherCollection.doc(creatorEmail);
+    const coachingSessionLogData = {
       teacher: creatorEmail,
       title: title,
       description: title,
@@ -176,8 +195,32 @@ export const addCoachingSchedule = (coachingDetails) => async (
       meetingLink: googleMeetsLink,
       studentAttendees: studentAttendees.map((student) => student.email),
       status: "pending",
+    };
+    const fieldValue = firebase.firestore.FieldValue;
+    await db.runTransaction(async (transaction) => {
+      const teacherCoachingSessionRef = teacherRef
+        .collection("coachingSessions")
+        .doc(eventId);
+      transaction.set(coachingSessionRef, coachingSessionLogData);
+      transaction.update(teacherRef, {
+        "coachingStats.pending": fieldValue.increment(1),
+      });
+      transaction.set(teacherCoachingSessionRef, {
+        eventId,
+      });
+      //Iterate for each student
+      studentAttendees.forEach((student) => {
+        const studentRef = studentCollection.doc(student.email);
+        const studentCoachingSessionCollectionRef = studentRef
+          .collection("coachingSessions")
+          .doc(eventId);
+        transaction.update(studentRef, {
+          "coachingStats.pending": fieldValue.increment(1),
+        });
+        transaction.set(studentCoachingSessionCollectionRef, { eventId });
+      });
     });
-
+    dispatch(hideModal());
     dispatch(addCoachingScheduleSuccess());
     dispatch(showNotification("SUCCESS", "Coaching Schedule Added!"));
   } catch (error) {}
@@ -199,14 +242,60 @@ export const removeCoachingSchedule = (coachingId) => async (
   getState
 ) => {
   const { gapiCalendar } = getState().gapi;
+  const fieldValue = firebase.firestore.FieldValue;
+  const coachingSessionRef = coachingLogsCollection.doc(coachingId);
   dispatch(removeCoachingScheduleRequest());
-
+  dispatch(showModal("LOADING_MODAL"));
   try {
     await gapiCalendar.events.delete({
       calendarId: "primary",
       eventId: coachingId,
     });
-    await coachingLogsCollection.doc(coachingId).delete();
+    await db.runTransaction(async (transaction) => {
+      const coachingData = await transaction
+        .get(coachingSessionRef)
+        .then((coachingDoc) => coachingDoc.data());
+      const { status, studentAttendees, teacher } = coachingData;
+      const teacherRef = teacherCollection.doc(teacher);
+      const teacherCoachingSessionRef = teacherRef
+        .collection("coachingSessions")
+        .doc(coachingId);
+      const teacherData = await transaction
+        .get(teacherRef)
+        .then((teacherDoc) => teacherDoc.data());
+      const teacherCoachingStats = teacherData.coachingStats;
+
+      //Iterate students
+      for (const student of studentAttendees) {
+        const studentRef = studentCollection.doc(student);
+        const studentCoachingSessionRef = studentRef
+          .collection("coachingSessions")
+          .doc(coachingId);
+        const studentData = await transaction
+          .get(studentRef)
+          .then((studentDoc) => studentDoc.data());
+
+        const studentCoachingStats = studentData.coachingStats;
+
+        studentCoachingStats[status] -= 1;
+        transaction.update(studentRef, {
+          coachingStats: { ...studentCoachingStats },
+        });
+        transaction.delete(studentCoachingSessionRef);
+      }
+      //Begin editing Teacher Data
+      teacherCoachingStats[status] -= 1;
+
+      transaction.update(teacherRef, {
+        coachingStats: { ...teacherCoachingStats },
+      });
+      transaction.delete(teacherCoachingSessionRef);
+      transaction.delete(coachingSessionRef);
+    });
+
+    dispatch(hideModal());
+
+    dispatch(showNotification("SUCCESS", "Coaching Schedule Removed!"));
     dispatch(removeCoachingScheduleSuccess());
   } catch (error) {
     dispatch({
@@ -224,4 +313,17 @@ export const removeCoachingScheduleRequest = () => {
 
 export const removeCoachingScheduleSuccess = () => {
   return { type: REMOVE_COACHING_SCHEDULE_SUCCESS };
+};
+
+export const getStudentCoachingSchedules = (studentEmail) => async (
+  dispatch
+) => {
+  const studentDocRef = studentCollection.doc(studentEmail);
+};
+
+export const getStudentsCoachingSchedulesRequest = () => {
+  return { type: GET_STUDENT_COACHING_SCHEDULES_REQUEST };
+};
+export const getStudentsCoachingSchedulesSuccess = (results) => {
+  return { type: GET_STUDENT_COACHING_SCHEDULES_SUCCESS, data: results };
 };

@@ -14,7 +14,6 @@ const useStyles = makeStyles((theme) => ({
   },
   colorCard: {
     backgroundColor: "#C4C4C4",
-    paddingbottom: "10em",
   },
 }));
 
@@ -77,7 +76,7 @@ const AdminDashboard = (props) => {
         <Grid>
           <Card className={classes.colorCard}>
             <CardContent>
-              <Typography align="center" variant="h3">
+              <Typography align="center" variant="h4">
                 Juan Dela Cruz
               </Typography>
               <Typography align="center" variant="h5">

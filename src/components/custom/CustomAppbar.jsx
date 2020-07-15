@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
     },
     color: "white",
   },
+  appBar: {
+    background: "#333333",
+  },
 }));
 
 const CustomAppbar = (props) => {
@@ -62,7 +65,7 @@ const CustomAppbar = (props) => {
   }, [props.location.pathname]);
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" className={classes.appBar}>
       <Toolbar>
         <IconButton className={classes.menuButton} onClick={onMenuButtonClick}>
           <MenuIcon />

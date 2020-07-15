@@ -30,8 +30,11 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: "#95A3B3",
+    backgroundColor: "#222222",
     color: "white",
+  },
+  iconColor: {
+    color: "#84DCC6",
   },
   // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
@@ -82,7 +85,7 @@ const StudentDrawer = (props) => {
           to={{ pathname: `/student${path}`, state: { text: text } }}
           key={text}
         >
-          <ListItemIcon>{icon}</ListItemIcon>
+          <ListItemIcon className={classes.iconColor}>{icon}</ListItemIcon>
           <ListItemText primary={text} />
         </ListItem>
       );
@@ -109,7 +112,7 @@ const StudentDrawer = (props) => {
           {renderListItems()}
           <ListItem button onClick={handleSignoutButton}>
             <ListItemIcon>
-              <ExitToAppIcon />
+              <ExitToAppIcon className={classes.iconColor} />
             </ListItemIcon>
             <ListItemText primary="Sign Out" />
           </ListItem>
@@ -128,7 +131,7 @@ const StudentDrawer = (props) => {
           {renderListItems()}
           <ListItem button onClick={handleSignoutButton}>
             <ListItemIcon>
-              <ExitToAppIcon />
+              <ExitToAppIcon className={classes.iconColor} />
             </ListItemIcon>
             <ListItemText primary="Sign Out" />
           </ListItem>

@@ -10,8 +10,6 @@ import {
   GET_COACHING_SCHEDULE_SUCCESS,
   REMOVE_COACHING_SCHEDULE_REQUEST,
   REMOVE_COACHING_SCHEDULE_SUCCESS,
-  GET_TEACHER_COACHING_SCHEDULES_REQUEST,
-  GET_TEACHER_COACHING_SCHEDULES_SUCCESS,
 } from "../types";
 
 const INITIAL_STATE = {
@@ -66,12 +64,7 @@ export default (state = INITIAL_STATE, action) => {
     case REMOVE_COACHING_SCHEDULE_SUCCESS: {
       return { ...state };
     }
-    case GET_TEACHER_COACHING_SCHEDULES_REQUEST: {
-      return { ...state };
-    }
-    case GET_TEACHER_COACHING_SCHEDULES_SUCCESS: {
-      return { ...state, coachingSchedules: action.data };
-    }
+
     default:
       return state;
   }

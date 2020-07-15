@@ -53,25 +53,29 @@ export const clearCoachingAttendees = () => {
   };
 };
 
-export const getStudentCoachingSchedules = () => async (dispatch, getState) => {
+export const getCoachingSchedules = () => async (dispatch, getState) => {
+  const { email, type } = getState().auth.data.user;
   dispatch(getCoachingSchedulesRequest());
-  const studentEmail = getState().auth.data.user.email;
-  const studentDocRef = studentCollection.doc(studentEmail);
+  if (type === "student") {
+    await dispatch(getStudentCoachingSchedules(email));
+  } else if (type === "teacher") {
+    await dispatch(getTeacherCoachingSchedule(email));
+  }
+};
 
+const getStudentCoachingSchedules = (studentEmail) => async (dispatch) => {
+  const studentDocRef = studentCollection.doc(studentEmail);
   studentDocRef.collection("coachingSessions").onSnapshot(async (snapshot) => {
     const coachingSessionIds = snapshot.docs.map((doc) => doc.id);
     // Fetch all coachingSessions using the ID
     const coachingSessions = await Promise.all(
       coachingSessionIds.map((id) => coachingLogsCollection.doc(id).get())
     ).then((results) => results.map((result) => result.data()));
-
     dispatch(getCoachingSchedulesSuccess(coachingSessions));
   });
 };
 
-export const getTeacherCoachingSchedule = () => async (dispatch, getState) => {
-  dispatch(getCoachingSchedulesRequest());
-  const teacherEmail = getState().auth.data.user.email;
+const getTeacherCoachingSchedule = (teacherEmail) => async (dispatch) => {
   const teacherRef = teacherCollection.doc(teacherEmail);
   teacherRef.collection("coachingSessions").onSnapshot(async (snapshot) => {
     const coachingSessionIds = snapshot.docs.map((doc) => doc.id);
@@ -79,18 +83,17 @@ export const getTeacherCoachingSchedule = () => async (dispatch, getState) => {
     const coachingSessions = await Promise.all(
       coachingSessionIds.map((id) => coachingLogsCollection.doc(id).get())
     ).then((results) => results.map((result) => result.data()));
-
     dispatch(getCoachingSchedulesSuccess(coachingSessions));
   });
 };
 
-export const getCoachingSchedulesRequest = () => {
+const getCoachingSchedulesRequest = () => {
   return {
     type: GET_COACHING_SCHEDULES_REQUEST,
   };
 };
 
-export const getCoachingSchedulesSuccess = (result) => {
+const getCoachingSchedulesSuccess = (result) => {
   return {
     type: GET_COACHING_SCHEDULES_SUCCESS,
     data: result,

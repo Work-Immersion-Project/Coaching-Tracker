@@ -6,7 +6,7 @@ import StudentDrawer from "./StudentDrawer";
 import StudentSchedules from "./StudentSchedules";
 import StudentTeacherList from "./StudentTeacherList";
 import CustomAppbar from "../custom/CustomAppbar";
-import { getStudentCoachingSchedules } from "../../actions";
+import { getCoachingSchedules } from "../../actions";
 import { useDispatch } from "react-redux";
 // import AddEventDrawer from "./components/AddEventDrawer";
 
@@ -31,7 +31,7 @@ const StudentPage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getStudentCoachingSchedules());
+    dispatch(getCoachingSchedules());
   }, []);
 
   return (

@@ -28,18 +28,19 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: "#95A3B3",
+    backgroundColor: "#222222",
   },
   toolbar: theme.mixins.toolbar,
   content: {
     width: "100%",
     padding: "1em",
+    color: "white",
   },
   timePicker: {
     margin: "1em",
   },
-  titleStyle: {
-    color: "black",
+  fontStyle: {
+    color: "white",
   },
 }));
 

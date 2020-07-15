@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { getCoachingSchedules } from "../../actions";
 import { connect } from "react-redux";
 import { Grid, Paper, CircularProgress } from "@material-ui/core";
@@ -23,14 +23,16 @@ const useStyles = makeStyles((theme) => ({
 
 const StudentSchedules = (props) => {
   const classes = useStyles();
-
+  useEffect(() => {
+    props.getCoachingSchedules();
+  }, []);
   const renderContent = () => {
     if (props.coachingSchedules) {
       return (
         <Paper className={classes.scheduler}>
           <CustomScheduler
             className={classes.scheduler}
-            calendarEvents={props.calendarEvents}
+            calendarEvents={props.coachingSchedules}
           />
         </Paper>
       );

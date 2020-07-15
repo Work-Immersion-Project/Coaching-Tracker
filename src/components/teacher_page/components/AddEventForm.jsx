@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import {
   getStudents,
@@ -37,6 +38,10 @@ const useStyles = makeStyles(() => ({
   },
   addedStudentsList: {
     width: "100%",
+  },
+  fontColor: {
+    color: "white",
+    borderColor: "white",
   },
 }));
 
@@ -139,7 +144,7 @@ const AddEventForm = (props) => {
 
   useEffect(() => {
     if (isOpen) {
-      props.getStudentsBySubject();
+      props.getStudents();
     }
   }, [isOpen, props.student]);
 
@@ -154,7 +159,6 @@ const AddEventForm = (props) => {
 
   const addCoachingEvent = (values) => {
     props.addCoachingSchedule(values);
-    props.hideModal();
     props.closeAddEventDrawer();
   };
 
@@ -175,7 +179,10 @@ const AddEventForm = (props) => {
         <Field
           label="Add Title"
           name="title"
+          inputComponent={StyledAddTitle}
           component={CustomMaterialTextField}
+          InputLabelProps={{ classes: { root: classes.fontColor } }}
+          InputProps={{ classes: { notchedOutline: classes.fontColor } }}
         />
 
         <Divider />
@@ -226,16 +233,17 @@ const AddEventForm = (props) => {
           }}
           disableClearable
           loading={loading}
-          options={
-            props.students
-              ? props.students.filter(
-                  (student) =>
-                    props.addedStudents.filter(
-                      (addedStudent) => student.email === addedStudent.email
-                    ).length === 0
-                )
-              : []
-          }
+          options={props.students ? props.students : []}
+          // options={
+          //   props.students
+          //     ? props.students.filter(
+          //         (student) =>
+          //           props.addedStudents.filter(
+          //             (addedStudent) => student.email === addedStudent.email
+          //           ).length === 0
+          //       )
+          //     : []
+          // }
           onChange={(_, value, reason) => {
             if (reason === "select-option") {
               handleOnStudentClick(value);

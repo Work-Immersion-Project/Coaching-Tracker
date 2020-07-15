@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch } from "react-router-dom";
 import StudentDashboard from "./StudentDashboard";
 import StudentDrawer from "./StudentDrawer";
 import StudentSchedules from "./StudentSchedules";
 import StudentTeacherList from "./StudentTeacherList";
-import CustomDrawer from "../custom/CustomAppbar";
 import CustomAppbar from "../custom/CustomAppbar";
+import { getStudentCoachingSchedules } from "../../actions";
+import { useDispatch } from "react-redux";
 // import AddEventDrawer from "./components/AddEventDrawer";
 
 const useStyles = makeStyles({
@@ -27,6 +28,12 @@ const useStyles = makeStyles({
 const StudentPage = () => {
   let { path } = useRouteMatch();
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getStudentCoachingSchedules());
+  }, []);
+
   return (
     <div className={classes.container}>
       <StudentDrawer />

@@ -8,7 +8,7 @@ import TeacherDrawer from "./TeacherDrawer";
 import TeacherSchedules from "./TeacherSchedules";
 import TeacherStudentList from "./TeacherStudentList";
 import AddEventDrawer from "./components/AddEventDrawer";
-import { getCoachingSchedules } from "../../actions";
+import { getTeacherCoachingSchedule } from "../../actions";
 import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles({
@@ -30,9 +30,11 @@ const TeacherPage = () => {
   let { path } = useRouteMatch();
   const classes = useStyles();
   const dispatch = useDispatch();
+
   useEffect(() => {
-    dispatch(getCoachingSchedules());
+    dispatch(getTeacherCoachingSchedule());
   }, []);
+
   return (
     <div className={classes.container}>
       <TeacherDrawer />

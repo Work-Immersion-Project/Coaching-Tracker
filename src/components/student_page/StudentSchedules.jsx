@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { getCoachingSchedules } from "../../actions";
+import React from "react";
 import { connect } from "react-redux";
 import { Grid, Paper, CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -23,9 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 const StudentSchedules = (props) => {
   const classes = useStyles();
-  useEffect(() => {
-    props.getCoachingSchedules();
-  }, []);
+
   const renderContent = () => {
     if (props.coachingSchedules) {
       return (
@@ -58,6 +55,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {
-  getCoachingSchedules,
-})(StudentSchedules);
+export default connect(mapStateToProps)(StudentSchedules);

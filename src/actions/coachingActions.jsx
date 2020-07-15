@@ -27,6 +27,7 @@ import { showNotification, showModal, hideModal } from "../actions";
 import { normalizeDate } from "../utils";
 import firebase from "firebase";
 import { db } from "../firebase";
+import { result } from "lodash";
 
 const coachingLogsCollection = db.collection("coachingLogs");
 const teacherCollection = db.collection("teachers");
@@ -52,30 +53,35 @@ export const clearCoachingAttendees = () => {
   };
 };
 
-export const getCoachingSchedules = () => async (dispatch, getState) => {
-  const currentUserEmail = getState().auth.data.user.email;
-  const currentUserType = getState().auth.data.user.type;
-  console.log(currentUserType, currentUserEmail);
+export const getStudentCoachingSchedules = () => async (dispatch, getState) => {
   dispatch(getCoachingSchedulesRequest());
-  try {
-    if (currentUserType === "student") {
-      coachingLogsCollection
-        .where("studentAttendees", "array-contains", currentUserEmail)
-        .onSnapshot((snapshot) => {
-          dispatch(
-            getCoachingScheduleSuccess(snapshot.docs.map((doc) => doc.data()))
-          );
-        });
-    } else {
-      coachingLogsCollection
-        .where("teacher", "==", currentUserEmail)
-        .onSnapshot((snapshot) => {
-          dispatch(
-            getCoachingSchedulesSuccess(snapshot.docs.map((doc) => doc.data()))
-          );
-        });
-    }
-  } catch (error) {}
+  const studentEmail = getState().auth.data.user.email;
+  const studentDocRef = studentCollection.doc(studentEmail);
+
+  studentDocRef.collection("coachingSessions").onSnapshot(async (snapshot) => {
+    const coachingSessionIds = snapshot.docs.map((doc) => doc.id);
+    // Fetch all coachingSessions using the ID
+    const coachingSessions = await Promise.all(
+      coachingSessionIds.map((id) => coachingLogsCollection.doc(id).get())
+    ).then((results) => results.map((result) => result.data()));
+
+    dispatch(getCoachingSchedulesSuccess(coachingSessions));
+  });
+};
+
+export const getTeacherCoachingSchedule = () => async (dispatch, getState) => {
+  dispatch(getCoachingSchedulesRequest());
+  const teacherEmail = getState().auth.data.user.email;
+  const teacherRef = teacherCollection.doc(teacherEmail);
+  teacherRef.collection("coachingSessions").onSnapshot(async (snapshot) => {
+    const coachingSessionIds = snapshot.docs.map((doc) => doc.id);
+    // Fetch all coachingSessions using the ID
+    const coachingSessions = await Promise.all(
+      coachingSessionIds.map((id) => coachingLogsCollection.doc(id).get())
+    ).then((results) => results.map((result) => result.data()));
+
+    dispatch(getCoachingSchedulesSuccess(coachingSessions));
+  });
 };
 
 export const getCoachingSchedulesRequest = () => {
@@ -313,17 +319,4 @@ export const removeCoachingScheduleRequest = () => {
 
 export const removeCoachingScheduleSuccess = () => {
   return { type: REMOVE_COACHING_SCHEDULE_SUCCESS };
-};
-
-export const getStudentCoachingSchedules = (studentEmail) => async (
-  dispatch
-) => {
-  const studentDocRef = studentCollection.doc(studentEmail);
-};
-
-export const getStudentsCoachingSchedulesRequest = () => {
-  return { type: GET_STUDENT_COACHING_SCHEDULES_REQUEST };
-};
-export const getStudentsCoachingSchedulesSuccess = (results) => {
-  return { type: GET_STUDENT_COACHING_SCHEDULES_SUCCESS, data: results };
 };

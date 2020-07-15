@@ -10,8 +10,10 @@ import {
   ADD_TEACHER_SUCCESS,
   ASSIGN_SUBJECT_TEACHER_REQUEST,
   ASSIGN_SUBJECT_TEACHER_SUCCESS,
+  REMOVE_SUBJECT_TEACHER_REQUEST,
+  REMOVE_SUBJECT_TEACHER_SUCCESS,
 } from "../types";
-import { hideModal, showModal } from ".";
+import { hideModal, showModal, showNotification } from ".";
 import { db } from "../firebase";
 import firebase from "firebase";
 
@@ -86,15 +88,11 @@ export const addTeacher = ({
     });
 
     dispatch(
-      showModal("SUCCESS_MODAL", {
-        onDialogClose: () => dispatch(hideModal()),
-        title: "Teacher Added!",
-        content: `You have successfully added ${firstName} ${lastName}`,
-      })
+      showNotification(
+        "SUCCESS",
+        `Teacher ${metadata.fullName} has been added!`
+      )
     );
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    dispatch(hideModal());
 
     dispatch(addTeacherSuccess());
   } catch (error) {
@@ -118,43 +116,95 @@ export const addTeacherSuccess = () => {
 
 export const assignSubjectTeacher = (values) => async (dispatch) => {
   const teacherRef = teachersCollection.doc(values.email);
+  const fieldValue = firebase.firestore.FieldValue;
   dispatch(hideModal());
   dispatch(showModal("LOADING_MODAL"));
   dispatch(assignSubjectTeacherRequest());
 
-  await teacherRef.update({
-    handledSubjects: values.subjects.map(({ subjectName }) => subjectName),
+  await db.runTransaction(async (transaction) => {
+    transaction.update(teacherRef, {
+      handledSubjects: values.subjects.map(({ subjectName }) => subjectName),
+    });
+
+    values.subjects.forEach((subject) => {
+      const subjectRef = subjectsCollection.doc(subject.subjectName);
+      const teacherCollectionRef = subjectRef
+        .collection("teachers")
+        .doc(values.email);
+
+      transaction.update(subjectRef, {
+        totalTeachers: fieldValue.increment(1),
+      });
+
+      transaction.set(teacherCollectionRef, {
+        email: values.email,
+      });
+    });
   });
 
-  for (const subject of values.subjects) {
-    const subjectRef = subjectsCollection.doc(subject.subjectName);
-    await subjectRef.update({
-      totalTeachers: firebase.firestore.FieldValue.increment(1),
-    });
-    await subjectRef
-      .collection("teachers")
-      .doc(values.email)
-      .set({ email: values.email });
-  }
-
   dispatch(assignSubjectTeacherSuccess());
+  dispatch(hideModal());
   dispatch(
-    showModal("SUCCESS_MODAL", {
-      onDialogClose: () => dispatch(hideModal()),
-      title: "Assignment Success",
-      content: `You have successfully assigned subject to teacher.`,
-    })
+    showNotification(
+      "SUCCESS",
+      `You have successfully assigned subject/s:  ${values.subjects.map(
+        (subject) => subject.subjectName
+      )} `
+    )
   );
 };
 
-export const assignSubjectTeacherRequest = () => {
+const assignSubjectTeacherRequest = () => {
   return {
     type: ASSIGN_SUBJECT_TEACHER_REQUEST,
   };
 };
 
-export const assignSubjectTeacherSuccess = () => {
+const assignSubjectTeacherSuccess = () => {
   return {
     type: ASSIGN_SUBJECT_TEACHER_SUCCESS,
+  };
+};
+
+export const removeSubjectTeacher = (
+  { email, metadata },
+  subjectName
+) => async (dispatch) => {
+  const fieldValue = firebase.firestore.FieldValue;
+  const teacherRef = teachersCollection.doc(email);
+  const subjectRef = subjectsCollection.doc(subjectName);
+  dispatch(hideModal());
+  dispatch(showModal("LOADING_MODAL"));
+  dispatch(removeSubjectTeacherRequest());
+  teacherRef.update({
+    handledSubjects: fieldValue.arrayRemove(subjectName),
+  });
+
+  await db.runTransaction(async (transaction) => {
+    const teachersRef = subjectRef.collection("teachers").doc(email);
+    transaction.delete(teachersRef);
+    transaction.update(subjectRef, {
+      totalStudentsEnrolled: fieldValue.increment(-1),
+    });
+  });
+
+  dispatch(hideModal());
+  dispatch(removeSubjectTeacherSuccess());
+  dispatch(
+    showNotification(
+      "SUCCESS",
+      `Subject ${subjectName} has been unassigned from ${metadata.fullName}.`
+    )
+  );
+};
+
+const removeSubjectTeacherRequest = () => {
+  return {
+    type: REMOVE_SUBJECT_TEACHER_REQUEST,
+  };
+};
+const removeSubjectTeacherSuccess = () => {
+  return {
+    type: REMOVE_SUBJECT_TEACHER_SUCCESS,
   };
 };

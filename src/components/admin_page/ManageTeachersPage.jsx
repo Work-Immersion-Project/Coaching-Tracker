@@ -8,6 +8,7 @@ import {
   showModal,
   hideModal,
   assignSubjectTeacher,
+  removeSubjectTeacher,
 } from "../../actions";
 
 const useStyles = makeStyles(() => ({
@@ -15,6 +16,7 @@ const useStyles = makeStyles(() => ({
     height: "100%",
     width: "100%",
     padding: "1em",
+    background: "#4B4E6D",
   },
 }));
 
@@ -27,10 +29,19 @@ const ManageTeachersPage = (props) => {
   const onDialogClose = () => {
     props.hideModal();
   };
-
+  const onRemoveSubjectPressed = (rowData, subjectName) => {
+    props.showModal("CONFIRMATION_MODAL", {
+      onDialogClose: onDialogClose,
+      title: "Remove Subject?",
+      content: `Are you sure you want to remove ${subjectName} from teacher?`,
+      onNegativeClick: onDialogClose,
+      onPositiveClick: () => {
+        props.removeSubjectTeacher(rowData, subjectName);
+      },
+    });
+  };
   const onSubmit = (email, currentSubjects, values) => {
     props.hideModal();
-    console.log([...values.subjects, ...currentSubjects]);
     props.assignSubjectTeacher({
       ...values,
       subjects: [
@@ -43,7 +54,7 @@ const ManageTeachersPage = (props) => {
     });
   };
 
-  const onAssignSubjectsPressed = (event, rowData) => {
+  const onAssignSubjectsPressed = (_, rowData) => {
     console.log(rowData);
     props.showModal("ASSIGN_SUBJECT_FORM_MODAL", {
       currentSubjects: rowData.handledSubjects,
@@ -77,9 +88,13 @@ const ManageTeachersPage = (props) => {
           {
             title: "Handled Subjects",
             field: "handledSubjects",
-            render: ({ handledSubjects }) =>
-              handledSubjects.map((subject) => (
-                <Chip key={subject} label={subject} />
+            render: (rowData) =>
+              rowData.handledSubjects.map((subject) => (
+                <Chip
+                  key={subject}
+                  label={subject}
+                  onDelete={() => onRemoveSubjectPressed(rowData, subject)}
+                />
               )),
           },
         ]}
@@ -106,4 +121,5 @@ export default connect(mapStateToProps, {
   showModal,
   hideModal,
   assignSubjectTeacher,
+  removeSubjectTeacher,
 })(ManageTeachersPage);

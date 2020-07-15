@@ -11,6 +11,7 @@ const useStyles = makeStyles(() => ({
     height: "100%",
     width: "100%",
     padding: "1em",
+    background: "#4B4E6D",
   },
 
   teacherChip: {

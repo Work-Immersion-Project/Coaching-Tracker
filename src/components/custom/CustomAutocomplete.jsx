@@ -15,36 +15,39 @@ const CustomAutoComplete = ({
   options,
   getOptionLabel,
   renderValues,
+  multiple,
   inputComponent: InputComponent,
   meta: { touched, invalid, error },
   ...custom
 }) => {
   const classes = useStyles();
   const [inputValue, setInputValue] = useState("");
-  const fieldValues = fields.getAll();
   const loading = options ? false : true;
 
   return (
     <>
       <AutoComplete
         {...custom}
+        multiple={multiple}
         inputValue={inputValue}
-        onInputChange={(event, value, reason) => {
+        onInputChange={(_, value, reason) => {
           if (reason === "input") {
             setInputValue(value);
           }
         }}
         loading={loading}
         options={options}
+        filterSelectedOptions
         getOptionLabel={getOptionLabel}
-        onChange={(event, value, reason) => {
-          if (reason === "select-option") {
-            setInputValue("");
-            fields.push(value);
+        onChange={(_, value, reason) => {
+          fields.removeAll();
+          if (reason === "select-option" || reason === "remove-option") {
+            value.forEach((value, index) => fields.insert(index, value));
           }
         }}
         renderInput={(params) => (
           <InputComponent
+            {...params}
             className={classes.root}
             ref={params.InputProps.ref}
             inputProps={params.inputProps}
@@ -53,7 +56,6 @@ const CustomAutoComplete = ({
           />
         )}
       />
-      {renderValues(fields)}
     </>
   );
 };

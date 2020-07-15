@@ -4,6 +4,7 @@ import {
   showModal,
   hideModal,
   assignStudentSubjects,
+  removeStudentSubject,
 } from "../../actions";
 import { connect } from "react-redux";
 import MaterialTable from "material-table";
@@ -15,6 +16,7 @@ const useStyles = makeStyles(() => ({
     height: "100%",
     width: "100%",
     padding: "1em",
+    backgroundColor: "#4B4E6D",
   },
 }));
 
@@ -39,6 +41,18 @@ const ManageStudentsPage = (props) => {
         }),
       ],
       email,
+    });
+  };
+
+  const onRemoveSubjectPressed = (rowData, subjectName) => {
+    props.showModal("CONFIRMATION_MODAL", {
+      onDialogClose: onDialogClose,
+      title: "Remove Subject?",
+      content: `Are you sure you want to remove ${subjectName} from student?`,
+      onNegativeClick: onDialogClose,
+      onPositiveClick: () => {
+        props.removeStudentSubject(rowData, subjectName);
+      },
     });
   };
 
@@ -85,7 +99,11 @@ const ManageStudentsPage = (props) => {
             field: "enrolledSubjects",
             render: (rowData) =>
               rowData.enrolledSubjects.map((subject) => (
-                <Chip key={subject} label={subject} />
+                <Chip
+                  key={subject}
+                  label={subject}
+                  onDelete={() => onRemoveSubjectPressed(rowData, subject)}
+                />
               )),
           },
         ]}
@@ -112,4 +130,5 @@ export default connect(mapStateToProps, {
   hideModal,
   showModal,
   assignStudentSubjects,
+  removeStudentSubject,
 })(ManageStudentsPage);

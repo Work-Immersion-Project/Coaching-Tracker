@@ -9,8 +9,11 @@ import {
   GET_STUDENT_REQUEST,
   ASSIGN_STUDENT_SUBJECT_REQUEST,
   ASSIGN_STUDENT_SUBJECT_SUCCESS,
+  REMOVE_STUDENT_SUBJECT_REQUEST,
+  REMOVE_STUDENT_SUBJECT_SUCCESS,
 } from "../types";
-import { hideModal, showModal } from ".";
+
+import { showNotification, showModal, hideModal } from "./";
 import firebase from "firebase";
 import { db } from "../firebase";
 import _ from "lodash";
@@ -114,51 +117,56 @@ export const addStudent = ({
       enrolledSubjects: [],
     });
 
-    dispatch(
-      showModal("SUCCESS_MODAL", {
-        onDialogClose: () => dispatch(hideModal()),
-        title: "Student Added!",
-        content: `You have successfully added ${firstName} ${lastName}`,
-      })
-    );
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
     dispatch(hideModal());
     dispatch(addStudentSuccess());
+    dispatch(
+      showNotification(
+        "SUCCESS",
+        `Student ${metadata.fullName} has been added!`
+      )
+    );
   } catch (error) {
-    console.log(error);
-    dispatch(hideModal());
+    dispatch(showNotification("ERROR", error));
   }
 };
 
 export const assignStudentSubjects = (values) => async (dispatch) => {
+  const fieldValue = firebase.firestore.FieldValue;
   const studentRef = studentsCollection.doc(values.email);
   dispatch(hideModal());
   dispatch(showModal("LOADING_MODAL"));
   dispatch(assignStudentsSubjectsRequest());
 
-  await studentRef.update({
-    enrolledSubjects: values.subjects.map(({ subjectName }) => subjectName),
+  await db.runTransaction(async (transaction) => {
+    transaction.update(studentRef, {
+      enrolledSubjects: values.subjects.map(({ subjectName }) => subjectName),
+    });
+
+    values.subjects.forEach((subject) => {
+      const subjectRef = subjectsCollection.doc(subject.subjectName);
+
+      const enrolledStudentRef = subjectRef
+        .collection("enrolledStudents")
+        .doc(values.email);
+
+      transaction.update(subjectRef, {
+        totalStudentsEnrolled: fieldValue.increment(1),
+      });
+
+      transaction.set(enrolledStudentRef, {
+        email: values.email,
+      });
+    });
   });
 
-  for (const subject of values.subjects) {
-    const subjectRef = subjectsCollection.doc(subject.subjectName);
-    await subjectRef.update({
-      totalEnrolledStudents: firebase.firestore.FieldValue.increment(1),
-    });
-    await subjectRef
-      .collection("enrolledStudents")
-      .doc(values.email)
-      .set({ email: values.email });
-  }
-
-  dispatch(assignStudentsSubjectsSuccess());
+  dispatch(hideModal());
   dispatch(
-    showModal("SUCCESS_MODAL", {
-      onDialogClose: () => dispatch(hideModal()),
-      title: "Assignment Success",
-      content: `You have successfully assigned subject to student.`,
-    })
+    showNotification(
+      "SUCCESS",
+      `Student has been enrolled to Subjects: ${values.subjects.map(
+        (subject) => subject.subjectName
+      )}`
+    )
   );
 };
 export const assignStudentsSubjectsRequest = () => {
@@ -172,12 +180,55 @@ export const assignStudentsSubjectsSuccess = () => {
   };
 };
 
+export const removeStudentSubject = (
+  { email, metadata },
+  subjectName
+) => async (dispatch) => {
+  const fieldValue = firebase.firestore.FieldValue;
+  const studentRef = studentsCollection.doc(email);
+  const subjectRef = subjectsCollection.doc(subjectName);
+  dispatch(hideModal());
+  dispatch(showModal("LOADING_MODAL"));
+  dispatch(removeStudentSubjectRequest());
+  studentRef.update({
+    enrolledSubjects: fieldValue.arrayRemove(subjectName),
+  });
+
+  await db.runTransaction(async (transaction) => {
+    const enrolledStudentRef = subjectRef
+      .collection("enrolledStudents")
+      .doc(email);
+    transaction.delete(enrolledStudentRef);
+    transaction.update(subjectRef, {
+      totalStudentsEnrolled: fieldValue.increment(-1),
+    });
+  });
+
+  dispatch(hideModal());
+  dispatch(removeStudentSubjectSuccess());
+  dispatch(
+    showNotification(
+      "SUCCESS",
+      `Subject ${subjectName} has been unassigned from ${metadata.fullName}.`
+    )
+  );
+};
+
+export const removeStudentSubjectRequest = () => {
+  return {
+    type: REMOVE_STUDENT_SUBJECT_REQUEST,
+  };
+};
+
+export const removeStudentSubjectSuccess = () => {
+  return {
+    type: REMOVE_STUDENT_SUBJECT_SUCCESS,
+  };
+};
+
 export const addStudentRequest = () => {
   return { type: ADD_STUDENT_REQUEST };
 };
 export const addStudentSuccess = () => {
   return { type: ADD_STUDENT_SUCCESS };
-};
-export const addStudentError = (error) => {
-  return { type: ADD_STUDENT_ERROR };
 };

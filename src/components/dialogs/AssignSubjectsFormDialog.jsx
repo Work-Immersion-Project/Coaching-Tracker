@@ -49,22 +49,7 @@ const AssignSubjectsFormDialog = (props) => {
     getSubjectFields();
   }, []);
 
-  const renderSubjectChips = (fields) => {
-    const values = fields.getAll();
-    if (values) {
-      return values.map(({ subjectName }, index) => {
-        return (
-          <Chip
-            className={classes.chipsWrapper}
-            key={subjectName}
-            label={subjectName}
-            onDelete={() => fields.remove(index)}
-          />
-        );
-      });
-    }
-    return null;
-  };
+  console.log({ currentSubjects, subjectFields });
 
   return (
     <Dialog open={open} onClose={onDialogClose}>
@@ -76,29 +61,20 @@ const AssignSubjectsFormDialog = (props) => {
               <InputLabel>Subjects</InputLabel>
               <FieldArray
                 name="subjects"
-                renderValues={renderSubjectChips}
+                multiple={true}
                 getOptionLabel={(option) => option.subjectName}
                 component={CustomAutoComplete}
                 inputComponent={TextField}
                 options={
-                  subjectFieldsValues
+                  subjectFields
                     ? subjectFields.filter(
-                        (option) =>
-                          subjectFieldsValues.filter(
-                            (subjectField) =>
-                              subjectField.subjectName === option.subjectName
-                          ).length === 0
-                      )
-                    : subjectFields
-                    ? subjectFields.filter(
-                        (option) =>
+                        (field) =>
                           currentSubjects.filter(
-                            (subject) => subject === option.subjectName
+                            (currSubj) => currSubj === field.subjectName
                           ).length === 0
                       )
-                    : subjectFields
+                    : []
                 }
-                variant="outlined"
               />
             </Grid>
           </Grid>

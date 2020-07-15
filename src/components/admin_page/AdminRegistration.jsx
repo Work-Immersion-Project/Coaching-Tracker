@@ -119,13 +119,6 @@ const AdminRegistration = (props) => {
   const classes = useStyles();
   const { handleSubmit, reset, pristine, submitting } = props;
 
-  const sampleOptions = [
-    { title: "abc" },
-    { title: "def" },
-    { title: "ghi" },
-    { title: "jkl" },
-  ];
-
   const registerUser = (values) => {
     reset();
     const createdAt = new Date();
@@ -179,8 +172,8 @@ const AdminRegistration = (props) => {
       <Grid item sm>
         <InputLabel className={classes.inputLabel}>Course</InputLabel>
         <Field
-          name="subject"
-          id="subject"
+          name="course"
+          id="course"
           required
           native
           disableUnderline
@@ -188,8 +181,31 @@ const AdminRegistration = (props) => {
           className={classes.selectField}
         >
           <option value={""} />
-          <option className={classes.selectValue} value={"subject1"}>
-            Subject1
+          <option
+            className={classes.selectValue}
+            value={"bachelor-of-multimedia-arts"}
+          >
+            Bachelor of Multiedia Arts
+          </option>
+          <option
+            className={classes.selectValue}
+            value={"bachelor-of-fine-arts"}
+          >
+            Bachelor of Fine Arts
+          </option>
+          <option
+            className={classes.selectValue}
+            value={"bachelor-of-science-in-computer-science"}
+          >
+            Bachelor of Science in Computer Science
+          </option>
+          <option
+            className={classes.selectValue}
+            value={
+              "bachelor-of-science-in-entertainment-and-multimedia-computing"
+            }
+          >
+            Bachelor of Science in Entertainment and Multimedia Computing
           </option>
         </Field>
       </Grid>
@@ -208,22 +224,6 @@ const AdminRegistration = (props) => {
       } else if (type === "teacher") {
         return renderTeacherForms();
       }
-    }
-    return null;
-  };
-
-  const renderSubjectChips = (fields) => {
-    const values = fields.getAll();
-    if (values) {
-      return values.map((subject, index) => {
-        return (
-          <Chip
-            key={subject.title}
-            label={subject.title}
-            onDelete={() => fields.remove(index)}
-          />
-        );
-      });
     }
     return null;
   };
@@ -309,20 +309,7 @@ const AdminRegistration = (props) => {
               </option>
             </Field>
           </Grid>
-          <Grid item sm>
-            <InputLabel className={classes.inputLabel}>Subjects</InputLabel>
-            <FieldArray
-              name="subjects"
-              renderValues={renderSubjectChips}
-              getOptionLabel={(option) => option.title}
-              component={CustomAutoComplete}
-              variant="outlined"
-              clearOnBlur
-              inputComponent={InputBase}
-              options={sampleOptions}
-              className={classes.subjectField}
-            />
-          </Grid>
+
           {renderForms()}
           <Button
             type="submit"

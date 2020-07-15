@@ -6,18 +6,30 @@ import {
   GET_SUBJECT_REQUEST,
   GET_SUBJECT_SUCCESS,
 } from "../types";
+import { setError } from "./errorActions";
 import { db } from "../firebase";
 
 const subjectsCollection = db.collection("subjects");
 
-export const addSubject = (values) => async (dispatch) => {
+export const addSubject = (values) => async (dispatch, getState) => {
   dispatch(addSubjectRequest());
   try {
-    subjectsCollection
-      .doc(values.subject_name)
-      .set({ ...values, enrolledStudents: [], teachers: [] });
-    dispatch(addSubjectSuccess());
-  } catch (error) {}
+    const isSubjectExisting =
+      getState().subjects.data.filter(
+        (subject) => subject.subjectName === values.subjectName
+      ).length !== 0;
+    if (isSubjectExisting) {
+      throw "Subject already exists!";
+    } else {
+      subjectsCollection
+        .doc(values.subjectName)
+        .set({ ...values, totalStudentsEnrolled: 0, totalTeachers: 0 });
+      dispatch(addSubjectSuccess());
+    }
+  } catch (error) {
+    console.log(error);
+    dispatch(setError(error));
+  }
 };
 
 export const addSubjectRequest = () => {
@@ -31,12 +43,31 @@ export const addSubjectSuccess = () => {
     type: ADD_SUBJECT_SUCCESS,
   };
 };
-
 export const getSubjects = () => async (dispatch) => {
   dispatch(getSubjectsRequest());
 
-  subjectsCollection.onSnapshot((snapshot) => {
-    dispatch(getSubjectsSuccess(snapshot.docs.map((doc) => doc.data())));
+  subjectsCollection.onSnapshot(async (snapshot) => {
+    const subjectsDocument = snapshot.docs.map(async (doc) => {
+      const subjectName = doc.data().subjectName;
+
+      const enrolledStudents = await subjectsCollection
+        .doc(subjectName)
+        .collection("enrolledStudents")
+        .get()
+        .then((documents) => documents.docs.map((doc) => doc.data()));
+      const teachers = await subjectsCollection
+        .doc(subjectName)
+        .collection("teachers")
+        .get()
+        .then((documents) => documents.docs.map((doc) => doc.data()));
+      return {
+        subjectName,
+        enrolledStudents,
+        teachers,
+      };
+    });
+    const documents = await Promise.all(subjectsDocument);
+    dispatch(getSubjectsSuccess(documents));
   });
 };
 
@@ -47,7 +78,6 @@ export const getSubjectsRequest = () => {
 };
 
 export const getSubjectsSuccess = (results) => {
-  console.log(results);
   return {
     type: GET_SUBJECTS_SUCCESS,
     data: results,

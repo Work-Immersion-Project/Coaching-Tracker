@@ -9,6 +9,7 @@ import {
   showModal,
   hideModal,
   closeAddEventDrawer,
+  getStudentsBySubject,
 } from "../../../actions";
 import {
   TextField,
@@ -138,7 +139,7 @@ const AddEventForm = (props) => {
 
   useEffect(() => {
     if (isOpen) {
-      props.getStudents();
+      props.getStudentsBySubject();
     }
   }, [isOpen, props.student]);
 
@@ -291,4 +292,5 @@ export default connect(mapStateToProps, {
   showModal,
   hideModal,
   closeAddEventDrawer,
+  getStudentsBySubject,
 })(AddEventFormWithReduxForm);

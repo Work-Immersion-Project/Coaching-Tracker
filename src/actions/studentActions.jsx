@@ -2,16 +2,20 @@ import {
   ADD_STUDENT_REQUEST,
   ADD_STUDENT_ERROR,
   ADD_STUDENT_SUCCESS,
-  GET_STUDENTS_ERROR,
   GET_STUDENTS_REQUEST,
   GET_STUDENTS_SUCCESS,
   GET_STUDENT_SUCCESS,
   GET_STUDENT_ERROR,
   GET_STUDENT_REQUEST,
+  ASSIGN_STUDENT_SUBJECT_REQUEST,
+  ASSIGN_STUDENT_SUBJECT_SUCCESS,
 } from "../types";
 import { hideModal, showModal } from ".";
+import firebase from "firebase";
 import { db } from "../firebase";
+import _ from "lodash";
 const studentsCollection = db.collection("students");
+const subjectsCollection = db.collection("subjects");
 
 export const getStudent = (studentEmail) => async (dispatch) => {
   const studentDocument = await studentsCollection.doc(studentEmail).get();
@@ -44,7 +48,33 @@ export const getStudents = () => async (dispatch, getState) => {
     dispatch(getStudentsSuccess(snapshot.docs.map((doc) => doc.data())));
   });
 };
+export const getStudentsBySubject = () => async (dispatch, getState) => {
+  dispatch(getStudentsRequest());
+  const studentDocuments = getState().auth.data.user.handledSubjects.map(
+    async (subject) =>
+      await subjectsCollection
+        .doc(subject)
+        .collection("enrolledStudents")
+        .get()
+        .then((snapshot) => snapshot.docs.map((document) => document.data()))
+  );
 
+  const students = await Promise.all(studentDocuments);
+  const filteredStudents = _.mapKeys(
+    _.flatten(students),
+    (value) => value.email
+  );
+
+  dispatch(
+    getStudentsSuccess(
+      Object.keys(filteredStudents).map((value) => {
+        return {
+          email: value,
+        };
+      })
+    )
+  );
+};
 export const getStudentsRequest = () => {
   return { type: GET_STUDENTS_REQUEST };
 };
@@ -70,6 +100,7 @@ export const addStudent = ({
   dispatch(addStudentRequest());
   try {
     const metadata = {
+      fullName: `${firstName} ${middleName} ${lastName}`,
       firstName,
       middleName,
       lastName,
@@ -80,6 +111,7 @@ export const addStudent = ({
       metadata,
       email,
       id,
+      enrolledSubjects: [],
     });
 
     dispatch(
@@ -97,6 +129,47 @@ export const addStudent = ({
     console.log(error);
     dispatch(hideModal());
   }
+};
+
+export const assignStudentSubjects = (values) => async (dispatch) => {
+  const studentRef = studentsCollection.doc(values.email);
+  dispatch(hideModal());
+  dispatch(showModal("LOADING_MODAL"));
+  dispatch(assignStudentsSubjectsRequest());
+
+  await studentRef.update({
+    enrolledSubjects: values.subjects.map(({ subjectName }) => subjectName),
+  });
+
+  for (const subject of values.subjects) {
+    const subjectRef = subjectsCollection.doc(subject.subjectName);
+    await subjectRef.update({
+      totalEnrolledStudents: firebase.firestore.FieldValue.increment(1),
+    });
+    await subjectRef
+      .collection("enrolledStudents")
+      .doc(values.email)
+      .set({ email: values.email });
+  }
+
+  dispatch(assignStudentsSubjectsSuccess());
+  dispatch(
+    showModal("SUCCESS_MODAL", {
+      onDialogClose: () => dispatch(hideModal()),
+      title: "Assignment Success",
+      content: `You have successfully assigned subject to student.`,
+    })
+  );
+};
+export const assignStudentsSubjectsRequest = () => {
+  return {
+    type: ASSIGN_STUDENT_SUBJECT_REQUEST,
+  };
+};
+export const assignStudentsSubjectsSuccess = () => {
+  return {
+    type: ASSIGN_STUDENT_SUBJECT_SUCCESS,
+  };
 };
 
 export const addStudentRequest = () => {

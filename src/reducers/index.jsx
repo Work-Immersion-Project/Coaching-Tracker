@@ -10,12 +10,14 @@ import teacherReducer from "./teacherReducer";
 import studentReducer from "./studentReducer";
 import subjectsReducer from "./subjectsReducers";
 import coursesReducer from "./coursesReducers";
+import fieldsReducer from "./fieldsReducer";
 import coachingReducer from "./coachingReducer";
 
 export default combineReducers({
   auth: authReducer,
   form: formReducer,
   users: usersReducer,
+  fields: fieldsReducer,
   teachers: teacherReducer,
   students: studentReducer,
   gapi: gapiReducer,

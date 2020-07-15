@@ -7,7 +7,6 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   const { error } = action;
-
   if (error) {
     return {
       error: error,

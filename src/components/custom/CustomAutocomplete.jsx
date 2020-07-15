@@ -22,6 +22,7 @@ const CustomAutoComplete = ({
   const classes = useStyles();
   const [inputValue, setInputValue] = useState("");
   const fieldValues = fields.getAll();
+  const loading = options ? false : true;
 
   return (
     <>
@@ -33,16 +34,8 @@ const CustomAutoComplete = ({
             setInputValue(value);
           }
         }}
-        options={
-          fieldValues
-            ? options.filter(
-                (option) =>
-                  fieldValues.filter(
-                    (fieldValue) => fieldValue.title === option.title
-                  ).length === 0
-              )
-            : options
-        }
+        loading={loading}
+        options={options}
         getOptionLabel={getOptionLabel}
         onChange={(event, value, reason) => {
           if (reason === "select-option") {

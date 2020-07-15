@@ -25,7 +25,7 @@ export default (state = INITIAL_STATE, action) => {
     case GET_TEACHERS_REQUEST:
       return { ...state };
     case GET_TEACHERS_SUCCESS:
-      return { ...state, data: _.mapKeys(action.data, "email") };
+      return { ...state, data: action.data };
     case ADD_TEACHER_REQUEST:
       return { ...state };
     case ADD_TEACHER_SUCCESS:

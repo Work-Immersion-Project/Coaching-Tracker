@@ -8,10 +8,14 @@ import {
   ADD_TEACHER_ERROR,
   ADD_TEACHER_REQUEST,
   ADD_TEACHER_SUCCESS,
+  ASSIGN_SUBJECT_TEACHER_REQUEST,
+  ASSIGN_SUBJECT_TEACHER_SUCCESS,
 } from "../types";
 import { hideModal, showModal } from ".";
 import { db } from "../firebase";
+import firebase from "firebase";
 
+const subjectsCollection = db.collection("subjects");
 const teachersCollection = db.collection("teachers");
 
 export const getTeacher = (teacherEmail) => async (dispatch) => {
@@ -67,6 +71,7 @@ export const addTeacher = ({
   dispatch(addTeacherRequest());
   try {
     const metadata = {
+      fullName: `${firstName} ${middleName} ${lastName}`,
       firstName,
       middleName,
       lastName,
@@ -77,6 +82,7 @@ export const addTeacher = ({
       metadata,
       email,
       id,
+      handledSubjects: [],
     });
 
     dispatch(
@@ -107,5 +113,48 @@ export const addTeacherRequest = () => {
 export const addTeacherSuccess = () => {
   return {
     type: ADD_TEACHER_SUCCESS,
+  };
+};
+
+export const assignSubjectTeacher = (values) => async (dispatch) => {
+  const teacherRef = teachersCollection.doc(values.email);
+  dispatch(hideModal());
+  dispatch(showModal("LOADING_MODAL"));
+  dispatch(assignSubjectTeacherRequest());
+
+  await teacherRef.update({
+    handledSubjects: values.subjects.map(({ subjectName }) => subjectName),
+  });
+
+  for (const subject of values.subjects) {
+    const subjectRef = subjectsCollection.doc(subject.subjectName);
+    await subjectRef.update({
+      totalTeachers: firebase.firestore.FieldValue.increment(1),
+    });
+    await subjectRef
+      .collection("teachers")
+      .doc(values.email)
+      .set({ email: values.email });
+  }
+
+  dispatch(assignSubjectTeacherSuccess());
+  dispatch(
+    showModal("SUCCESS_MODAL", {
+      onDialogClose: () => dispatch(hideModal()),
+      title: "Assignment Success",
+      content: `You have successfully assigned subject to teacher.`,
+    })
+  );
+};
+
+export const assignSubjectTeacherRequest = () => {
+  return {
+    type: ASSIGN_SUBJECT_TEACHER_REQUEST,
+  };
+};
+
+export const assignSubjectTeacherSuccess = () => {
+  return {
+    type: ASSIGN_SUBJECT_TEACHER_SUCCESS,
   };
 };

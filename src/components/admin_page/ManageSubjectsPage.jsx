@@ -1,37 +1,10 @@
 import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Card,
-  Grid,
-  Typography,
-  Paper,
-  CircularProgress,
-  Chip,
-} from "@material-ui/core";
-import {
-  hideModal,
-  showModal,
-  addSubject,
-  getSubjects,
-} from "../../../actions";
+import { Grid, Chip } from "@material-ui/core";
+import { hideModal, showModal, addSubject, getSubjects } from "../../actions";
 import _ from "lodash";
 import { connect } from "react-redux";
-import AddIcon from "@material-ui/icons/Add";
-import MaterialTable, { MTableBody } from "material-table";
-import SubjectsList from "./SubjectsList";
-import AddSubjectForm from "./AddSubjectForm";
-
-const sampleData = [
-  {
-    name: "English",
-  },
-  {
-    name: "English",
-  },
-  {
-    name: "English",
-  },
-];
+import MaterialTable from "material-table";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -39,25 +12,18 @@ const useStyles = makeStyles(() => ({
     width: "100%",
     padding: "1em",
   },
-  tableContainer: {
-    height: "100%",
-    width: "100%",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
   teacherChip: {
-    margin: "0 0.25em",
+    margin: "0.25em",
   },
   studentChip: {
-    margin: "0 0.25em",
+    margin: "0.25em",
   },
 }));
 
-const AdminSubjectsPage = (props) => {
+const ManageSubjectsPage = (props) => {
   const classes = useStyles();
-
+  console.log(props);
   useEffect(() => {
     props.getSubjects();
   }, []);
@@ -72,7 +38,7 @@ const AdminSubjectsPage = (props) => {
     props.addSubject(values);
   };
 
-  const handleAddSubjectButton = () => {
+  const onAddSubjectPressed = () => {
     props.showModal("ADD_SUBJECT_FORM_MODAL", {
       onDialogClose: onDialogClose,
       title: "Add Subject",
@@ -92,22 +58,32 @@ const AdminSubjectsPage = (props) => {
         data={props.subjects ? props.subjects : []}
         title="Subjects"
         columns={[
-          { title: "Subject Name", field: "subject_name" },
+          { title: "Subject Name", field: "subjectName" },
           {
             title: "Assigned Teacher",
             field: "teachers",
             render: (rowData) =>
-              rowData.teachers.map((teacher) => (
-                <Chip className={classes.teacherChip} label={teacher} />
-              )),
+              rowData.teachers === null && rowData.teachers.length === 0
+                ? ""
+                : rowData.teachers.map((teacher) => (
+                    <Chip
+                      className={classes.teacherChip}
+                      label={teacher.email}
+                    />
+                  )),
           },
           {
             title: "Enrolled Students",
             field: "enrolledStudents",
-            render: (rowData) =>
-              rowData.enrolledStudents.map((student) => (
-                <Chip className={classes.studentChip} label={student} />
-              )),
+            render: ({ enrolledStudents }) =>
+              enrolledStudents && enrolledStudents.length === 0
+                ? ""
+                : enrolledStudents.map((student) => (
+                    <Chip
+                      className={classes.studentChip}
+                      label={student.email}
+                    />
+                  )),
           },
         ]}
         isLoading={!props.subjects}
@@ -116,7 +92,7 @@ const AdminSubjectsPage = (props) => {
             icon: "add",
             tooltip: "Add Subject",
             isFreeAction: true,
-            onClick: handleAddSubjectButton,
+            onClick: onAddSubjectPressed,
           },
         ]}
       />
@@ -135,4 +111,4 @@ export default connect(mapStateToProps, {
   showModal,
   addSubject,
   getSubjects,
-})(AdminSubjectsPage);
+})(ManageSubjectsPage);

@@ -8,6 +8,8 @@ import {
   GET_STUDENT_SUCCESS,
   GET_STUDENT_ERROR,
   GET_STUDENT_REQUEST,
+  ASSIGN_STUDENT_SUBJECT_SUCCESS,
+  ASSIGN_STUDENT_SUBJECT_REQUEST,
 } from "../types";
 
 import _ from "lodash";
@@ -26,6 +28,10 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state };
     case GET_STUDENTS_SUCCESS:
       return { ...state, data: _.mapKeys(action.data, "email") };
+    case ASSIGN_STUDENT_SUBJECT_SUCCESS:
+      return { ...state };
+    case ASSIGN_STUDENT_SUBJECT_REQUEST:
+      return { ...state };
     default:
       return state;
   }

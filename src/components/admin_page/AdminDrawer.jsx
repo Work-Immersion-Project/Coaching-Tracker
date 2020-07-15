@@ -63,14 +63,14 @@ const AdminDrawer = (props) => {
       path: "/coaching-log",
     },
     {
-      text: "Teacher List",
+      text: "Manage Teachers",
       icon: <FaceIcon />,
-      path: "/teacher-list",
+      path: "/manage-teachers",
     },
     {
-      text: "Student List",
+      text: "Manage Students",
       icon: <SchoolIcon />,
-      path: "/student-list",
+      path: "/manage-students",
     },
   ];
 

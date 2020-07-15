@@ -9,3 +9,5 @@ export * from "./adminActions";
 export * from "./coachingActions";
 export * from "./coursesActions";
 export * from "./subjectsActions";
+export * from "./errorActions";
+export * from "./fieldsActions";

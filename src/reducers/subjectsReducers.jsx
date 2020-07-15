@@ -3,6 +3,8 @@ import {
   ADD_SUBJECT_REQUEST,
   GET_SUBJECTS_SUCCESS,
   GET_SUBJECTS_REQUEST,
+  GET_SUBJECT_FIELDS_SUCCESS,
+  GET_SUBJECT_FIELDS_REQUEST,
 } from "../types";
 
 const INITIAL_STATE = {
@@ -20,6 +22,7 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state };
     case GET_SUBJECTS_SUCCESS:
       return { ...state, data: action.data };
+
     default:
       return state;
   }

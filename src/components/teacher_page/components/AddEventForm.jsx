@@ -138,12 +138,6 @@ const formTheme = createMuiTheme({
       },
     },
 
-    MuiTypography: {
-      subtitle1: {
-        color: "white",
-      },
-    },
-
     MuiPickersClockNumber: {
       clockNumber: {
         color: "white",

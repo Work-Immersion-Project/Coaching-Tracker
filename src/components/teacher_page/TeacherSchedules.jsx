@@ -27,6 +27,13 @@ const formTheme = createMuiTheme({
         backgroundColor: "#222222"
       }
     },
+
+    MuiTypography: {
+      h6: {
+        color: "white",
+      },
+    },
+
     DayScaleEmptyCell: {
       emptyCell: {
         backgroundColor: "#222222"
@@ -53,7 +60,14 @@ const formTheme = createMuiTheme({
       },
       highlightedText: {
         color: "#84DCC6"
-      }
+      },
+      otherMonth: {
+        color : "rgba(244, 244, 244, 0.38)",
+      },
+      today: {
+        color: "#222222",
+        background: "#84DCC6"
+      },
     },
 
     MuiIconButton: {
@@ -102,6 +116,20 @@ const formTheme = createMuiTheme({
       },
     },
 
+    MuiTableCell: {
+      head: {
+        color: "#84DCC6",
+      },
+      body: {
+        color: "white",
+      },
+    },
+
+    MuiMenuItem: {
+      root: {
+        color: "#84DCC6"
+      }
+    }
   }
 });
 

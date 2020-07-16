@@ -203,6 +203,12 @@ const formTheme = createMuiTheme({
         color: "#000000",
       },
     },
+    MuiPaper: {
+      root: {
+        backgroundColor: "#222222",
+        color: "white"
+      }
+    },
   },
 });
 

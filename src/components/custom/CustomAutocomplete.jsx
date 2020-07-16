@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { CircularProgress, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AutoComplete from "@material-ui/lab/Autocomplete";
-
+import renderHelperFormText from "../helpers/renderHelperFormText";
 const useStyles = makeStyles(() => ({
   root: {
     width: "100%",
@@ -56,6 +56,7 @@ const CustomAutoComplete = ({
           />
         )}
       />
+       {renderHelperFormText({ touched, error })}
     </>
   );
 };

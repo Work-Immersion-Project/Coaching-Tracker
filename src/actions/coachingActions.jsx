@@ -10,10 +10,7 @@ import {
   ADD_COACHING_SCHEDULE_SUCCESS,
   REMOVE_COACHING_SCHEDULE_REQUEST,
   REMOVE_COACHING_SCHEDULE_SUCCESS,
-  GET_STUDENT_COACHING_SCHEDULES_REQUEST,
-  GET_STUDENT_COACHING_SCHEDULES_SUCCESS,
-  GET_TEACHER_COACHING_SCHEDULES_REQUEST,
-  GET_TEACHER_COACHING_SCHEDULES_SUCCESS,
+ 
 } from "../types";
 import {
   add,
@@ -123,14 +120,11 @@ export const addCoachingSchedule = (coachingDetails) => async (
   getState
 ) => {
   const { gapiCalendar } = getState().gapi;
-  const { startDate, startTime, endDate, endTime, title } = coachingDetails;
-  const studentAttendees = getState().coaching.selectedStudentAttendees.map(
-    (attendee) => {
-      return {
-        email: attendee.email,
-      };
-    }
-  );
+  const { startDate, startTime, endDate, endTime, title, studentAttendees } = coachingDetails;
+  const convertedStudentAttendees = studentAttendees.map((student) => {return {
+    email: student.email,
+    fullName: student.metadata.fullName
+  }});
 
   const randomRequestId =
     Math.random().toString(36).substring(2, 15) +
@@ -167,7 +161,7 @@ export const addCoachingSchedule = (coachingDetails) => async (
       dateTime: adjustedEndingDate,
     },
     sendNotifications: true,
-    attendees: studentAttendees,
+    attendees: convertedStudentAttendees,
     conferenceDataVersion: 1,
     reminders: {
       useDefault: "useDefault",
@@ -202,7 +196,7 @@ export const addCoachingSchedule = (coachingDetails) => async (
       endDate: adjustedEndingDate,
       eventId: eventId,
       meetingLink: googleMeetsLink,
-      studentAttendees: studentAttendees.map((student) => student.email),
+      studentAttendees: convertedStudentAttendees,
       status: "pending",
     };
     const fieldValue = firebase.firestore.FieldValue;
@@ -276,7 +270,7 @@ export const removeCoachingSchedule = (coachingId) => async (
 
       //Iterate students
       for (const student of studentAttendees) {
-        const studentRef = studentCollection.doc(student);
+        const studentRef = studentCollection.doc(student.email);
         const studentCoachingSessionRef = studentRef
           .collection("coachingSessions")
           .doc(coachingId);

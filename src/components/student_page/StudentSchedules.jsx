@@ -22,12 +22,12 @@ const useStyles = makeStyles((theme) => ({
 
 const StudentSchedules = (props) => {
   const classes = useStyles();
-
   const renderContent = () => {
     if (props.coachingSchedules) {
       return (
         <Paper className={classes.scheduler}>
           <CustomScheduler
+            accessType="student"
             className={classes.scheduler}
             calendarEvents={props.coachingSchedules}
           />

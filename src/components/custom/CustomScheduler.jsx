@@ -74,7 +74,7 @@ const MonthTableCell = withStyles({})(({ onCellClick, ...restProps }) => {
 });
 
 const AppointmentTooltipHeader = withStyles({})(
-  ({ children, appointmentData, classes, ...restProps }) => {
+  ({ children, appointmentData, classes, accessType, ...restProps }) => {
     const dispatch = useDispatch();
 
     const onDialogClose = () => {
@@ -86,6 +86,8 @@ const AppointmentTooltipHeader = withStyles({})(
       restProps.onHide();
       dispatch(removeCoachingSchedule(appointmentData.eventId));
     };
+
+
 
     const handleOnDeleteButton = () => {
       dispatch(
@@ -105,9 +107,9 @@ const AppointmentTooltipHeader = withStyles({})(
         appointmentData={appointmentData}
       >
         <Grid container justify="flex-end">
-          <IconButton onClick={handleOnDeleteButton}>
+          {accessType === "student" ? null :   <IconButton onClick={handleOnDeleteButton}>
             <DeleteIcon />
-          </IconButton>
+          </IconButton>}
         </Grid>
       </AppointmentTooltip.Header>
     );
@@ -156,41 +158,8 @@ const AppointmentTooltipContent = withStyles({
   );
 });
 
-// const AppointmentContent = withStyles(appointmentStyles)(
-//   ({ classes, data, formatDate, ...restProps }) => {
-//     return (
-//       <Appointments.AppointmentContent
-//         {...restProps}
-//         className={classNames({
-//           [classes.pendingCell]: data.status === "pending",
-//           [classes.finishedCell]: data.status === "finished",
-//           [classes.overDueCell]: data.status === "overdue",
-//         })}
-//         formatDate={formatDate}
-//         data={data}
-//       >
-//         <Grid container alignItems="center">
-//           <Typography>{data.title}</Typography>
-//           <Typography>
-//             {formatDate(data.startDate.toString(), {
-//               hour: "numeric",
-//               minute: "numeric",
-//             })}
-//           </Typography>
-//           <Typography>{" - "}</Typography>
-//           <Typography>
-//             {formatDate(data.endDate.toString(), {
-//               hour: "numeric",
-//               minute: "numeric",
-//             })}
-//           </Typography>
-//         </Grid>
-//       </Appointments.AppointmentContent>
-//     );
-//   }
-// );
 
-const CustomScheduler = ({ coachingSchedules, openAddEventDrawer }) => {
+const CustomScheduler = ({ coachingSchedules, openAddEventDrawer, accessType }) => {
   const today = new Date();
   const weekTableCell = connectProps(WeekTableCell, () => {
     return {
@@ -209,6 +178,10 @@ const CustomScheduler = ({ coachingSchedules, openAddEventDrawer }) => {
       onCellClick: openAddEventDrawer,
     };
   });
+
+  const appointmentHeader = connectProps(AppointmentTooltipHeader, () => {
+   return { accessType}
+  })
 
   const statuses = [
     {
@@ -268,7 +241,7 @@ const CustomScheduler = ({ coachingSchedules, openAddEventDrawer }) => {
       <Resources data={resources} mainResourceName="status" />
       <AppointmentTooltip
         contentComponent={AppointmentTooltipContent}
-        headerComponent={AppointmentTooltipHeader}
+        headerComponent={appointmentHeader}
       />
     </Scheduler>
   );

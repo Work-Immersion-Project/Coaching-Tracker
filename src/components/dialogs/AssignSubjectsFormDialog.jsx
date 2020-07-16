@@ -39,7 +39,6 @@ const AssignSubjectsFormDialog = (props) => {
     handleSubmit,
     pristined,
     subjectFields,
-    subjectFieldsValues,
     getSubjectFields,
     currentSubjects,
   } = props;
@@ -49,7 +48,6 @@ const AssignSubjectsFormDialog = (props) => {
     getSubjectFields();
   }, []);
 
-  console.log({ currentSubjects, subjectFields });
 
   return (
     <Dialog open={open} onClose={onDialogClose}>

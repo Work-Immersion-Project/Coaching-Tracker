@@ -27,7 +27,8 @@ const TeacherSchedules = (props) => {
     if (props.coachingSchedules) {
       return (
         <Paper className={classes.scheduler}>
-          <CustomScheduler
+          <CustomScheduler        
+            accessType="teacher"
             className={classes.scheduler}
             calendarEvents={props.calendarEvents}
           />

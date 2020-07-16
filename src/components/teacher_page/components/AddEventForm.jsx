@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Field, reduxForm } from "redux-form";
+import { Field, reduxForm, FieldArray } from "redux-form";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { makeStyles, styled } from "@material-ui/core/styles";
@@ -22,11 +22,13 @@ import {
   Divider,
   CircularProgress,
 } from "@material-ui/core";
+import _ from "lodash";
 import AddEventStudentList from "./AddEventStudentList";
 import AutoComplete from "@material-ui/lab/Autocomplete";
 import CustomDatePicker from "../../custom/CustomDatePicker";
 import CustomTimePicker from "../../custom/CustomTimePicker";
 import CustomMaterialTextField from "../../custom/CustomMaterialTextField";
+import CustomAutoComplete from "../../custom/CustomAutocomplete";
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -43,6 +45,7 @@ const useStyles = makeStyles(() => ({
     color: "white",
     borderColor: "white",
   },
+
 }));
 
 const validateDates = (values) => {
@@ -57,10 +60,15 @@ const validateDates = (values) => {
   ];
 
   requiredFields.forEach((field) => {
+    console.log(typeof values.studentAttendees);
     if (!values[field]) {
       errors[field] = "Required!";
     }
   });
+
+  if(!values.studentAttendees ){
+    errors.studentAttendees = "Required!";
+  } 
 
   if (
     values.endTime &&
@@ -120,6 +128,59 @@ const formTheme = createMuiTheme({
         color: "#84DCC6",
       },
     },
+
+    MuiInputLabel: { 
+      root: { 
+        color: "white",
+        "&$focused": { 
+          color: "#84DCC6"
+        }
+      },
+    },
+
+    MuiInput: { 
+      root: { 
+        color: "white",
+      },  
+      underline: {
+        '&:before': {
+            borderBottom: '1px solid rgba(132, 220, 198, 1)'
+        },
+        '&:after': {
+            borderBottom: `2px solid rgba(132, 220, 198, 1)`
+        },
+        '&:hover:not($disabled):not($focused):not($error):before': {
+          borderBottom: `2px solid rgba(132, 220, 198, 1)`
+      }
+      }
+    },
+
+    MuiIconButton: { 
+      root: { 
+        color: "#84DCC6",
+      },
+    },
+
+    MuiFormHelperText: { 
+      root: { 
+        color: "#84DCC6",
+      },
+    },
+
+    MuiButton: { 
+      root: { 
+        backgroundColor: "#84DCC6",
+        "&:hover": {
+          backgroundColor: "#52aa95",
+          "@media (hover: none)": {
+            backgroundColor: "#84DCC6"
+          }
+        }
+      },
+      text: { 
+        color: "#000000",
+      },
+    },
   },
 });
 
@@ -136,22 +197,17 @@ const StyledAddTitle = styled(TextField)({
 });
 
 const AddEventForm = (props) => {
-  const [isOpen, setOpen] = useState(false);
-  const [addStudentFieldValue, setAddStudentFieldValue] = useState("");
+
   const { handleSubmit, reset, pristine, submitting } = props;
   const classes = useStyles();
-  const loading = props.students === null && isOpen;
+
 
   useEffect(() => {
-    if (isOpen) {
-      props.getStudents();
-    }
-  }, [isOpen, props.student]);
 
-  const handleOnStudentClick = (student) => {
-    setAddStudentFieldValue("");
-    props.addCoachingAttendee(student);
-  };
+      props.getStudents();
+    
+  }, []);
+
 
   const onDialogClose = () => {
     props.hideModal();
@@ -181,8 +237,6 @@ const AddEventForm = (props) => {
           name="title"
           inputComponent={StyledAddTitle}
           component={CustomMaterialTextField}
-          InputLabelProps={{ classes: { root: classes.fontColor } }}
-          InputProps={{ classes: { notchedOutline: classes.fontColor } }}
         />
 
         <Divider />
@@ -214,59 +268,19 @@ const AddEventForm = (props) => {
           component={CustomTimePicker}
         />
         <Divider />
-        <AutoComplete
-          className={classes.addStudentsField}
-          onOpen={() => {
-            setOpen(true);
-          }}
-          onClose={(_, reason) => {
-            if (reason === "select-option") {
-              setAddStudentFieldValue("");
-            }
-            setOpen(false);
-          }}
-          inputValue={addStudentFieldValue}
-          onInputChange={(_, input, reason) => {
-            if (reason === "input") {
-              setAddStudentFieldValue(input);
-            }
-          }}
-          disableClearable
-          loading={loading}
-          options={props.students ? props.students : []}
-          // options={
-          //   props.students
-          //     ? props.students.filter(
-          //         (student) =>
-          //           props.addedStudents.filter(
-          //             (addedStudent) => student.email === addedStudent.email
-          //           ).length === 0
-          //       )
-          //     : []
-          // }
-          onChange={(_, value, reason) => {
-            if (reason === "select-option") {
-              handleOnStudentClick(value);
-            }
-          }}
-          getOptionLabel={(option) => option.email}
-          noOptionsText="No Students Found"
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Add Students"
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <>
-                    {loading ? <CircularProgress /> : null}
-                    {params.InputProps.endAdornment}
-                  </>
-                ),
-              }}
-            />
-          )}
-        />
+        <FieldArray
+                name="studentAttendees"
+                multiple={true}
+                getOptionLabel={(option) => option.email}
+                component={CustomAutoComplete}
+                inputComponent={TextField}
+                options={
+                  props.students
+                    ? props.students
+                    : []
+                }
+              />
+       
         <AddEventStudentList className={classes.addedStudentsList} />
         <Divider />
         <Button

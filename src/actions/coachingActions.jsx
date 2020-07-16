@@ -24,7 +24,7 @@ import {
   sub,
 } from "date-fns";
 import { showNotification, showModal, hideModal } from "../actions";
-import { normalizeDate } from "../utils";
+import { normalizeDate, isDayBehind } from "../utils";
 import firebase from "firebase";
 import { db } from "../firebase";
 import { result } from "lodash";
@@ -59,8 +59,9 @@ export const updateCoachingScheduleStatus = (eventId, status) => async (
   getState
 ) => {
   const coachingSessionRef = coachingLogsCollection.doc(eventId);
+  dispatch(hideModal());
   dispatch(updateCoachingScheduleStatusRequest());
-  dispatch(showModal("LOADING_MODAL"));
+
   await db.runTransaction(async (transaction) => {
     const coachingDoc = await transaction
       .get(coachingSessionRef)
@@ -93,10 +94,8 @@ export const updateCoachingScheduleStatus = (eventId, status) => async (
     transaction.update(coachingSessionRef, { status });
   });
 
-  dispatch(hideModal());
+  dispatch(showNotification("SUCCESS", "Schedule Updated Successfully!"));
   dispatch(updateCoachingScheduleStatusSuccess());
-  dispatch(showNotification("SUCCESS", "Coaching Schedule Accepted!"));
-  dispatch(getCoachingSchedules());
 };
 
 export const updateCoachingScheduleStatusRequest = () => {
@@ -109,12 +108,15 @@ export const updateCoachingScheduleStatusSuccess = () => {
 
 export const getCoachingSchedules = () => async (dispatch, getState) => {
   const { email, type } = getState().auth.data.user;
+
   dispatch(getCoachingSchedulesRequest());
-  if (type === "student") {
-    await dispatch(getStudentCoachingSchedules(email));
-  } else if (type === "teacher") {
-    await dispatch(getTeacherCoachingSchedule(email));
-  }
+  coachingLogsCollection.onSnapshot(async () => {
+    if (type === "student") {
+      await dispatch(getStudentCoachingSchedules(email));
+    } else if (type === "teacher") {
+      await dispatch(getTeacherCoachingSchedule(email));
+    }
+  });
 };
 
 const getStudentCoachingSchedules = (studentEmail) => async (dispatch) => {
@@ -155,6 +157,19 @@ const getTeacherCoachingSchedule = (teacherEmail) => async (dispatch) => {
     );
     dispatch(getCoachingSchedulesSuccess(coachingSessions));
   });
+};
+
+const updateOverdueCoachingSchedules = () => async (dispatch) => {
+  const coachingDocs = await coachingLogsCollection
+    .get()
+    .then((snapshot) => snapshot.docs.map((doc) => doc.data()));
+  for (const coachingData of coachingDocs) {
+    if (isDayBehind(new Date(coachingData.endDate))) {
+      await dispatch(
+        updateCoachingScheduleStatus(coachingData.eventId, "overdue")
+      );
+    }
+  }
 };
 
 const getCoachingSchedulesRequest = () => {

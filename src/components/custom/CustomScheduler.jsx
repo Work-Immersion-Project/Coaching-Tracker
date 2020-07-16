@@ -199,12 +199,14 @@ const AppointmentTooltipContent = withStyles({
     ...restProps
   }) => {
     const renderContent = () => {
-      if (appointmentData.status === "denied") {
+      if (
+        appointmentData.status === "denied" ||
+        appointmentData.status === "overdue" ||
+        appointmentData.status === "cancelled"
+      ) {
         return null;
       }
-      if (appointmentData.status === "cancelled") {
-        return null;
-      }
+
       if (
         appointmentData.status === "waiting_for_response" &&
         accessType === "student"
@@ -257,7 +259,7 @@ const AppointmentTooltipContent = withStyles({
           justify="center"
         >
           <Button
-            disabled={meetingAvailable || dayBehind}
+            disabled={!meetingAvailable || dayBehind}
             className={classes.meetingButton}
             onClick={() => {
               window.open(appointmentData.meetingLink, "_blank");
@@ -272,7 +274,7 @@ const AppointmentTooltipContent = withStyles({
             align="center"
             variant="subtitle2"
           >
-            {meetingAvailable || dayBehind ? "" : appointmentData.meetingLink}
+            {!meetingAvailable || dayBehind ? "" : appointmentData.meetingLink}
           </Typography>
           <Button
             className={classes.denyMeetingButton}

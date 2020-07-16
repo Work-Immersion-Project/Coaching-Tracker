@@ -8,7 +8,7 @@ import StudentTeacherList from "./StudentTeacherList";
 import CustomAppbar from "../custom/CustomAppbar";
 import { getCoachingSchedules } from "../../actions";
 import { useDispatch } from "react-redux";
-// import AddEventDrawer from "./components/AddEventDrawer";
+import RequestEventDrawer from "./components/RequestEventDrawer";
 
 const useStyles = makeStyles({
   container: {
@@ -49,7 +49,7 @@ const StudentPage = () => {
           <StudentTeacherList />
         </Route>
       </div>
-      {/* <AddEventDrawer /> */}
+      <RequestEventDrawer />
     </div>
   );
 };

@@ -162,6 +162,7 @@ export const assignStudentSubjects = (values) => async (dispatch) => {
 
       transaction.set(enrolledStudentRef, {
         email: values.email,
+        fullName: values.metadata.fullName,
       });
     });
   });

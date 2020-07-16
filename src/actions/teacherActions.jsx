@@ -1,11 +1,8 @@
 import {
   GET_TEACHER_REQUEST,
-  GET_TEACHER_ERROR,
   GET_TEACHER_SUCCESS,
-  GET_TEACHERS_ERROR,
   GET_TEACHERS_SUCCESS,
   GET_TEACHERS_REQUEST,
-  ADD_TEACHER_ERROR,
   ADD_TEACHER_REQUEST,
   ADD_TEACHER_SUCCESS,
   ASSIGN_SUBJECT_TEACHER_REQUEST,
@@ -15,6 +12,7 @@ import {
 } from "../types";
 import { hideModal, showModal, showNotification } from ".";
 import { db } from "../firebase";
+import _ from "lodash";
 import firebase from "firebase";
 
 const subjectsCollection = db.collection("subjects");
@@ -48,6 +46,32 @@ export const getTeachers = () => async (dispatch) => {
       getTeachersSuccess(snapshot.docs.map((document) => document.data()))
     );
   });
+};
+
+export const getTeachersBySubject = () => async (dispatch, getState) => {
+  dispatch(getTeacherRequest());
+  const teacherDocuments = getState().auth.data.user.enrolledSubjects.map(
+    async (subject) =>
+      await subjectsCollection
+        .doc(subject)
+        .collection("teachers")
+        .get()
+        .then((snapshot) => snapshot.docs.map((document) => document.data()))
+  );
+
+  const teachers = await Promise.all(teacherDocuments);
+  const filteredTeachers = _.mapKeys(
+    _.flatten(teachers),
+    (value) => value.email
+  );
+
+  dispatch(
+    getTeachersSuccess(
+      _.map(filteredTeachers, (value, _) => {
+        return value;
+      })
+    )
+  );
 };
 
 export const getTeachersRequest = () => {
@@ -144,6 +168,7 @@ export const assignSubjectTeacher = (values) => async (dispatch) => {
 
       transaction.set(teacherCollectionRef, {
         email: values.email,
+        fullName: values.metadata.fullName,
       });
     });
   });
@@ -190,7 +215,7 @@ export const removeSubjectTeacher = (
     const teachersRef = subjectRef.collection("teachers").doc(email);
     transaction.delete(teachersRef);
     transaction.update(subjectRef, {
-      totalStudentsEnrolled: fieldValue.increment(-1),
+      totalTeachers: fieldValue.increment(-1),
     });
   });
 

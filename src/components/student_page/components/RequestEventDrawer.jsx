@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Drawer, Grid, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
-import AddEventForm from "./AddEventForm";
+import RequestEventForm from "./RequestEventForm";
 import { closeAddEventDrawer, clearCoachingAttendees } from "../../../actions";
 
 const drawerWidth = 300;
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddEventDrawer = ({
+const RequestEventDrawer = ({
   addEventDrawerData,
   closeAddEventDrawer,
   clearCoachingAttendees,
@@ -53,9 +53,9 @@ const AddEventDrawer = ({
       return (
         <Grid container className={classes.content}>
           <Typography variant="h6" align="right">
-            ADD EVENT
+            REQUEST EVENT
           </Typography>
-          <AddEventForm initialValues={initialValues} />
+          <RequestEventForm initialValues={initialValues} />
         </Grid>
       );
     }
@@ -95,4 +95,4 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   closeAddEventDrawer,
   clearCoachingAttendees,
-})(AddEventDrawer);
+})(RequestEventDrawer);

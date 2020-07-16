@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { Grid, Paper, CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CustomScheduler from "../custom/CustomScheduler";
-import StudentRequest from "./components/StudentRequest";
 
 const useStyles = makeStyles((theme) => ({
   content: {

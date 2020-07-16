@@ -10,7 +10,8 @@ import {
   ADD_COACHING_SCHEDULE_SUCCESS,
   REMOVE_COACHING_SCHEDULE_REQUEST,
   REMOVE_COACHING_SCHEDULE_SUCCESS,
- 
+  REQUEST_COACHING_SCHEDULE_REQUEST,
+  REQUEST_COACHING_SCHEDULE_SUCCESS,
 } from "../types";
 import {
   add,
@@ -25,6 +26,7 @@ import { normalizeDate } from "../utils";
 import firebase from "firebase";
 import { db } from "../firebase";
 import { result } from "lodash";
+import { setError } from "./errorActions";
 
 const coachingLogsCollection = db.collection("coachingLogs");
 const teacherCollection = db.collection("teachers");
@@ -67,7 +69,15 @@ const getStudentCoachingSchedules = (studentEmail) => async (dispatch) => {
     // Fetch all coachingSessions using the ID
     const coachingSessions = await Promise.all(
       coachingSessionIds.map((id) => coachingLogsCollection.doc(id).get())
-    ).then((results) => results.map((result) => result.data()));
+    ).then((results) =>
+      results.map((result) => {
+        const data = result.data();
+        return {
+          ...data,
+          students: data.studentAttendees.map((student) => student.email),
+        };
+      })
+    );
     dispatch(getCoachingSchedulesSuccess(coachingSessions));
   });
 };
@@ -79,7 +89,15 @@ const getTeacherCoachingSchedule = (teacherEmail) => async (dispatch) => {
     // Fetch all coachingSessions using the ID
     const coachingSessions = await Promise.all(
       coachingSessionIds.map((id) => coachingLogsCollection.doc(id).get())
-    ).then((results) => results.map((result) => result.data()));
+    ).then((results) =>
+      results.map((result) => {
+        const data = result.data();
+        return {
+          ...data,
+          students: data.studentAttendees.map((student) => student.email),
+        };
+      })
+    );
     dispatch(getCoachingSchedulesSuccess(coachingSessions));
   });
 };
@@ -120,11 +138,21 @@ export const addCoachingSchedule = (coachingDetails) => async (
   getState
 ) => {
   const { gapiCalendar } = getState().gapi;
-  const { startDate, startTime, endDate, endTime, title, studentAttendees } = coachingDetails;
-  const convertedStudentAttendees = studentAttendees.map((student) => {return {
-    email: student.email,
-    fullName: student.metadata.fullName
-  }});
+  const { email, metadata } = getState().auth.data.user;
+  const {
+    startDate,
+    startTime,
+    endDate,
+    endTime,
+    title,
+    studentAttendees,
+  } = coachingDetails;
+  const convertedStudentAttendees = studentAttendees.map((student) => {
+    return {
+      email: student.email,
+      fullName: student.metadata.fullName,
+    };
+  });
 
   const randomRequestId =
     Math.random().toString(36).substring(2, 15) +
@@ -150,7 +178,6 @@ export const addCoachingSchedule = (coachingDetails) => async (
     add(convertedEndDate, convertedEndTime)
   );
 
-  console.log({ adjustedStartingDate, adjustedEndingDate });
   const event = {
     summary: title,
     description: title,
@@ -185,11 +212,13 @@ export const addCoachingSchedule = (coachingDetails) => async (
       });
     const googleMeetsLink = results.conferenceData.entryPoints[0].uri;
     const eventId = results.id;
-    const creatorEmail = results.creator.email;
     const coachingSessionRef = coachingLogsCollection.doc(eventId);
-    const teacherRef = teacherCollection.doc(creatorEmail);
+    const teacherRef = teacherCollection.doc(email);
     const coachingSessionLogData = {
-      teacher: creatorEmail,
+      teacher: {
+        email,
+        fullName: metadata.fullName,
+      },
       title: title,
       description: title,
       startDate: adjustedStartingDate,
@@ -197,6 +226,7 @@ export const addCoachingSchedule = (coachingDetails) => async (
       eventId: eventId,
       meetingLink: googleMeetsLink,
       studentAttendees: convertedStudentAttendees,
+      createdAt: new Date(),
       status: "pending",
     };
     const fieldValue = firebase.firestore.FieldValue;
@@ -316,4 +346,141 @@ export const removeCoachingScheduleRequest = () => {
 
 export const removeCoachingScheduleSuccess = () => {
   return { type: REMOVE_COACHING_SCHEDULE_SUCCESS };
+};
+
+export const requestCoachingSchedule = (coachingDetails) => async (
+  dispatch,
+  getState
+) => {
+  const { gapiCalendar } = getState().gapi;
+  const { email, metadata } = getState().auth.data.user;
+  dispatch(requestCoachingScheduleRequest());
+  const {
+    startDate,
+    startTime,
+    endDate,
+    endTime,
+    title,
+    teacherAttendee,
+  } = coachingDetails;
+
+  const randomRequestId =
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15);
+
+  const convertedEndTime = {
+    hours: getHours(endTime),
+    minutes: getMinutes(endTime),
+  };
+
+  const convertedStartTime = {
+    hours: getHours(startTime),
+    minutes: getMinutes(startTime),
+  };
+
+  const convertedStartDate = normalizeDate(startDate);
+  const convertedEndDate = normalizeDate(endDate);
+
+  const adjustedStartingDate = formatRFC3339(
+    add(convertedStartDate, convertedStartTime)
+  );
+
+  const adjustedEndingDate = formatRFC3339(
+    add(convertedEndDate, convertedEndTime)
+  );
+  const event = {
+    summary: title,
+    description: title,
+    start: {
+      dateTime: adjustedStartingDate,
+    },
+    end: {
+      dateTime: adjustedEndingDate,
+    },
+    sendNotifications: true,
+    attendees: [teacherAttendee],
+    conferenceDataVersion: 1,
+    reminders: {
+      useDefault: "useDefault",
+    },
+    conferenceData: {
+      createRequest: { requestId: randomRequestId },
+    },
+  };
+  dispatch(hideModal());
+  dispatch(showModal("LOADING_MODAL"));
+  try {
+    const results = await gapiCalendar.events
+      .insert({
+        calendarId: "primary",
+        resource: event,
+      })
+      .then((event) => {
+        return event.result;
+      });
+    const googleMeetsLink = results.conferenceData.entryPoints[0].uri;
+    const eventId = results.id;
+    const creatorEmail = results.creator.email;
+    const coachingSessionRef = coachingLogsCollection.doc(eventId);
+    const studentRef = studentCollection.doc(creatorEmail);
+    const studentCoachingSessionRef = studentRef
+      .collection("coachingSessions")
+      .doc(eventId);
+    const teacherRef = teacherCollection.doc(teacherAttendee.email);
+    const teacherCoachingSessionRef = teacherRef
+      .collection("coachingSessions")
+      .doc(eventId);
+
+    const coachingSessionLogData = {
+      teacher: teacherAttendee,
+      title: title,
+      description: title,
+      startDate: adjustedStartingDate,
+      endDate: adjustedEndingDate,
+      eventId: eventId,
+      meetingLink: googleMeetsLink,
+      createdAt: new Date(),
+      studentAttendees: [
+        {
+          email,
+          fullName: metadata.fullName,
+        },
+      ],
+      status: "waiting_for_response",
+    };
+
+    const fieldValue = firebase.firestore.FieldValue;
+    await db
+      .runTransaction(async (transaction) => {
+        transaction.set(coachingSessionRef, coachingSessionLogData);
+        transaction.update(teacherRef, {
+          "coachingStats.requests": fieldValue.increment(1),
+        });
+
+        transaction.set(teacherCoachingSessionRef, {
+          eventId,
+        });
+        transaction.set(studentCoachingSessionRef, { eventId });
+        transaction.update(studentRef, {
+          "coachingStats.requests": fieldValue.increment(1),
+        });
+      })
+      .catch((error) => {
+        throw error;
+      });
+    dispatch(hideModal());
+    dispatch(requestCoachingScheduleSuccess());
+    dispatch(showNotification("SUCCESS", "Coaching Schedule Requested!"));
+  } catch (error) {
+    dispatch(setError(error));
+  }
+};
+
+const requestCoachingScheduleRequest = () => {
+  return { type: REQUEST_COACHING_SCHEDULE_REQUEST };
+};
+const requestCoachingScheduleSuccess = () => {
+  return {
+    type: REQUEST_COACHING_SCHEDULE_SUCCESS,
+  };
 };

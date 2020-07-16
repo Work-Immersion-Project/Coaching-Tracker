@@ -30,7 +30,7 @@ const ManageStudentsPage = (props) => {
     props.hideModal();
   };
 
-  const onSubmit = (email, currentSubjects, values) => {
+  const onSubmit = ({ email, metadata }, currentSubjects, values) => {
     props.hideModal();
     props.assignStudentSubjects({
       ...values,
@@ -41,6 +41,7 @@ const ManageStudentsPage = (props) => {
         }),
       ],
       email,
+      metadata,
     });
   };
 
@@ -63,7 +64,7 @@ const ManageStudentsPage = (props) => {
       title: `Assign Subjects to ${rowData.metadata.fullName}`,
       onNegativeClick: onDialogClose,
       onPositiveClick: (values) =>
-        onSubmit(rowData.email, rowData.enrolledSubjects, values),
+        onSubmit(rowData, rowData.enrolledSubjects, values),
     });
   };
 

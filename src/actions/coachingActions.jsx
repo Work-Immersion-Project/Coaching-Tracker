@@ -10,7 +10,8 @@ import {
   ADD_COACHING_SCHEDULE_SUCCESS,
   REMOVE_COACHING_SCHEDULE_REQUEST,
   REMOVE_COACHING_SCHEDULE_SUCCESS,
-  REQUEST_COACHING_SCHEDULE_REQUEST,
+  UPDATE_COACHING_SCHEDULE_STATUS_REQUEST,
+  UPDATE_COACHING_SCHEDULE_STATUS_SUCCESS, REQUEST_COACHING_SCHEDULE_REQUEST,
   REQUEST_COACHING_SCHEDULE_SUCCESS,
 } from "../types";
 import {
@@ -24,7 +25,7 @@ import {
 import { showNotification, showModal, hideModal } from "../actions";
 import { normalizeDate } from "../utils";
 import firebase from "firebase";
-import { db } from "../firebase";
+import {db} from "../firebase"
 import { result } from "lodash";
 import { setError } from "./errorActions";
 

@@ -10,3 +10,9 @@ export const normalizeDate = (date) =>
     hours: getHours(date),
     minutes: getMinutes(date),
   });
+
+export const isDayBehind = (date) => new Date() > date;
+export const isMeetingAvailable = (startDate, endDate) => {
+  const currentDate = new Date();
+  return currentDate >= startDate && currentDate <= endDate;
+};

@@ -70,7 +70,6 @@ const validateDates = (values) => {
   ];
 
   requiredFields.forEach((field) => {
-    console.log(typeof values.studentAttendees);
     if (!values[field]) {
       errors[field] = "Required!";
     }

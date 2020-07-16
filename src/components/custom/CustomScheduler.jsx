@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 import { connectProps } from "@devexpress/dx-react-core";
 import { Grid, Typography, Button, IconButton } from "@material-ui/core";
 import DuoIcon from "@material-ui/icons/Duo";
-import DeleteIcon from "@material-ui/icons/Delete";
 import {
   Scheduler,
   DayView,
@@ -17,45 +16,96 @@ import {
   AppointmentTooltip,
   Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { fade } from "@material-ui/core/styles/colorManipulator";
 import { connect, useDispatch } from "react-redux";
 import {
   openAddEventDrawer,
   removeCoachingSchedule,
   showModal,
   hideModal,
+  updateCoachingScheduleStatus,
 } from "../../actions";
+import { isDayBehind, isMeetingAvailable } from "../../utils";
+import classNames from "clsx";
 
 import _ from "lodash";
-import CheckIcon from "@material-ui/icons/Check";
 
-const WeekTableCell = withStyles({})(({ onCellClick, ...restProps }) => {
+const WeekTableCell = withStyles(({ palette }) => ({
+  dayBehindCell: {
+    backgroundColor: fade(palette.action.disabledBackground, 0.04),
+    "&:hover": {
+      backgroundColor: fade(palette.action.disabledBackground, 0.04),
+    },
+    "&:focus": {
+      backgroundColor: fade(palette.action.disabledBackground, 0.04),
+    },
+  },
+}))(({ classes, onCellClick, ...restProps }) => {
+  const isCellDisabled = isDayBehind(restProps.startDate);
   return (
     <WeekView.TimeTableCell
+      className={classNames({
+        [classes.dayBehindCell]: isCellDisabled,
+      })}
       onClick={() => {
-        onCellClick(restProps);
+        if (!isCellDisabled) {
+          onCellClick(restProps);
+        }
       }}
       {...restProps}
     />
   );
 });
 
-const DayTableCell = withStyles({})(({ onCellClick, ...restProps }) => {
+const DayTableCell = withStyles(({ palette }) => ({
+  dayBehindCell: {
+    backgroundColor: fade(palette.action.disabledBackground, 0.04),
+    "&:hover": {
+      backgroundColor: fade(palette.action.disabledBackground, 0.04),
+    },
+    "&:focus": {
+      backgroundColor: fade(palette.action.disabledBackground, 0.04),
+    },
+  },
+}))(({ classes, onCellClick, ...restProps }) => {
+  const isCellDisabled = isDayBehind(restProps.startDate);
   return (
     <DayView.TimeTableCell
+      className={classNames({
+        [classes.dayBehindCell]: isCellDisabled,
+      })}
       onClick={() => {
-        onCellClick(restProps);
+        if (!isCellDisabled) {
+          onCellClick(restProps);
+        }
       }}
       {...restProps}
     />
   );
 });
 
-const MonthTableCell = withStyles({})(({ onCellClick, ...restProps }) => {
+const MonthTableCell = withStyles(({ palette }) => ({
+  dayBehindCell: {
+    backgroundColor: fade(palette.action.disabledBackground, 0.04),
+    "&:hover": {
+      backgroundColor: fade(palette.action.disabledBackground, 0.04),
+    },
+    "&:focus": {
+      backgroundColor: fade(palette.action.disabledBackground, 0.04),
+    },
+  },
+}))(({ classes, onCellClick, ...restProps }) => {
+  const isCellDisabled = isDayBehind(restProps.startDate);
   return (
     <MonthView.TimeTableCell
+      className={classNames({
+        [classes.dayBehindCell]: isCellDisabled,
+      })}
       onClick={() => {
-        onCellClick(restProps);
+        if (!isCellDisabled) {
+          onCellClick(restProps);
+        }
       }}
       {...restProps}
     />
@@ -94,13 +144,6 @@ const AppointmentTooltipHeader = withStyles({
   return (
     <AppointmentTooltip.Header {...restProps} appointmentData={appointmentData}>
       <Grid container justify="flex-end" direction="column">
-        {accessType === "student" ? null : (
-          <Grid item container justify="flex-end">
-            <IconButton onClick={handleOnDeleteButton}>
-              <DeleteIcon />
-            </IconButton>
-          </Grid>
-        )}
         <Grid
           className={classes.teacherTitle}
           item
@@ -141,72 +184,135 @@ const AppointmentTooltipContent = withStyles({
     backgroundColor: "blue",
     color: "white",
   },
-})(({ children, appointmentData, accessType, classes, ...restProps }) => {
-  const renderContent = () => {
-    if (
-      appointmentData.status === "waiting_for_response" &&
-      accessType === "student"
-    ) {
-      return null;
-    } else if (
-      appointmentData.status === "waiting_for_response" &&
-      accessType === "teacher"
-    ) {
-      return (
-        <div className={classes.meetingButtonWrapper}>
-          <Button
-            className={classes.acceptMeetingButton}
-            onClick={() => {}}
-            variant="contained"
-            startIcon={<CheckIcon />}
+  denyMeetingButton: {
+    margin: "1em",
+    backgroundColor: "red",
+    color: "white",
+  },
+})(
+  ({
+    children,
+    appointmentData,
+    onUpdateStatusButtonPressed,
+    accessType,
+    classes,
+    ...restProps
+  }) => {
+    const renderContent = () => {
+      if (appointmentData.status === "denied") {
+        return null;
+      }
+      if (appointmentData.status === "cancelled") {
+        return null;
+      }
+      if (
+        appointmentData.status === "waiting_for_response" &&
+        accessType === "student"
+      ) {
+        return null;
+      } else if (
+        appointmentData.status === "waiting_for_response" &&
+        accessType === "teacher"
+      ) {
+        return (
+          <Grid
+            className={classes.meetingButtonWrapper}
+            container
+            direction="column"
+            justify="center"
           >
-            Accept Request
-          </Button>
-        </div>
+            <Button
+              className={classes.acceptMeetingButton}
+              onClick={() => {
+                onUpdateStatusButtonPressed(appointmentData.eventId, "pending");
+              }}
+              variant="contained"
+            >
+              Accept Request
+            </Button>
+            <Button
+              className={classes.denyMeetingButton}
+              onClick={() => {
+                onUpdateStatusButtonPressed(appointmentData.eventId, "denied");
+              }}
+              variant="contained"
+            >
+              Deny Request
+            </Button>
+          </Grid>
+        );
+      }
+
+      const dayBehind = isDayBehind(new Date(appointmentData.endDate));
+      const meetingAvailable = isMeetingAvailable(
+        new Date(appointmentData.startDate),
+        new Date(appointmentData.endDate)
       );
-    }
+
+      return (
+        <Grid
+          className={classes.meetingButtonWrapper}
+          container
+          direction="column"
+          justify="center"
+        >
+          <Button
+            disabled={meetingAvailable || dayBehind}
+            className={classes.meetingButton}
+            onClick={() => {
+              window.open(appointmentData.meetingLink, "_blank");
+            }}
+            variant="contained"
+            startIcon={<DuoIcon />}
+          >
+            Join Google Meet
+          </Button>
+          <Typography
+            display={meetingAvailable || dayBehind ? "none" : ""}
+            align="center"
+            variant="subtitle2"
+          >
+            {meetingAvailable || dayBehind ? "" : appointmentData.meetingLink}
+          </Typography>
+          <Button
+            className={classes.denyMeetingButton}
+            onClick={() => {
+              onUpdateStatusButtonPressed(appointmentData.eventId, "cancelled");
+            }}
+            variant="contained"
+          >
+            Cancel
+          </Button>
+        </Grid>
+      );
+    };
 
     return (
-      <div className={classes.meetingButtonWrapper}>
-        <Button
-          className={classes.meetingButton}
-          onClick={() => {
-            window.open(appointmentData.meetingLink, "_blank");
-          }}
-          variant="contained"
-          startIcon={<DuoIcon />}
-        >
-          Join Google Meet
-        </Button>
-        <Typography className={classes.meetingLink} component="p">
-          {appointmentData.meetingLink}
-        </Typography>
-      </div>
-    );
-  };
-
-  return (
-    <AppointmentTooltip.Content
-      {...restProps}
-      appointmentData={appointmentData}
-    >
-      <Grid
-        className={classes.container}
-        container
-        justify="center"
-        alignItems="center"
+      <AppointmentTooltip.Content
+        {...restProps}
+        appointmentData={appointmentData}
       >
-        {renderContent()}
-      </Grid>
-    </AppointmentTooltip.Content>
-  );
-});
+        <Grid
+          className={classes.container}
+          container
+          justify="center"
+          alignItems="center"
+        >
+          {renderContent()}
+        </Grid>
+      </AppointmentTooltip.Content>
+    );
+  }
+);
 
 const CustomScheduler = ({
   coachingSchedules,
   openAddEventDrawer,
   accessType,
   loggedInStudentEmail,
+  showModal,
+  hideModal,
+  updateCoachingScheduleStatus,
 }) => {
   const studentInstances = _.flatten(
     coachingSchedules.map((schedule) =>
@@ -221,6 +327,83 @@ const CustomScheduler = ({
     )
   );
   const today = new Date();
+
+  const statuses = [
+    {
+      text: "Pending",
+      id: "pending",
+      color: "#ffeb3b",
+    },
+    {
+      text: "Finished",
+      id: "finished",
+      color: "#2e7d32",
+    },
+    {
+      text: "Cancelled",
+      id: "cancelled",
+      color: "#b71c1c",
+    },
+    {
+      text: "Request Denied",
+      id: "denied",
+      color: "#b71c1c",
+    },
+    {
+      text: "Waiting For Response",
+      id: "waiting_for_response",
+      color: "#ffff6b",
+    },
+    {
+      text: "Overdue",
+      id: "overdue",
+      color: "#e65100",
+    },
+  ];
+
+  const resources = [
+    {
+      fieldName: "status",
+      title: "Status",
+      instances: statuses,
+    },
+    {
+      fieldName: "students",
+      title: "Students",
+      allowMultiple: true,
+      instances: studentInstances,
+    },
+  ];
+
+  const currentDate =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+
+  const onDialogClose = () => {
+    hideModal();
+  };
+  const onUpdateStatusButtonPressed = (eventId, status) => {
+    let title = "";
+    let content = "";
+    if (status === "pending") {
+      title = "Accept Schedule Request?";
+      content = "Are you sure that you are available at this date?";
+    } else if (status === "cancelled") {
+      title = "Cancel Schedule?";
+      content = "Are you sure that you want to cancel this session?";
+    } else if (status === "denied") {
+      title = "Deny Schedule Request?";
+      content = "Are you sure that you want to deny this session?";
+    }
+
+    showModal("CONFIRMATION_MODAL", {
+      onDialogClose: onDialogClose,
+      title,
+      content,
+      onNegativeClick: onDialogClose,
+      onPositiveClick: () => updateCoachingScheduleStatus(eventId, status),
+    });
+  };
+
   const weekTableCell = connectProps(WeekTableCell, () => {
     return {
       onCellClick: openAddEventDrawer,
@@ -244,48 +427,9 @@ const CustomScheduler = ({
   });
 
   const appointmentContent = connectProps(AppointmentTooltipContent, () => {
-    return { accessType };
+    return { accessType, onUpdateStatusButtonPressed };
   });
 
-  const statuses = [
-    {
-      text: "Pending",
-      id: "pending",
-      color: "yellow",
-    },
-    {
-      text: "Finished",
-      id: "finished",
-      color: "green",
-    },
-    {
-      text: "Waiting For Response",
-      id: "waiting_for_response",
-      color: "blue",
-    },
-    {
-      text: "Overdue",
-      id: "overdue",
-      color: "red",
-    },
-  ];
-
-  const resources = [
-    {
-      fieldName: "status",
-      title: "Status",
-      instances: statuses,
-    },
-    {
-      fieldName: "students",
-      title: "Students",
-      allowMultiple: true,
-      instances: studentInstances,
-    },
-  ];
-
-  const currentDate =
-    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
   return (
     <Scheduler
       height="auto"
@@ -303,6 +447,7 @@ const CustomScheduler = ({
       <DayView
         startDayHour={1}
         endDayHour={24}
+        d
         timeTableCellComponent={dayTableCell}
       />
       <WeekView
@@ -331,4 +476,7 @@ const mapStateToProps = (state) => {
 };
 export default connect(mapStateToProps, {
   openAddEventDrawer,
+  updateCoachingScheduleStatus,
+  showModal,
+  hideModal,
 })(CustomScheduler);

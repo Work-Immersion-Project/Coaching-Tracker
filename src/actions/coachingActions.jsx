@@ -12,6 +12,8 @@ import {
   REMOVE_COACHING_SCHEDULE_SUCCESS,
   REQUEST_COACHING_SCHEDULE_REQUEST,
   REQUEST_COACHING_SCHEDULE_SUCCESS,
+  UPDATE_COACHING_SCHEDULE_STATUS_REQUEST,
+  UPDATE_COACHING_SCHEDULE_STATUS_SUCCESS,
 } from "../types";
 import {
   add,
@@ -50,6 +52,59 @@ export const clearCoachingAttendees = () => {
   return {
     type: CLEAR_COACHING_ATTENDEES,
   };
+};
+
+export const updateCoachingScheduleStatus = (eventId, status) => async (
+  dispatch,
+  getState
+) => {
+  const coachingSessionRef = coachingLogsCollection.doc(eventId);
+  dispatch(updateCoachingScheduleStatusRequest());
+  dispatch(showModal("LOADING_MODAL"));
+  await db.runTransaction(async (transaction) => {
+    const coachingDoc = await transaction
+      .get(coachingSessionRef)
+      .then((doc) => doc.data());
+    const sessionStatus =
+      coachingDoc.status === "waiting_for_response"
+        ? "requests"
+        : coachingDoc.status;
+    const teacherRef = teacherCollection.doc(coachingDoc.teacher.email);
+    const teacherData = await transaction
+      .get(teacherRef)
+      .then((doc) => doc.data());
+
+    for (const student of coachingDoc.studentAttendees) {
+      const studentRef = studentCollection.doc(student.email);
+      const { coachingStats } = await transaction
+        .get(studentRef)
+        .then((doc) => doc.data());
+      coachingStats[sessionStatus]--;
+      coachingStats[status]++;
+      transaction.update(studentRef, { coachingStats });
+    }
+
+    teacherData.coachingStats[sessionStatus]--;
+    teacherData.coachingStats[status]++;
+
+    transaction.update(teacherRef, {
+      coachingStats: { ...teacherData.coachingStats },
+    });
+    transaction.update(coachingSessionRef, { status });
+  });
+
+  dispatch(hideModal());
+  dispatch(updateCoachingScheduleStatusSuccess());
+  dispatch(showNotification("SUCCESS", "Coaching Schedule Accepted!"));
+  dispatch(getCoachingSchedules());
+};
+
+export const updateCoachingScheduleStatusRequest = () => {
+  return { type: UPDATE_COACHING_SCHEDULE_STATUS_REQUEST };
+};
+
+export const updateCoachingScheduleStatusSuccess = () => {
+  return { type: UPDATE_COACHING_SCHEDULE_STATUS_SUCCESS };
 };
 
 export const getCoachingSchedules = () => async (dispatch, getState) => {
@@ -331,10 +386,7 @@ export const removeCoachingSchedule = (coachingId) => async (
     dispatch(showNotification("SUCCESS", "Coaching Schedule Removed!"));
     dispatch(removeCoachingScheduleSuccess());
   } catch (error) {
-    dispatch({
-      type: "REMOVE_COACHING_SCHEDULE_ERROR",
-      error: error,
-    });
+    dispatch(setError(error));
   }
 };
 

@@ -35,9 +35,13 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     padding: "1em",
     color: "#84DCC6",
+    align: "center"
   },
   timePicker: {
     margin: "1em",
+  },
+  title:{
+    marginLeft: "85px",
   },
 }));
 
@@ -59,7 +63,7 @@ const AddEventDrawer = ({
       };
       return (
         <Grid container className={classes.content}>
-          <Typography variant="h6" align="right">
+          <Typography variant="h6" className = {classes.title}>
             ADD EVENT
           </Typography>
           <AddEventForm initialValues={initialValues} />

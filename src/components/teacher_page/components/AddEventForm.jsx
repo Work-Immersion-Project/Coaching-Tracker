@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Field, reduxForm, FieldArray } from "redux-form";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import {
   getStudents,
@@ -44,6 +43,21 @@ const useStyles = makeStyles(() => ({
   fontColor: {
     color: "white",
     borderColor: "white",
+  },
+  
+  button: {
+    minWidth:"270px",
+  },
+
+  divider: {
+    marginTop: "1em",
+    marginBottom: "0.5em",
+    backgroundColor: "#95a3b3"
+  },
+
+  divider2: {
+    marginBottom: "0.5em",
+    backgroundColor: "#95a3b3"
   },
 
 }));
@@ -129,6 +143,18 @@ const formTheme = createMuiTheme({
       },
     },
 
+    MuiTypography:{
+      subtitle1: {
+        color: "white"
+      }
+    },
+
+    MuiPickersClockNumber: {
+      clockNumber: {
+        color: "white"
+      }
+    },
+
     MuiInputLabel: { 
       root: { 
         color: "white",
@@ -143,6 +169,7 @@ const formTheme = createMuiTheme({
         color: "white",
       },  
       underline: {
+        minWidth: "270px",
         '&:before': {
             borderBottom: '1px solid rgba(132, 220, 198, 1)'
         },
@@ -239,7 +266,7 @@ const AddEventForm = (props) => {
           component={CustomMaterialTextField}
         />
 
-        <Divider />
+        <Divider className = {classes.divider}/>
         <Field
           label="Start Date"
           name="startDate"
@@ -253,7 +280,7 @@ const AddEventForm = (props) => {
           name="startTime"
           component={CustomTimePicker}
         />
-        <Divider />
+        <Divider className = {classes.divider2}/>
         <Field
           inputComponent={StyledDatePicker}
           label="End Date"
@@ -267,7 +294,7 @@ const AddEventForm = (props) => {
           name="endTime"
           component={CustomTimePicker}
         />
-        <Divider />
+        <Divider className = {classes.divider2}/>
         <FieldArray
                 name="studentAttendees"
                 multiple={true}
@@ -282,9 +309,9 @@ const AddEventForm = (props) => {
               />
        
         <AddEventStudentList className={classes.addedStudentsList} />
-        <Divider />
         <Button
           type="submit"
+          className = {classes.button}
           disabled={pristine || (submitting && props.addedStudents.length == 0)}
         >
           Create Coaching Schedule

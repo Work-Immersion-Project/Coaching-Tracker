@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { getCoachingSchedules } from "../../actions";
 import { connect } from "react-redux";
-import { Grid, Paper, CircularProgress } from "@material-ui/core";
+import { Grid, Paper, CircularProgress, createMuiTheme, ThemeProvider, } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CustomScheduler from "../custom/CustomScheduler";
 
@@ -20,12 +20,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const formTheme = createMuiTheme({
+  overrides: {
+    MuiPaper: {
+      root: {
+        backgroundColor: "#95a3b3"
+      }
+    },
+    DayScaleEmptyCell: {
+      emptyCell: {
+        backgroundColor: "#95a3b3"
+      }
+    }
+  }
+});
+
 const TeacherSchedules = (props) => {
   const classes = useStyles();
 
   const renderContent = () => {
     if (props.coachingSchedules) {
       return (
+        <ThemeProvider theme={formTheme}>
         <Paper className={classes.scheduler}>
           <CustomScheduler        
             accessType="teacher"
@@ -33,6 +49,7 @@ const TeacherSchedules = (props) => {
             calendarEvents={props.calendarEvents}
           />
         </Paper>
+        </ThemeProvider>
       );
     }
     return <CircularProgress />;

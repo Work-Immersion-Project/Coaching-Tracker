@@ -40,6 +40,7 @@ const appointmentStyles = {
   },
 };
 
+
 const WeekTableCell = withStyles({})(({ onCellClick, ...restProps }) => {
   return (
     <WeekView.TimeTableCell
@@ -129,6 +130,7 @@ const AppointmentTooltipContent = withStyles({
     fontSize: "0.8rem",
   },
 })(({ children, appointmentData, classes, ...restProps }) => {
+  console.log(appointmentData);
   return (
     <AppointmentTooltip.Content
       {...restProps}
@@ -182,6 +184,8 @@ const CustomScheduler = ({ coachingSchedules, openAddEventDrawer, accessType }) 
   const appointmentHeader = connectProps(AppointmentTooltipHeader, () => {
    return { accessType}
   })
+
+ 
 
   const statuses = [
     {

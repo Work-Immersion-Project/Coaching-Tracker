@@ -22,7 +22,6 @@ export const registerUser = (values) => async (dispatch) => {
     }
 
     await userCollections.doc(email).set({
-      email,
       type,
     });
 

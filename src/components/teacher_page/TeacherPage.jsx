@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Route, useRouteMatch } from "react-router-dom";
+import { Route, useRouteMatch, Switch, Redirect } from "react-router-dom";
 import CustomAppbar from "../custom/CustomAppbar";
 import TeacherDashboard from "./TeacherDashboard";
 
@@ -41,18 +41,21 @@ const TeacherPage = () => {
       <TeacherDrawer />
       <div className={classes.content}>
         <CustomAppbar />
-        <Route path={`${path}`} exact>
-          <TeacherDashboard />
-        </Route>
-        <Route path={`${path}/schedules`} exact>
-          <TeacherSchedules />
-        </Route>
-        <Route path={`${path}/student-list`} exact>
-          <TeacherStudentList />
-        </Route>
-        <Route path={`${path}/notifications`} exact>
-          <TeacherNotifications/>
+        <Switch>
+          <Route path={`${path}`} exact>
+            <TeacherDashboard />
           </Route>
+          <Route path={`${path}/schedules`} exact>
+            <TeacherSchedules />
+          </Route>
+          <Route path={`${path}/student-list`} exact>
+            <TeacherStudentList />
+          </Route>
+          <Route path={`${path}/notifications`} exact>
+            <TeacherNotifications />
+          </Route>
+          <Redirect to={`${path}`} />
+        </Switch>
       </div>
       <AddEventDrawer />
     </div>

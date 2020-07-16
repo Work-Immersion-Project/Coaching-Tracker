@@ -3,13 +3,11 @@ import { Field, reduxForm, FieldArray } from "redux-form";
 import { connect } from "react-redux";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import {
-  getStudents,
-  addCoachingAttendee,
-  addCoachingSchedule,
+  getTeachersBySubject,
   showModal,
   hideModal,
   closeAddEventDrawer,
-  getStudentsBySubject,
+  requestCoachingSchedule,
 } from "../../../actions";
 import {
   TextField,
@@ -19,8 +17,7 @@ import {
   Divider,
 } from "@material-ui/core";
 import _ from "lodash";
-import AddEventStudentList from "./AddEventStudentList";
-import AutoComplete from "@material-ui/lab/Autocomplete";
+
 import CustomDatePicker from "../../custom/CustomDatePicker";
 import CustomTimePicker from "../../custom/CustomTimePicker";
 import CustomMaterialTextField from "../../custom/CustomMaterialTextField";
@@ -41,22 +38,6 @@ const useStyles = makeStyles(() => ({
     color: "white",
     borderColor: "white",
   },
-  
-  button: {
-    minWidth:"270px",
-  },
-
-  divider: {
-    marginTop: "1em",
-    marginBottom: "0.5em",
-    backgroundColor: "#95a3b3"
-  },
-
-  divider2: {
-    marginBottom: "0.5em",
-    backgroundColor: "#95a3b3"
-  },
-
 }));
 
 const validateDates = (values) => {
@@ -140,25 +121,8 @@ const formTheme = createMuiTheme({
       },
     },
 
-<<<<<<< HEAD
-    MuiTypography:{
-      subtitle1: {
-        color: "white"
-      }
-    },
-
-    MuiPickersClockNumber: {
-      clockNumber: {
-        color: "white"
-      }
-    },
-
-    MuiInputLabel: { 
-      root: { 
-=======
     MuiInputLabel: {
       root: {
->>>>>>> feature
         color: "white",
         "&$focused": {
           color: "#84DCC6",
@@ -171,14 +135,8 @@ const formTheme = createMuiTheme({
         color: "white",
       },
       underline: {
-<<<<<<< HEAD
-        minWidth: "270px",
-        '&:before': {
-            borderBottom: '1px solid rgba(132, 220, 198, 1)'
-=======
         "&:before": {
           borderBottom: "1px solid rgba(132, 220, 198, 1)",
->>>>>>> feature
         },
         "&:after": {
           borderBottom: `2px solid rgba(132, 220, 198, 1)`,
@@ -230,31 +188,31 @@ const StyledAddTitle = styled(TextField)({
   margin: "0.5em 0",
 });
 
-const AddEventForm = (props) => {
+const RequestEventForm = (props) => {
   const { handleSubmit, reset, pristine, submitting } = props;
   const classes = useStyles();
 
   useEffect(() => {
-    props.getStudents();
+    props.getTeachersBySubject();
   }, []);
 
   const onDialogClose = () => {
     props.hideModal();
   };
 
-  const addCoachingEvent = (values) => {
-    props.addCoachingSchedule(values);
+  const requestCoachingEvent = (values) => {
+    props.requestCoachingSchedule(values);
     props.closeAddEventDrawer();
   };
 
   const handleOnSubmit = (values) => {
     props.showModal("CONFIRMATION_MODAL", {
       onDialogClose: onDialogClose,
-      title: "Schedule Coaching?",
+      title: "Request Coaching?",
       content:
         "Make sure that you have entered the correct information before proceeding.",
       onNegativeClick: onDialogClose,
-      onPositiveClick: () => addCoachingEvent(values),
+      onPositiveClick: () => requestCoachingEvent(values),
     });
   };
 
@@ -268,7 +226,7 @@ const AddEventForm = (props) => {
           component={CustomMaterialTextField}
         />
 
-        <Divider className = {classes.divider}/>
+        <Divider />
         <Field
           label="Start Date"
           name="startDate"
@@ -282,7 +240,7 @@ const AddEventForm = (props) => {
           name="startTime"
           component={CustomTimePicker}
         />
-        <Divider className = {classes.divider2}/>
+        <Divider />
         <Field
           inputComponent={StyledDatePicker}
           label="End Date"
@@ -296,22 +254,19 @@ const AddEventForm = (props) => {
           name="endTime"
           component={CustomTimePicker}
         />
-        <Divider className = {classes.divider2}/>
-        <FieldArray
-          name="studentAttendees"
-          multiple={true}
+        <Divider />
+        <Field
+          name="teacherAttendee"
+          multiple={false}
+          limitTags={1}
           getOptionLabel={(option) => option.email}
           component={CustomAutoComplete}
           inputComponent={TextField}
-          options={props.students ? props.students : []}
+          options={props.teachers ? props.teachers : []}
         />
 
-        <AddEventStudentList className={classes.addedStudentsList} />
-        <Button
-          type="submit"
-          className = {classes.button}
-          disabled={pristine || (submitting && props.addedStudents.length == 0)}
-        >
+        <Divider />
+        <Button type="submit" disabled={pristine || submitting}>
           Create Coaching Schedule
         </Button>
       </form>
@@ -321,23 +276,20 @@ const AddEventForm = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    students: state.students.data,
-    addedStudents: state.coaching.selectedStudentAttendees,
+    teachers: state.teachers.data,
   };
 };
 
-const AddEventFormWithReduxForm = reduxForm({
+const RequestEventFormWithReduxForm = reduxForm({
   form: "AddEventDrawerForm",
   validate: validateDates,
   enableReinitialize: true,
-})(AddEventForm);
+})(RequestEventForm);
 
 export default connect(mapStateToProps, {
-  getStudents,
-  addCoachingAttendee,
-  addCoachingSchedule,
   showModal,
   hideModal,
   closeAddEventDrawer,
-  getStudentsBySubject,
-})(AddEventFormWithReduxForm);
+  requestCoachingSchedule,
+  getTeachersBySubject,
+})(RequestEventFormWithReduxForm);

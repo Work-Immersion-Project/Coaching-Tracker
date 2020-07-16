@@ -57,7 +57,7 @@ const StudentTeacherList = (props) => {
 
   useEffect(() => {
     props.getTeachers();
-  }, [props]);
+  }, []);
 
   const renderContent = () => {
     if (props.teachers) {
@@ -75,7 +75,6 @@ const StudentTeacherList = (props) => {
               </TableHead>
               <TableBody>
                 {teachers.map((teacher) => {
-                  console.log(teacher);
                   return (
                     <StyledTableRow key={teacher.email}>
                       <StyledTableCell

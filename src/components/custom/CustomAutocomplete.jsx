@@ -12,10 +12,12 @@ const useStyles = makeStyles(() => ({
 const CustomAutoComplete = ({
   label,
   fields,
+  input,
   options,
   getOptionLabel,
   renderValues,
   multiple,
+  limitTags,
   inputComponent: InputComponent,
   meta: { touched, invalid, error },
   ...custom
@@ -23,6 +25,20 @@ const CustomAutoComplete = ({
   const classes = useStyles();
   const [inputValue, setInputValue] = useState("");
   const loading = options ? false : true;
+
+  const onChange = (_, value, reason) => {
+    if (multiple) {
+      fields.removeAll();
+    }
+    if (reason === "select-option" || reason === "remove-option") {
+      if (multiple) {
+        value.forEach((value, index) => fields.insert(index, value));
+      } else {
+        setInputValue(value.email);
+        input.onChange(value);
+      }
+    }
+  };
 
   return (
     <>
@@ -35,16 +51,13 @@ const CustomAutoComplete = ({
             setInputValue(value);
           }
         }}
+        size="small"
+        limitTags={1}
         loading={loading}
         options={options}
         filterSelectedOptions
         getOptionLabel={getOptionLabel}
-        onChange={(_, value, reason) => {
-          fields.removeAll();
-          if (reason === "select-option" || reason === "remove-option") {
-            value.forEach((value, index) => fields.insert(index, value));
-          }
-        }}
+        onChange={onChange}
         renderInput={(params) => (
           <InputComponent
             {...params}
@@ -56,7 +69,7 @@ const CustomAutoComplete = ({
           />
         )}
       />
-       {renderHelperFormText({ touched, error })}
+      {renderHelperFormText({ touched, error })}
     </>
   );
 };

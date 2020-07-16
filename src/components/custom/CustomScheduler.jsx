@@ -25,21 +25,9 @@ import {
   showModal,
   hideModal,
 } from "../../actions";
-import classNames from "clsx";
-import _, { rest } from "lodash";
 
-const appointmentStyles = {
-  pendingCell: {
-    backgroundColor: "yellow",
-  },
-  finishedCell: {
-    backgroundColor: "green",
-  },
-  overDueCell: {
-    backgroundColor: "red",
-  },
-};
-
+import _ from "lodash";
+import CheckIcon from "@material-ui/icons/Check";
 
 const WeekTableCell = withStyles({})(({ onCellClick, ...restProps }) => {
   return (
@@ -74,52 +62,71 @@ const MonthTableCell = withStyles({})(({ onCellClick, ...restProps }) => {
   );
 });
 
-const AppointmentTooltipHeader = withStyles({})(
-  ({ children, appointmentData, classes, accessType, ...restProps }) => {
-    const dispatch = useDispatch();
+const AppointmentTooltipHeader = withStyles({
+  teacherTitle: {
+    margin: "0.5em 0",
+  },
+})(({ children, appointmentData, classes, accessType, ...restProps }) => {
+  const dispatch = useDispatch();
 
-    const onDialogClose = () => {
-      dispatch(hideModal());
-    };
+  const onDialogClose = () => {
+    dispatch(hideModal());
+  };
 
-    const removeSchedule = () => {
-      dispatch(hideModal());
-      restProps.onHide();
-      dispatch(removeCoachingSchedule(appointmentData.eventId));
-    };
+  const removeSchedule = () => {
+    dispatch(hideModal());
+    restProps.onHide();
+    dispatch(removeCoachingSchedule(appointmentData.eventId));
+  };
 
-
-
-    const handleOnDeleteButton = () => {
-      dispatch(
-        showModal("CONFIRMATION_MODAL", {
-          onDialogClose: onDialogClose,
-          title: `Remove ${appointmentData.title}?`,
-          content: "Are you sure you want to remove this schedule?",
-          onNegativeClick: onDialogClose,
-          onPositiveClick: () => removeSchedule(),
-        })
-      );
-    };
-
-    return (
-      <AppointmentTooltip.Header
-        {...restProps}
-        appointmentData={appointmentData}
-      >
-        <Grid container justify="flex-end">
-          {accessType === "student" ? null :   <IconButton onClick={handleOnDeleteButton}>
-            <DeleteIcon />
-          </IconButton>}
-        </Grid>
-      </AppointmentTooltip.Header>
+  const handleOnDeleteButton = () => {
+    dispatch(
+      showModal("CONFIRMATION_MODAL", {
+        onDialogClose: onDialogClose,
+        title: `Remove ${appointmentData.title}?`,
+        content: "Are you sure you want to remove this schedule?",
+        onNegativeClick: onDialogClose,
+        onPositiveClick: () => removeSchedule(),
+      })
     );
-  }
-);
+  };
+
+  return (
+    <AppointmentTooltip.Header {...restProps} appointmentData={appointmentData}>
+      <Grid container justify="flex-end" direction="column">
+        {accessType === "student" ? null : (
+          <Grid item container justify="flex-end">
+            <IconButton onClick={handleOnDeleteButton}>
+              <DeleteIcon />
+            </IconButton>
+          </Grid>
+        )}
+        <Grid
+          className={classes.teacherTitle}
+          item
+          container
+          direction="column"
+          justify="center"
+          alignContent="center"
+        >
+          <Typography variant="h6" align="center">
+            {appointmentData.teacher.fullName}
+          </Typography>
+          <Typography variant="caption" align="center">
+            {appointmentData.teacher.email}
+          </Typography>
+        </Grid>
+      </Grid>
+    </AppointmentTooltip.Header>
+  );
+});
 
 const AppointmentTooltipContent = withStyles({
   container: {
     width: "100%",
+  },
+  meetingButtonWrapper: {
+    margin: "1em 0",
   },
   meetingButton: {
     margin: "1em",
@@ -129,19 +136,38 @@ const AppointmentTooltipContent = withStyles({
   meetingLink: {
     fontSize: "0.8rem",
   },
-})(({ children, appointmentData, classes, ...restProps }) => {
-  console.log(appointmentData);
-  return (
-    <AppointmentTooltip.Content
-      {...restProps}
-      appointmentData={appointmentData}
-    >
-      <Grid
-        className={classes.container}
-        container
-        justify="center"
-        alignItems="center"
-      >
+  acceptMeetingButton: {
+    margin: "1em",
+    backgroundColor: "blue",
+    color: "white",
+  },
+})(({ children, appointmentData, accessType, classes, ...restProps }) => {
+  const renderContent = () => {
+    if (
+      appointmentData.status === "waiting_for_response" &&
+      accessType === "student"
+    ) {
+      return null;
+    } else if (
+      appointmentData.status === "waiting_for_response" &&
+      accessType === "teacher"
+    ) {
+      return (
+        <div className={classes.meetingButtonWrapper}>
+          <Button
+            className={classes.acceptMeetingButton}
+            onClick={() => {}}
+            variant="contained"
+            startIcon={<CheckIcon />}
+          >
+            Accept Request
+          </Button>
+        </div>
+      );
+    }
+
+    return (
+      <div className={classes.meetingButtonWrapper}>
         <Button
           className={classes.meetingButton}
           onClick={() => {
@@ -155,13 +181,45 @@ const AppointmentTooltipContent = withStyles({
         <Typography className={classes.meetingLink} component="p">
           {appointmentData.meetingLink}
         </Typography>
+      </div>
+    );
+  };
+
+  return (
+    <AppointmentTooltip.Content
+      {...restProps}
+      appointmentData={appointmentData}
+    >
+      <Grid
+        className={classes.container}
+        container
+        justify="center"
+        alignItems="center"
+      >
+        {renderContent()}
       </Grid>
     </AppointmentTooltip.Content>
   );
 });
 
-
-const CustomScheduler = ({ coachingSchedules, openAddEventDrawer, accessType }) => {
+const CustomScheduler = ({
+  coachingSchedules,
+  openAddEventDrawer,
+  accessType,
+  loggedInStudentEmail,
+}) => {
+  const studentInstances = _.flatten(
+    coachingSchedules.map((schedule) =>
+      schedule.studentAttendees.map((student) => {
+        return {
+          text:
+            loggedInStudentEmail !== student.email ? student.fullName : "You",
+          id: student.email,
+          color: "red",
+        };
+      })
+    )
+  );
   const today = new Date();
   const weekTableCell = connectProps(WeekTableCell, () => {
     return {
@@ -182,10 +240,12 @@ const CustomScheduler = ({ coachingSchedules, openAddEventDrawer, accessType }) 
   });
 
   const appointmentHeader = connectProps(AppointmentTooltipHeader, () => {
-   return { accessType}
-  })
+    return { accessType };
+  });
 
- 
+  const appointmentContent = connectProps(AppointmentTooltipContent, () => {
+    return { accessType };
+  });
 
   const statuses = [
     {
@@ -197,6 +257,11 @@ const CustomScheduler = ({ coachingSchedules, openAddEventDrawer, accessType }) 
       text: "Finished",
       id: "finished",
       color: "green",
+    },
+    {
+      text: "Waiting For Response",
+      id: "waiting_for_response",
+      color: "blue",
     },
     {
       text: "Overdue",
@@ -211,7 +276,14 @@ const CustomScheduler = ({ coachingSchedules, openAddEventDrawer, accessType }) 
       title: "Status",
       instances: statuses,
     },
+    {
+      fieldName: "students",
+      title: "Students",
+      allowMultiple: true,
+      instances: studentInstances,
+    },
   ];
+
   const currentDate =
     today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
   return (
@@ -244,7 +316,7 @@ const CustomScheduler = ({ coachingSchedules, openAddEventDrawer, accessType }) 
       <Appointments />
       <Resources data={resources} mainResourceName="status" />
       <AppointmentTooltip
-        contentComponent={AppointmentTooltipContent}
+        contentComponent={appointmentContent}
         headerComponent={appointmentHeader}
       />
     </Scheduler>
@@ -254,6 +326,7 @@ const CustomScheduler = ({ coachingSchedules, openAddEventDrawer, accessType }) 
 const mapStateToProps = (state) => {
   return {
     coachingSchedules: state.coaching.coachingSchedules,
+    loggedInStudentEmail: state.auth.data?.user?.email,
   };
 };
 export default connect(mapStateToProps, {

@@ -49,6 +49,15 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         coachingSchedules: action.data,
       };
+    case GET_COACHING_SCHEDULE_REQUEST:
+      return {
+        ...state,
+      };
+    case GET_COACHING_SCHEDULE_SUCCESS:
+      return {
+        ...state,
+        selectedCoachingSchedule: action.data,
+      };
     case ADD_COACHING_SCHEDULE_REQUEST:
       return {
         ...state,

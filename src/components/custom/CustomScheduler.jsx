@@ -226,7 +226,10 @@ const AppointmentTooltipContent = withStyles({
             <Button
               className={classes.acceptMeetingButton}
               onClick={() => {
-                onUpdateStatusButtonPressed(appointmentData.eventId, "pending");
+                onUpdateStatusButtonPressed(
+                  appointmentData.coachingSessionId,
+                  "pending"
+                );
               }}
               variant="contained"
             >
@@ -235,7 +238,10 @@ const AppointmentTooltipContent = withStyles({
             <Button
               className={classes.denyMeetingButton}
               onClick={() => {
-                onUpdateStatusButtonPressed(appointmentData.eventId, "denied");
+                onUpdateStatusButtonPressed(
+                  appointmentData.coachingSessionId,
+                  "denied"
+                );
               }}
               variant="contained"
             >
@@ -279,7 +285,10 @@ const AppointmentTooltipContent = withStyles({
           <Button
             className={classes.denyMeetingButton}
             onClick={() => {
-              onUpdateStatusButtonPressed(appointmentData.eventId, "cancelled");
+              onUpdateStatusButtonPressed(
+                appointmentData.coachingSessionId,
+                "cancelled"
+              );
             }}
             variant="contained"
           >

@@ -7,9 +7,8 @@ import {
   GET_SUBJECT_SUCCESS,
 } from "../types";
 import { delayInSeconds } from "../utils";
-import { showNotifications, hideNotification } from ".";
+import { showAlert, hideAlert } from ".";
 import { db } from "../firebase";
-import { showNotification } from "./notificationActions";
 
 const subjectsCollection = db.collection("subjects");
 
@@ -29,7 +28,7 @@ export const addSubject = (values) => async (dispatch, getState) => {
       dispatch(addSubjectSuccess());
     }
   } catch (error) {
-    dispatch(showNotification("ERROR", error));
+    dispatch(showAlert("ERROR", error));
   }
 };
 

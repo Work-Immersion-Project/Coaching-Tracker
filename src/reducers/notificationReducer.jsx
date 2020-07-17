@@ -1,22 +1,14 @@
-import { SHOW_NOTIFICATION, HIDE_NOTIFICATION } from "../types";
-
+import { GET_NOTIFICATIONS_REQUEST, GET_NOTIFICATIONS_SUCCESS } from "../types";
 const INITIAL_STATE = {
-  message: null,
-  notificationType: null,
-  isOpen: false,
+  data: [],
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case SHOW_NOTIFICATION:
-      return {
-        ...state,
-        isOpen: true,
-        message: action.message,
-        type: action.notificationType,
-      };
-    case HIDE_NOTIFICATION:
-      return INITIAL_STATE;
+    case GET_NOTIFICATIONS_REQUEST:
+      return { ...state };
+    case GET_NOTIFICATIONS_SUCCESS:
+      return { ...state, data: action.data };
     default:
       return state;
   }

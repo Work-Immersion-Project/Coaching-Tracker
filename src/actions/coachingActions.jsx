@@ -23,11 +23,11 @@ import {
   getMinutes,
   sub,
 } from "date-fns";
-import { showNotification, showModal, hideModal } from "../actions";
+import { showAlert, showModal, hideModal, addNotification } from "../actions";
 import { normalizeDate, isDayBehind } from "../utils";
 import firebase from "firebase";
 import { db } from "../firebase";
-import { result } from "lodash";
+import { v4 as uuidV4 } from "uuid";
 import { setError } from "./errorActions";
 
 const coachingLogsCollection = db.collection("coachingLogs");
@@ -54,47 +54,100 @@ export const clearCoachingAttendees = () => {
   };
 };
 
-export const updateCoachingScheduleStatus = (eventId, status) => async (
-  dispatch,
-  getState
-) => {
-  const coachingSessionRef = coachingLogsCollection.doc(eventId);
+export const updateCoachingScheduleStatus = (
+  oldCoachingSessionId,
+  status
+) => async (dispatch, getState) => {
+  const currentLoggedinUser = getState().auth.user.data;
+  const newCoachingSessionId = uuidV4();
+  const oldCoachingSessionRef = coachingLogsCollection.doc(
+    oldCoachingSessionId
+  );
+  const updatedCoachingSessionRef = coachingLogsCollection.doc(
+    newCoachingSessionId
+  );
   dispatch(hideModal());
   dispatch(updateCoachingScheduleStatusRequest());
 
-  await db.runTransaction(async (transaction) => {
-    const coachingDoc = await transaction
-      .get(coachingSessionRef)
-      .then((doc) => doc.data());
-    const sessionStatus =
-      coachingDoc.status === "waiting_for_response"
-        ? "requests"
-        : coachingDoc.status;
-    const teacherRef = teacherCollection.doc(coachingDoc.teacher.email);
-    const teacherData = await transaction
-      .get(teacherRef)
-      .then((doc) => doc.data());
-
-    for (const student of coachingDoc.studentAttendees) {
-      const studentRef = studentCollection.doc(student.email);
-      const { coachingStats } = await transaction
-        .get(studentRef)
+  await db
+    .runTransaction(async (transaction) => {
+      const oldCoachingData = await transaction
+        .get(oldCoachingSessionRef)
         .then((doc) => doc.data());
-      coachingStats[sessionStatus]--;
-      coachingStats[status]++;
-      transaction.update(studentRef, { coachingStats });
-    }
 
-    teacherData.coachingStats[sessionStatus]--;
-    teacherData.coachingStats[status]++;
+      const sessionStatus =
+        oldCoachingData.status === "waiting_for_response"
+          ? "requests"
+          : oldCoachingData.status;
+      const teacherRef = teacherCollection.doc(oldCoachingData.teacher.email);
+      const teacherCoachingSessionRef = teacherRef
+        .collection("coachingSessions")
+        .doc(oldCoachingSessionId);
+      const teacherData = await transaction
+        .get(teacherRef)
+        .then((doc) => doc.data());
 
-    transaction.update(teacherRef, {
-      coachingStats: { ...teacherData.coachingStats },
+      for (const student of oldCoachingData.studentAttendees) {
+        const studentRef = studentCollection.doc(student.email);
+        const studentCoachingSessionRef = studentRef
+          .collection("coachingSessions")
+          .doc(oldCoachingSessionId);
+        const { coachingStats } = await transaction
+          .get(studentRef)
+          .then((doc) => doc.data());
+        coachingStats[sessionStatus] -= 1;
+        coachingStats[status] += 1;
+        transaction.update(studentRef, { coachingStats });
+        transaction.update(studentCoachingSessionRef, { status });
+      }
+
+      teacherData.coachingStats[sessionStatus] -= 1;
+      teacherData.coachingStats[status] += 1;
+
+      transaction.update(teacherRef, {
+        coachingStats: { ...teacherData.coachingStats },
+      });
+      transaction.update(teacherCoachingSessionRef, {
+        ...oldCoachingData,
+        status,
+      });
+
+      transaction.set(updatedCoachingSessionRef, {
+        ...oldCoachingData,
+        status,
+      });
+
+      return oldCoachingData.studentAttendees;
+    })
+    .then((students) => {
+      if (status === "cancelled") {
+        let message = `Your teacher ${currentLoggedinUser.metadata.fullName} has cancelled the coaching session.`;
+        students.forEach((student) => {
+          dispatch(
+            addNotification(
+              { ...student, type: "student" },
+              message,
+              oldCoachingSessionId,
+              status
+            )
+          );
+        });
+      } else if (status === "denied") {
+        let message = `Your teacher ${currentLoggedinUser.metadata.fullName} has cancelled the coaching session.`;
+        students.forEach((student) => {
+          dispatch(
+            addNotification(
+              { ...student, type: "student" },
+              message,
+              oldCoachingSessionId,
+              status
+            )
+          );
+        });
+      }
     });
-    transaction.update(coachingSessionRef, { status });
-  });
 
-  dispatch(showNotification("SUCCESS", "Schedule Updated Successfully!"));
+  dispatch(showAlert("SUCCESS", "Schedule Updated Successfully!"));
   dispatch(updateCoachingScheduleStatusSuccess());
 };
 
@@ -110,31 +163,24 @@ export const getCoachingSchedules = () => async (dispatch, getState) => {
   const { email, type } = getState().auth.data.user;
 
   dispatch(getCoachingSchedulesRequest());
-  coachingLogsCollection.onSnapshot(async () => {
-    if (type === "student") {
-      await dispatch(getStudentCoachingSchedules(email));
-    } else if (type === "teacher") {
-      await dispatch(getTeacherCoachingSchedule(email));
-    }
-  });
+  if (type === "student") {
+    await dispatch(getStudentCoachingSchedules(email));
+  } else if (type === "teacher") {
+    await dispatch(getTeacherCoachingSchedule(email));
+  }
 };
 
 const getStudentCoachingSchedules = (studentEmail) => async (dispatch) => {
   const studentDocRef = studentCollection.doc(studentEmail);
   studentDocRef.collection("coachingSessions").onSnapshot(async (snapshot) => {
-    const coachingSessionIds = snapshot.docs.map((doc) => doc.id);
-    // Fetch all coachingSessions using the ID
-    const coachingSessions = await Promise.all(
-      coachingSessionIds.map((id) => coachingLogsCollection.doc(id).get())
-    ).then((results) =>
-      results.map((result) => {
-        const data = result.data();
+    const coachingSessions = snapshot.docs
+      .map((doc) => doc.data())
+      .map((session) => {
         return {
-          ...data,
-          students: data.studentAttendees.map((student) => student.email),
+          ...session,
+          students: session.studentAttendees.map((student) => student.email),
         };
-      })
-    );
+      });
     dispatch(getCoachingSchedulesSuccess(coachingSessions));
   });
 };
@@ -142,19 +188,15 @@ const getStudentCoachingSchedules = (studentEmail) => async (dispatch) => {
 const getTeacherCoachingSchedule = (teacherEmail) => async (dispatch) => {
   const teacherRef = teacherCollection.doc(teacherEmail);
   teacherRef.collection("coachingSessions").onSnapshot(async (snapshot) => {
-    const coachingSessionIds = snapshot.docs.map((doc) => doc.id);
-    // Fetch all coachingSessions using the ID
-    const coachingSessions = await Promise.all(
-      coachingSessionIds.map((id) => coachingLogsCollection.doc(id).get())
-    ).then((results) =>
-      results.map((result) => {
-        const data = result.data();
+    const coachingSessions = snapshot.docs
+      .map((doc) => doc.data())
+      .map((session) => {
         return {
-          ...data,
-          students: data.studentAttendees.map((student) => student.email),
+          ...session,
+          students: session.studentAttendees.map((student) => student.email),
         };
-      })
-    );
+      });
+
     dispatch(getCoachingSchedulesSuccess(coachingSessions));
   });
 };
@@ -185,10 +227,37 @@ const getCoachingSchedulesSuccess = (result) => {
   };
 };
 
-export const getCoachingSchedule = (eventId) => async (
+export const getCoachingSchedule = (coachingSessionId) => async (
   dispatch,
   getState
-) => {};
+) => {
+  const { email, type } = getState().auth.data.user;
+  const currentSchedules = getState().coaching.coachingSchedules;
+  // Check if it is existing
+  let coachingSchedule = currentSchedules.filter(
+    (schedule) => schedule.coachingSessionId === coachingSessionId
+  );
+
+  if (!coachingSchedule.length !== 0) {
+    dispatch(getCoachingScheduleRequest());
+    if (type === "teacher") {
+      coachingSchedule = await teacherCollection
+        .doc(email)
+        .collection("coachingSessions")
+        .doc(coachingSessionId)
+        .get()
+        .then((doc) => doc.data());
+    } else if (type === "student") {
+      coachingSchedule = await studentCollection
+        .doc(email)
+        .collection("coachingSessions")
+        .doc(coachingSessionId)
+        .get()
+        .then((doc) => doc.data());
+    }
+    dispatch(getCoachingScheduleSuccess(coachingSchedule));
+  }
+};
 
 export const getCoachingScheduleRequest = () => {
   return {
@@ -207,6 +276,7 @@ export const addCoachingSchedule = (coachingDetails) => async (
   dispatch,
   getState
 ) => {
+  const coachingSessionId = uuidV4();
   const { gapiCalendar } = getState().gapi;
   const { email, metadata } = getState().auth.data.user;
   const {
@@ -224,9 +294,6 @@ export const addCoachingSchedule = (coachingDetails) => async (
     };
   });
 
-  const randomRequestId =
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15);
   const convertedEndTime = {
     hours: getHours(endTime),
     minutes: getMinutes(endTime),
@@ -264,7 +331,7 @@ export const addCoachingSchedule = (coachingDetails) => async (
       useDefault: "useDefault",
     },
     conferenceData: {
-      createRequest: { requestId: randomRequestId },
+      createRequest: { requestId: coachingSessionId },
     },
   };
 
@@ -282,9 +349,10 @@ export const addCoachingSchedule = (coachingDetails) => async (
       });
     const googleMeetsLink = results.conferenceData.entryPoints[0].uri;
     const eventId = results.id;
-    const coachingSessionRef = coachingLogsCollection.doc(eventId);
+    const coachingSessionRef = coachingLogsCollection.doc(coachingSessionId);
     const teacherRef = teacherCollection.doc(email);
-    const coachingSessionLogData = {
+    const coachingSessionData = {
+      coachingSessionId,
       teacher: {
         email,
         fullName: metadata.fullName,
@@ -300,32 +368,34 @@ export const addCoachingSchedule = (coachingDetails) => async (
       status: "pending",
     };
     const fieldValue = firebase.firestore.FieldValue;
+
     await db.runTransaction(async (transaction) => {
       const teacherCoachingSessionRef = teacherRef
         .collection("coachingSessions")
-        .doc(eventId);
-      transaction.set(coachingSessionRef, coachingSessionLogData);
+        .doc(coachingSessionId);
       transaction.update(teacherRef, {
         "coachingStats.pending": fieldValue.increment(1),
       });
-      transaction.set(teacherCoachingSessionRef, {
-        eventId,
-      });
+      transaction.set(coachingSessionRef, coachingSessionData);
+      transaction.set(teacherCoachingSessionRef, coachingSessionData);
       //Iterate for each student
       studentAttendees.forEach((student) => {
         const studentRef = studentCollection.doc(student.email);
         const studentCoachingSessionCollectionRef = studentRef
           .collection("coachingSessions")
-          .doc(eventId);
+          .doc(coachingSessionId);
         transaction.update(studentRef, {
           "coachingStats.pending": fieldValue.increment(1),
         });
-        transaction.set(studentCoachingSessionCollectionRef, { eventId });
+        transaction.set(
+          studentCoachingSessionCollectionRef,
+          coachingSessionData
+        );
       });
     });
     dispatch(hideModal());
     dispatch(addCoachingScheduleSuccess());
-    dispatch(showNotification("SUCCESS", "Coaching Schedule Added!"));
+    dispatch(showAlert("SUCCESS", "Coaching Schedule Added!"));
   } catch (error) {}
 };
 export const addCoachingScheduleRequest = () => {
@@ -398,7 +468,7 @@ export const removeCoachingSchedule = (coachingId) => async (
 
     dispatch(hideModal());
 
-    dispatch(showNotification("SUCCESS", "Coaching Schedule Removed!"));
+    dispatch(showAlert("SUCCESS", "Coaching Schedule Removed!"));
     dispatch(removeCoachingScheduleSuccess());
   } catch (error) {
     dispatch(setError(error));
@@ -421,6 +491,7 @@ export const requestCoachingSchedule = (coachingDetails) => async (
 ) => {
   const { gapiCalendar } = getState().gapi;
   const { email, metadata } = getState().auth.data.user;
+  const coachingSessionId = uuidV4();
   dispatch(requestCoachingScheduleRequest());
   const {
     startDate,
@@ -430,10 +501,6 @@ export const requestCoachingSchedule = (coachingDetails) => async (
     title,
     teacherAttendee,
   } = coachingDetails;
-
-  const randomRequestId =
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15);
 
   const convertedEndTime = {
     hours: getHours(endTime),
@@ -471,7 +538,7 @@ export const requestCoachingSchedule = (coachingDetails) => async (
       useDefault: "useDefault",
     },
     conferenceData: {
-      createRequest: { requestId: randomRequestId },
+      createRequest: { requestId: coachingSessionId },
     },
   };
   dispatch(hideModal());
@@ -488,17 +555,18 @@ export const requestCoachingSchedule = (coachingDetails) => async (
     const googleMeetsLink = results.conferenceData.entryPoints[0].uri;
     const eventId = results.id;
     const creatorEmail = results.creator.email;
-    const coachingSessionRef = coachingLogsCollection.doc(eventId);
+    const coachingSessionRef = coachingLogsCollection.doc(coachingSessionId);
     const studentRef = studentCollection.doc(creatorEmail);
     const studentCoachingSessionRef = studentRef
       .collection("coachingSessions")
-      .doc(eventId);
+      .doc(coachingSessionId);
     const teacherRef = teacherCollection.doc(teacherAttendee.email);
     const teacherCoachingSessionRef = teacherRef
       .collection("coachingSessions")
-      .doc(eventId);
+      .doc(coachingSessionId);
 
-    const coachingSessionLogData = {
+    const coachingSessionData = {
+      coachingSessionId,
       teacher: teacherAttendee,
       title: title,
       description: title,
@@ -519,15 +587,13 @@ export const requestCoachingSchedule = (coachingDetails) => async (
     const fieldValue = firebase.firestore.FieldValue;
     await db
       .runTransaction(async (transaction) => {
-        transaction.set(coachingSessionRef, coachingSessionLogData);
+        transaction.set(coachingSessionRef, coachingSessionData);
         transaction.update(teacherRef, {
           "coachingStats.requests": fieldValue.increment(1),
         });
 
-        transaction.set(teacherCoachingSessionRef, {
-          eventId,
-        });
-        transaction.set(studentCoachingSessionRef, { eventId });
+        transaction.set(teacherCoachingSessionRef, coachingSessionData);
+        transaction.set(studentCoachingSessionRef, coachingSessionData);
         transaction.update(studentRef, {
           "coachingStats.requests": fieldValue.increment(1),
         });
@@ -535,9 +601,17 @@ export const requestCoachingSchedule = (coachingDetails) => async (
       .catch((error) => {
         throw error;
       });
+    dispatch(
+      addNotification(
+        { ...teacherAttendee, type: "teacher" },
+        `Your student ${metadata.fullName} has requested a coaching session.`,
+        coachingSessionId,
+        "waiting_for_response"
+      )
+    );
     dispatch(hideModal());
     dispatch(requestCoachingScheduleSuccess());
-    dispatch(showNotification("SUCCESS", "Coaching Schedule Requested!"));
+    dispatch(showAlert("SUCCESS", "Coaching Schedule Requested!"));
   } catch (error) {
     dispatch(setError(error));
   }

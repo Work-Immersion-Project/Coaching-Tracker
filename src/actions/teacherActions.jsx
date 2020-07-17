@@ -10,7 +10,7 @@ import {
   REMOVE_SUBJECT_TEACHER_REQUEST,
   REMOVE_SUBJECT_TEACHER_SUCCESS,
 } from "../types";
-import { hideModal, showModal, showNotification } from ".";
+import { hideModal, showModal, showAlert } from ".";
 import { db } from "../firebase";
 import _ from "lodash";
 import firebase from "firebase";
@@ -118,10 +118,7 @@ export const addTeacher = ({
     });
 
     dispatch(
-      showNotification(
-        "SUCCESS",
-        `Teacher ${metadata.fullName} has been added!`
-      )
+      showAlert("SUCCESS", `Teacher ${metadata.fullName} has been added!`)
     );
 
     dispatch(addTeacherSuccess());
@@ -176,7 +173,7 @@ export const assignSubjectTeacher = (values) => async (dispatch) => {
   dispatch(assignSubjectTeacherSuccess());
   dispatch(hideModal());
   dispatch(
-    showNotification(
+    showAlert(
       "SUCCESS",
       `You have successfully assigned subject/s:  ${values.subjects.map(
         (subject) => subject.subjectName
@@ -222,7 +219,7 @@ export const removeSubjectTeacher = (
   dispatch(hideModal());
   dispatch(removeSubjectTeacherSuccess());
   dispatch(
-    showNotification(
+    showAlert(
       "SUCCESS",
       `Subject ${subjectName} has been unassigned from ${metadata.fullName}.`
     )

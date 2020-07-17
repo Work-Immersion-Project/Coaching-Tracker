@@ -1,12 +1,6 @@
 import { REGISTER_USER_REQUEST, REGISTER_USER_SUCCESS } from "../types";
 import { db } from "../firebase";
-import {
-  showNotification,
-  hideModal,
-  setError,
-  addStudent,
-  addTeacher,
-} from "./";
+import { showAlert, hideModal, setError, addStudent, addTeacher } from "./";
 
 const userCollections = db.collection("users");
 

@@ -8,16 +8,17 @@ import modalReducer from "./modalReducer";
 import teacherReducer from "./teacherReducer";
 import studentReducer from "./studentReducer";
 import subjectsReducer from "./subjectsReducers";
-import coursesReducer from "./coursesReducers";
 import fieldsReducer from "./fieldsReducer";
 import coachingReducer from "./coachingReducer";
-import notificationReducer from "./notificationReducer";
+import alertsReducer from "./alertsReducer";
 import registrationReducer from "./registrationReducer";
+import notificationReducer from "./notificationReducer";
 export default combineReducers({
   auth: authReducer,
   form: formReducer,
   registration: registrationReducer,
-  notification: notificationReducer,
+  notifications: notificationReducer,
+  alerts: alertsReducer,
   fields: fieldsReducer,
   teachers: teacherReducer,
   students: studentReducer,

@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       display: "none",
     },
-    color: "white",
+    color: "#52aa95",
   },
   appBar: {
     background: "#333333",

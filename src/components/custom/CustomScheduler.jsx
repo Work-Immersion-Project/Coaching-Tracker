@@ -116,6 +116,12 @@ const AppointmentTooltipHeader = withStyles({
   teacherTitle: {
     margin: "0.5em 0",
   },
+  headerFontColor: {
+    color: "#84DCC6"
+  },
+  emailFontColor: {
+    color: "white"
+  },
 })(({ children, appointmentData, classes, accessType, ...restProps }) => {
   const dispatch = useDispatch();
 
@@ -152,10 +158,10 @@ const AppointmentTooltipHeader = withStyles({
           justify="center"
           alignContent="center"
         >
-          <Typography variant="h6" align="center">
+          <Typography className = {classes.headerFontColor} variant="h6" align="center">
             {appointmentData.teacher.fullName}
           </Typography>
-          <Typography variant="caption" align="center">
+          <Typography className = {classes.emailFontColor} variant="caption" align="center">
             {appointmentData.teacher.email}
           </Typography>
         </Grid>

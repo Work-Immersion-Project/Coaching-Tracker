@@ -17,6 +17,13 @@ const useStyles = makeStyles((theme) => ({
   contentText: {
     color: "white",
   },
+
+  buttonText: {
+    color: "black",
+    "&:hover": {
+      backgroundColor: "#52aa95",
+    }
+  }
 }));
 
 export const ConfirmationDialog = ({
@@ -37,10 +44,10 @@ export const ConfirmationDialog = ({
           {content}
         </DialogContentText>
         <DialogActions>
-          <Button onClick={onNegativeClick} className={classes.contentText}>
+          <Button onClick={onNegativeClick} className={classes.buttonText}>
             Cancel
           </Button>
-          <Button onClick={onPositiveClick} className={classes.contentText}>
+          <Button onClick={onPositiveClick} className={classes.buttonText}>
             Confirm
           </Button>
         </DialogActions>

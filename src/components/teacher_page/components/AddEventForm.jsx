@@ -183,6 +183,12 @@ const formTheme = createMuiTheme({
       },
     },
 
+    MuiPaper: {
+      root: {
+        backgroundColor: "#222222",
+        color: "white"
+      }
+    },
     MuiButton: {
       root: {
         backgroundColor: "#84DCC6",
@@ -196,14 +202,8 @@ const formTheme = createMuiTheme({
       text: {
         color: "#000000",
       },
-    },
-    MuiPaper: {
-      root: {
-        backgroundColor: "#222222",
-        color: "white"
-      }
-    },
   },
+ },
 });
 
 const StyledDatePicker = styled(TextField)({

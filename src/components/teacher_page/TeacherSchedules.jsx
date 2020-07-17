@@ -129,7 +129,12 @@ const formTheme = createMuiTheme({
       root: {
         color: "#84DCC6"
       }
-    }
+    },
+    MuiSelect: {
+      icon: {
+        color: "#84DCC6"
+      }
+    },
   }
 });
 

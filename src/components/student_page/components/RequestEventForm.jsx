@@ -38,6 +38,20 @@ const useStyles = makeStyles(() => ({
     color: "white",
     borderColor: "white",
   },
+  button: {
+    minWidth: "270px",
+  },
+
+  divider: {
+    marginTop: "1em",
+    marginBottom: "0.5em",
+    backgroundColor: "#95a3b3",
+  },
+
+  divider2: {
+    marginBottom: "0.5em",
+    backgroundColor: "#95a3b3",
+  },
 }));
 
 const validateDates = (values) => {
@@ -121,6 +135,12 @@ const formTheme = createMuiTheme({
       },
     },
 
+    MuiPickersClockNumber: {
+      clockNumber: {
+        color: "white",
+      },
+    },
+
     MuiInputLabel: {
       root: {
         color: "white",
@@ -135,6 +155,7 @@ const formTheme = createMuiTheme({
         color: "white",
       },
       underline: {
+        minWidth: "270px",
         "&:before": {
           borderBottom: "1px solid rgba(132, 220, 198, 1)",
         },
@@ -159,19 +180,26 @@ const formTheme = createMuiTheme({
       },
     },
 
-    MuiButton: {
+    MuiPaper: {
       root: {
-        backgroundColor: "#84DCC6",
-        "&:hover": {
-          backgroundColor: "#52aa95",
-          "@media (hover: none)": {
-            backgroundColor: "#84DCC6",
-          },
+        backgroundColor: "#222222",
+        color: "white"
+      }
+    },
+  },
+  
+  MuiButton: {
+    root: {
+      backgroundColor: "#84DCC6",
+      "&:hover": {
+        backgroundColor: "#52aa95",
+        "@media (hover: none)": {
+          backgroundColor: "#84DCC6",
         },
       },
-      text: {
-        color: "#000000",
-      },
+    },
+    text: {
+      color: "#000000",
     },
   },
 });
@@ -226,7 +254,7 @@ const RequestEventForm = (props) => {
           component={CustomMaterialTextField}
         />
 
-        <Divider />
+        <Divider className={classes.divider}/>
         <Field
           label="Start Date"
           name="startDate"
@@ -240,7 +268,7 @@ const RequestEventForm = (props) => {
           name="startTime"
           component={CustomTimePicker}
         />
-        <Divider />
+        <Divider className={classes.divider2}/>
         <Field
           inputComponent={StyledDatePicker}
           label="End Date"
@@ -254,7 +282,7 @@ const RequestEventForm = (props) => {
           name="endTime"
           component={CustomTimePicker}
         />
-        <Divider />
+        <Divider className={classes.divider2}/>
         <Field
           name="teacherAttendee"
           multiple={false}
@@ -265,8 +293,8 @@ const RequestEventForm = (props) => {
           options={props.teachers ? props.teachers : []}
         />
 
-        <Divider />
-        <Button type="submit" disabled={pristine || submitting}>
+        <Divider className={classes.divider2} />
+        <Button type="submit" className={classes.button} disabled={pristine || submitting}>
           Create Coaching Schedule
         </Button>
       </form>

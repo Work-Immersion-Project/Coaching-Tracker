@@ -81,6 +81,9 @@ const useStyles = makeStyles(() => ({
   },
   submitButton: {
     backgroundColor: "#84DCC6",
+    "&:hover": {
+      backgroundColor: "#52aa95",
+    },
     marginTop: "1em",
     margin: "0 5em",
   },

@@ -2,20 +2,13 @@ import React from "react";
 import { connect } from "react-redux";
 import { Snackbar } from "@material-ui/core";
 import { styled } from "@material-ui/core/styles";
-import { hideNotification, hideError } from "../actions";
+import { hideAlert, hideError } from "../actions";
 import MuiAlert from "@material-ui/lab/Alert";
 
 const Alert = (props) => <MuiAlert elevation={6} variant="filled" {...props} />;
-const NotificationRoot = ({
-  isOpen,
-  message,
-  type,
-  error,
-  hideNotification,
-  hideError,
-}) => {
+const AlertRoot = ({ isOpen, message, type, error, hideAlert, hideError }) => {
   const onClose = () => {
-    hideNotification();
+    hideAlert();
     hideError();
   };
 
@@ -47,21 +40,34 @@ const NotificationRoot = ({
           </Alert>
         </Snackbar>
       );
+    case "NOTIFY":
+      return (
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          autoHideDuration={2000}
+          onClose={onClose}
+          open={isOpen}
+        >
+          <Alert onClose={onClose} severity="info">
+            {message}
+          </Alert>
+        </Snackbar>
+      );
     default:
       return null;
   }
 };
 
-const mapStateToProps = ({ notification, errors }) => {
+const mapStateToProps = ({ alerts, errors }) => {
   return {
-    isOpen: notification.isOpen,
-    type: notification.type,
-    message: notification.message,
+    isOpen: alerts.isOpen,
+    type: alerts.type,
+    message: alerts.message,
     error: errors.errorMessage,
   };
 };
 
 export default connect(mapStateToProps, {
-  hideNotification,
+  hideAlert,
   hideError,
-})(NotificationRoot);
+})(AlertRoot);

@@ -9,5 +9,6 @@ export * from "./coursesActions";
 export * from "./subjectsActions";
 export * from "./errorActions";
 export * from "./fieldsActions";
-export * from "./notificationActions";
+export * from "./alertActions";
 export * from "./registrationActions";
+export * from "./notificationActions";

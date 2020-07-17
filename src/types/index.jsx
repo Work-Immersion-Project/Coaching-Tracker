@@ -9,5 +9,6 @@ export * from "./coursesTypes";
 export * from "./subjectsTypes";
 export * from "./errorTypes";
 export * from "./fieldsTypes";
+export * from "./alertTypes";
 export * from "./notificationTypes";
 export * from "./registrationTypes";

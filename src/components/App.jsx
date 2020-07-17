@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Route, Switch, Router } from "react-router-dom";
-import { initializeGapiAuth, checkAuth } from "../actions";
+import { initializeGapiAuth, checkAuth, getNotifications } from "../actions";
 import { connect } from "react-redux";
 import DateFnsUtils from "@material-ui/pickers/adapter/date-fns";
 import { LocalizationProvider } from "@material-ui/pickers";
@@ -11,15 +11,27 @@ import StudentPage from "./student_page/StudentPage";
 import history from "../history";
 import PrivateRoute from "./PrivateRoute";
 import ModalRoot from "./ModalRoot";
-import NotificationRoot from "./NotificationRoot";
+import AlertRoot from "./AlertRoot";
 import "./App.css";
 
 const App = (props) => {
-  const { gapiAuth, authData, checkAuth, initializeGapiAuth } = props;
+  const {
+    gapiAuth,
+    authData,
+    checkAuth,
+    initializeGapiAuth,
+    getNotifications,
+  } = props;
 
   if (gapiAuth && !authData) {
     checkAuth();
   }
+
+  useEffect(() => {
+    if (authData) {
+      getNotifications();
+    }
+  }, [authData]);
 
   useEffect(() => {
     initializeGapiAuth();
@@ -37,7 +49,7 @@ const App = (props) => {
         </Switch>
       </Router>
       <ModalRoot />
-      <NotificationRoot />
+      <AlertRoot />
     </LocalizationProvider>
   );
 };
@@ -52,4 +64,5 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   initializeGapiAuth,
   checkAuth,
+  getNotifications,
 })(App);

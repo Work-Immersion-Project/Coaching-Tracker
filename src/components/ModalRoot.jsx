@@ -2,6 +2,7 @@ import React from "react";
 import { LoadingDialog, ConfirmationDialog, SuccessDialog } from "./dialogs";
 import AddSubjectFormDialog from "./dialogs/AddSubjectFormDialog";
 import AssignSubjectsFormDialog from "./dialogs/AssignSubjectsFormDialog";
+import CoachingSessionDialog from "./dialogs/CoachingSessionDialog";
 import { connect } from "react-redux";
 
 const ModalRoot = ({ modalType, modalProps }) => {
@@ -17,6 +18,8 @@ const ModalRoot = ({ modalType, modalProps }) => {
       return <AddSubjectFormDialog open={openModal} {...modalProps} />;
     case "ASSIGN_SUBJECT_FORM_MODAL":
       return <AssignSubjectsFormDialog open={openModal} {...modalProps} />;
+    case "COACHING_SESSION_MODAL":
+      return <CoachingSessionDialog open={openModal} {...modalProps} />;
     default:
       return null;
   }

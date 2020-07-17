@@ -11,6 +11,8 @@ import {
   ListItemText,
   IconButton,
 } from "@material-ui/core";
+import { connect } from "react-redux";
+import { showModal, hideModal } from "../../actions";
 import DeleteIcon from "@material-ui/icons/Delete";
 const useStyles = makeStyles(() => ({
   root: {
@@ -30,43 +32,31 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const sampleNotif = [
-  {
-    title:
-      "A student has requested a coaching session. Click me for more details.",
-  },
-  {
-    title: "aaaaaaaa",
-  },
-  {
-    title: "aaaaaaaa",
-  },
-  {
-    title: "aaaaaaaa",
-  },
-  {
-    title: "aaaaaaaa",
-  },
-  {
-    title: "aaaaaaaa",
-  },
-  {
-    title: "aaaaaaaa",
-  },
-  {
-    title: "aaaaaaaa",
-  },
-];
+const TeacherNotifications = (props) => {
+  const onDialogClose = () => {
+    props.hideModal();
+  };
 
-const TeacherNotifications = () => {
+  const onNotificationClick = (coachingSessionId) => {
+    props.showModal("COACHING_SESSION_MODAL", {
+      onDialogClose: onDialogClose,
+      coachingSessionId,
+    });
+  };
+
   const renderNotification = () => {
-    return sampleNotif.map((notif) => {
+    return props.notifications.map((notif) => {
       return (
         <>
-          <ListItem button key={notif.title}>
-            <ListItemText>{notif.title}</ListItemText>
+          <ListItem
+            button
+            onClickCapture={() => {
+              onNotificationClick(notif.coachingSessionId);
+            }}
+            key={notif.coachingSessionId}
+          >
+            <ListItemText>{notif.message}</ListItemText>
           </ListItem>
-          <Divider />
         </>
       );
     });
@@ -97,4 +87,13 @@ const TeacherNotifications = () => {
   );
 };
 
-export default TeacherNotifications;
+const mapStateToProps = (state) => {
+  return {
+    notifications: state.notifications.data,
+  };
+};
+
+export default connect(mapStateToProps, {
+  showModal,
+  hideModal,
+})(TeacherNotifications);

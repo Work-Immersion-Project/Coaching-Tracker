@@ -4,8 +4,8 @@ import { Route, useRouteMatch } from "react-router-dom";
 import StudentDashboard from "./StudentDashboard";
 import StudentDrawer from "./StudentDrawer";
 import StudentSchedules from "./StudentSchedules";
-import StudentTeacherList from "./StudentTeacherList";
 import CustomAppbar from "../custom/CustomAppbar";
+import NotificationPage from "../NotificationPage";
 import { getCoachingSchedules } from "../../actions";
 import { useDispatch } from "react-redux";
 import RequestEventDrawer from "./components/RequestEventDrawer";
@@ -45,9 +45,10 @@ const StudentPage = () => {
         <Route path={`${path}/schedules`} exact>
           <StudentSchedules />
         </Route>
-        <Route path={`${path}/teacher-list`} exact>
-          <StudentTeacherList />
-        </Route>
+
+        <Route path={`${path}/notifications`} exact>
+            <NotificationPage />
+          </Route>
       </div>
       <RequestEventDrawer />
     </div>

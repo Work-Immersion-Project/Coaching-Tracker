@@ -6,8 +6,7 @@ import TeacherDashboard from "./TeacherDashboard";
 
 import TeacherDrawer from "./TeacherDrawer";
 import TeacherSchedules from "./TeacherSchedules";
-import TeacherStudentList from "./TeacherStudentList";
-import TeacherNotifications from "./TeacherNotifications";
+import NotificationPage from "../NotificationPage";
 import AddEventDrawer from "./components/AddEventDrawer";
 import { getCoachingSchedules } from "../../actions";
 import { useDispatch } from "react-redux";
@@ -48,11 +47,8 @@ const TeacherPage = () => {
           <Route path={`${path}/schedules`} exact>
             <TeacherSchedules />
           </Route>
-          <Route path={`${path}/student-list`} exact>
-            <TeacherStudentList />
-          </Route>
           <Route path={`${path}/notifications`} exact>
-            <TeacherNotifications />
+            <NotificationPage />
           </Route>
           <Redirect to={`${path}`} />
         </Switch>

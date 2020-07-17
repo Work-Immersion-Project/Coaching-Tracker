@@ -143,27 +143,6 @@ const AdminRegistration = (props) => {
     props.hideModal();
   };
 
-  const renderTeacherForms = () => {
-    return (
-      <Grid item sm>
-        <InputLabel className={classes.inputLabel}>Subject</InputLabel>
-        <Field
-          name="subject"
-          id="subject"
-          required
-          native
-          disableUnderline
-          component={CustomSelectField}
-          className={classes.selectField}
-        >
-          <option value={""} />
-          <option className={classes.selectValue} value={"subject1"}>
-            Subject1
-          </option>
-        </Field>
-      </Grid>
-    );
-  };
 
   const renderStudentForms = () => {
     return (
@@ -205,8 +184,6 @@ const AdminRegistration = (props) => {
       const { type } = props.formValues;
       if (type === "student") {
         return renderStudentForms();
-      } else if (type === "teacher") {
-        return renderTeacherForms();
       }
     }
     return null;

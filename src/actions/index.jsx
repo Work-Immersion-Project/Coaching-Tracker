@@ -12,3 +12,4 @@ export * from "./fieldsActions";
 export * from "./alertActions";
 export * from "./registrationActions";
 export * from "./notificationActions";
+export * from "./coachingLogActions";

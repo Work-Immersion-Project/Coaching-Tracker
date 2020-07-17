@@ -107,7 +107,11 @@ export const addTeacher = ({
     const coachingStats = {
       pending: 0,
       finished: 0,
-      canceled: 0,
+      cancelled: 0,
+      overdue: 0,
+      ongoing: 0,
+      requests: 0,
+      waiting_for_response:0,
     };
     await teachersCollection.doc(email).set({
       metadata,

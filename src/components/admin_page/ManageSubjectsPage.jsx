@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Chip } from "@material-ui/core";
+import { makeStyles, styled, withStyles } from "@material-ui/core/styles";
+import { Grid, Chip, createMuiTheme, ThemeProvider,} from "@material-ui/core";
 import { hideModal, showModal, addSubject, getSubjects } from "../../actions";
 import _ from "lodash";
 import { connect } from "react-redux";
-import MaterialTable from "material-table";
+import MaterialTable, {MTableHeader} from "material-table";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -22,6 +22,74 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const StyledTableHeader = withStyles({
+})(({    children,
+  classes,
+  ...restProps}) => {
+    return <MTableHeader className={classes.test} {...restProps}/>;
+})
+
+
+const formTheme = createMuiTheme({
+  overrides: {
+    MuiPaper:{
+      root: {
+        color: "#84DCC6",
+        backgroundColor: "#222222"
+      }
+    },
+    MuiInput: {
+      root: {
+        color: "#84DCC6",
+      },
+      underline: {
+        minWidth: "270px",
+        "&:before": {
+          borderBottom: "1px solid rgba(132, 220, 198, 1)",
+        },
+        "&:after": {
+          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+        },
+        "&:hover:not($disabled):not($focused):not($error):before": {
+          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+        },
+      },
+    },
+    MuiIconButton: {
+      root: {
+        color: "#84DCC6",
+        "&$disabled": {
+          color: "#222222",
+        },
+      },
+      colorInherit: {
+        color: "#84DCC6",
+      },
+    },
+
+    MuiInputBase: {
+      input: {
+        color: "#84DCC6",
+      }
+    },
+    MuiSelect: {
+      icon: {
+        color: "#84DCC6",
+      }
+    },
+    MuiTypography: {
+      caption: {
+        color: "#84DCC6",
+      }
+    },
+    MuiTableCell: {
+      head: {
+        color: "#84DCC6",
+      }
+    },
+  },
+});
+
 const ManageSubjectsPage = (props) => {
   const classes = useStyles();
   console.log(props);
@@ -34,7 +102,7 @@ const ManageSubjectsPage = (props) => {
   };
 
   const handleOnSubmit = (values) => {
-    // TODO: Integrate Add Subject functionality here.
+  
     props.hideModal();
     props.addSubject(values);
   };
@@ -49,6 +117,7 @@ const ManageSubjectsPage = (props) => {
   };
 
   return (
+    <ThemeProvider theme={formTheme}>
     <Grid
       className={classes.root}
       container
@@ -87,7 +156,12 @@ const ManageSubjectsPage = (props) => {
                   )),
           },
         ]}
+
+  
         isLoading={!props.subjects}
+        components={{
+          Header: (props) => <StyledTableHeader {...props}/>
+        }}
         actions={[
           {
             icon: "add",
@@ -96,8 +170,15 @@ const ManageSubjectsPage = (props) => {
             onClick: onAddSubjectPressed,
           },
         ]}
+        options={{
+          headerStyle: {
+            backgroundColor: "#222222",
+            color: "#84DCC6",
+          }
+        }}
       />
     </Grid>
+    </ThemeProvider>
   );
 };
 

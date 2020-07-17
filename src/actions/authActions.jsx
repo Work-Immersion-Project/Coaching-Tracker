@@ -11,9 +11,6 @@ import app, { db } from "../firebase";
 import firebase from "firebase";
 
 // Authentication Actions.
-const studentCollection = db.collection("students");
-const teachersCollection = db.collection("teachers");
-const adminsCollection = db.collection("admins");
 const userCollection = db.collection("users");
 const collections = {
   admin: db.collection("admins"),

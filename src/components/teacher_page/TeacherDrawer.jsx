@@ -6,12 +6,12 @@ import {
   ListItemIcon,
   ListItemText,
   Hidden,
-  Button,
+
 } from "@material-ui/core";
 // Icons
 import HomeIcon from "@material-ui/icons/Home";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import SchoolIcon from "@material-ui/icons/School";
+
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 
@@ -47,11 +47,6 @@ const TeacherDrawer = (props) => {
       text: "Home",
       icon: <HomeIcon />,
       path: "/",
-    },
-    {
-      text: "Student List",
-      icon: <SchoolIcon />,
-      path: "/student-list",
     },
     {
       text: "Schedules",

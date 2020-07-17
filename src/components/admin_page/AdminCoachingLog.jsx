@@ -1,121 +1,114 @@
-import React from "react";
-import {
-  Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@material-ui/core";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import React, { useEffect } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { Grid, Chip, createMuiTheme, ThemeProvider, Typography} from "@material-ui/core";
+import { hideModal, showModal, getCoachingLogs } from "../../actions";
+import _ from "lodash";
+import { connect } from "react-redux";
+import MaterialTable from "material-table";
+import moment from "moment";
 
-function createData(teacher, student, date, time_in, time_out) {
-  return { teacher, student, date, time_in, time_out };
-}
-
-const rows = [
-  createData("Teacher", 10, "5/5/2020", "8:00 AM", "6:00 PM"),
-
-  createData("Teacher1", 10, "5/5/2020", "9:00 AM", "6:00 PM"),
-  createData("Teacher2", 20, "5/5/2020", "8:00 AM", "6:00 PM"),
-  createData("Teacher3", 15, "5/5/2020", "8:00 AM", "6:00 PM"),
-  createData("Teacher4", 6, "5/5/2020", "8:00 AM", "6:00 PM"),
-];
-
-const useStyles = makeStyles((theme) => ({
-  content: {
-    height: "100vh",
+const useStyles = makeStyles(() => ({
+  root: {
+    height: "100%",
     width: "100%",
-    backgroundColor: "#4B4E6D",
+    padding: "1em",
+    background: "#4B4E6D",
   },
-  table: {
-    width: "60vw",
-    backgroundColor: "#222222",
-    color: theme.palette.common.white,
+
+  teacherChip: {
+    margin: "0.25em",
   },
-  tableCell: {
-    color: "white",
-  },
-  tablePaper: {
-    backgroundColor: "#95A3B3",
-    color: "white",
+  studentChip: {
+    margin: "0.25em",
   },
 }));
 
-const StyledTableCell = withStyles((theme) => ({
-  head: {
-    backgroundColor: "#84DCC6",
-    color: theme.palette.common.black,
-  },
-  body: {
-    fontSize: 14,
-  },
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-  root: {
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
-    },
-  },
-}))(TableRow);
-
-const AdminCoachingLog = () => {
+const AdminCoachingLog = (props) => {
   const classes = useStyles();
+  
+  useEffect(() => {
+    props.getCoachingLogs();
+  }, []);
+
+
+
   return (
+
     <Grid
-      className={classes.content}
+      className={classes.root}
       container
       direction="column"
       justify="center"
-      alignItems="center"
     >
-      <Paper className={classes.tablePaper} elevation={3}>
-        <TableContainer className={classes.table}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell> Teacher</StyledTableCell>
-                <StyledTableCell align="right">
-                  Students Coached
-                </StyledTableCell>
-                <StyledTableCell align="right"> Date</StyledTableCell>
-                <StyledTableCell align="right"> Time In</StyledTableCell>
-                <StyledTableCell align="right"> Time Out</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <StyledTableRow key={row.teacher}>
-                  <StyledTableCell
-                    component="th"
-                    scope="row"
-                    className={classes.tableCell}
-                  >
-                    {row.teacher}
-                  </StyledTableCell>
-                  <StyledTableCell align="right" className={classes.tableCell}>
-                    {row.student}
-                  </StyledTableCell>
-                  <StyledTableCell align="right" className={classes.tableCell}>
-                    {row.date}
-                  </StyledTableCell>
-                  <StyledTableCell align="right" className={classes.tableCell}>
-                    {row.time_in}
-                  </StyledTableCell>
-                  <StyledTableCell align="right" className={classes.tableCell}>
-                    {row.time_out}
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+      <MaterialTable
+        data={props.coachingLogs ? props.coachingLogs : []}
+        title="Subjects"
+        columns={[
+          { title: "Status", field: "status",   render: (rowData) =>
+   <Chip
+            className={classes.teacherChip}
+            label={rowData.status}
+          /> },
+          {
+            title: "Assigned Teacher",
+            field: "teacher",
+            render: (rowData) =>
+              rowData.teachers === null && rowData.teachers.length === 0
+                ? ""
+                :<Chip
+                className={classes.teacherChip}
+                label={rowData.teacher.email}
+              />
+          },
+          {
+            title: "Students",
+            field: "studentAttendees",
+            render: ({ studentAttendees }) =>
+            studentAttendees && studentAttendees.length === 0
+                ? ""
+                : studentAttendees.map((student) => (
+                    <Chip
+                      className={classes.studentChip}
+                      label={student.email}
+                    />
+                  )),
+          },
+          {
+            title: "Start Date",
+            field: "startDate",
+            render: ({ startDate }) => <Typography>{moment(startDate).format('MMMM, DD, yyyy')}</Typography>
+          },
+          {
+            title: "End Date",
+            field: "endDate",
+            render: ({ endDate }) => <Typography>{moment(endDate).format('MMMM, DD, yyyy')}</Typography>
+          },
+          {
+            title: "Start Time",
+            field: "startDate",
+            render: ({ startDate }) => <Typography>{moment(startDate).format('HH:mm A')}</Typography>
+          },
+          {
+            title: "End Time",
+            field: "endDate",
+            render: ({ endDate }) => <Typography>{moment(endDate).format('HH:mm A')}</Typography>
+          },
+        ]}
+        isLoading={!props.coachingLogs}
+       
+      />
     </Grid>
   );
 };
 
-export default AdminCoachingLog;
+const mapStateToProps = (state) => {
+  return {
+    coachingLogs:state.coachingLog.data,
+  };
+};
+
+export default connect(mapStateToProps, {
+  hideModal,
+  showModal,
+  getCoachingLogs
+})(AdminCoachingLog);

@@ -25,6 +25,7 @@ import {
   showModal,
   hideModal,
   updateCoachingScheduleStatus,
+  confirmCoachingSchedule,
 } from "../../actions";
 import { isDayBehind, isMeetingAvailable } from "../../utils";
 import classNames from "clsx";
@@ -135,17 +136,6 @@ const AppointmentTooltipHeader = withStyles({
     dispatch(removeCoachingSchedule(appointmentData.eventId));
   };
 
-  const handleOnDeleteButton = () => {
-    dispatch(
-      showModal("CONFIRMATION_MODAL", {
-        onDialogClose: onDialogClose,
-        title: `Remove ${appointmentData.title}?`,
-        content: "Are you sure you want to remove this schedule?",
-        onNegativeClick: onDialogClose,
-        onPositiveClick: () => removeSchedule(),
-      })
-    );
-  };
 
   return (
     <AppointmentTooltip.Header {...restProps} appointmentData={appointmentData}>
@@ -180,6 +170,9 @@ const AppointmentTooltipContent = withStyles({
   meetingButton: {
     margin: "1em",
     backgroundColor: "#109083",
+    "&:hover": {
+      backgroundColor: "#006256",
+    },
     color: "white",
   },
   meetingLink: {
@@ -187,12 +180,18 @@ const AppointmentTooltipContent = withStyles({
   },
   acceptMeetingButton: {
     margin: "1em",
-    backgroundColor: "blue",
+    backgroundColor: "#0000ff",
+    "&:hover": {
+      backgroundColor: "#0000ca",
+    },
     color: "white",
   },
   denyMeetingButton: {
     margin: "1em",
-    backgroundColor: "red",
+    backgroundColor: "#ff0000",
+    "&:hover": {
+      backgroundColor: "#c20000",
+    },
     color: "white",
   },
 })(
@@ -201,14 +200,48 @@ const AppointmentTooltipContent = withStyles({
     appointmentData,
     onUpdateStatusButtonPressed,
     accessType,
+    confirmCoachingSchedule,
+    loggedInUser,
     classes,
     ...restProps
   }) => {
+    const renderConfirmationButton = () => {
+      if(loggedInUser.type === "teacher"){
+        return <Button
+        className={classes.acceptMeetingButton}
+        onClick={() => {
+          confirmCoachingSchedule(appointmentData.coachingSessionId);
+        }}
+        variant="contained"
+      >
+        Finish Session
+      </Button>
+      } else if (loggedInUser.type === "student"){
+        let disabled = true;
+  
+        if(appointmentData.studentsConfirmed){
+          disabled = !appointmentData.studentsConfirmed.filter((student) => student.email === loggedInUser.email).length === 0;
+        }
+  
+        return <Button
+        disabled={disabled}
+        className={classes.acceptMeetingButton}
+        onClick={() => {
+          confirmCoachingSchedule(appointmentData.coachingSessionId);
+        }}
+        variant="contained"
+      >
+        Finish Session
+      </Button>
+      }
+    }
+  
     const renderContent = () => {
       if (
         appointmentData.status === "denied" ||
         appointmentData.status === "overdue" ||
-        appointmentData.status === "cancelled"
+        appointmentData.status === "cancelled"||
+        appointmentData.status === "finished" 
       ) {
         return null;
       }
@@ -263,14 +296,15 @@ const AppointmentTooltipContent = withStyles({
         new Date(appointmentData.endDate)
       );
 
-      return (
-        <Grid
-          className={classes.meetingButtonWrapper}
-          container
-          direction="column"
-          justify="center"
-        >
-          <Button
+      if(appointmentData.status === 'ongoing' ){
+        return (
+          <Grid
+            className={classes.meetingButtonWrapper}
+            container
+            direction="column"
+            justify="center"
+          >
+            <Button
             disabled={!meetingAvailable || dayBehind}
             className={classes.meetingButton}
             onClick={() => {
@@ -282,24 +316,59 @@ const AppointmentTooltipContent = withStyles({
             Join Google Meet
           </Button>
           <Typography
-            display={meetingAvailable || dayBehind ? "none" : ""}
+          
+            align="center"
+            variant="subtitle2"
+          >
+            {appointmentData.meetingLink}
+          </Typography>
+          {renderConfirmationButton()}
+          </Grid>
+        );
+      }
+      return (
+        <Grid
+          className={classes.meetingButtonWrapper}
+          container
+          direction="column"
+          justify="center"
+        >
+          <Button
+            disabled={!meetingAvailable || dayBehind}
+            className={classes.meetingButton}
+            onClick={() => {
+              if(loggedInUser.type !== "student"){
+
+                onUpdateStatusButtonPressed(   appointmentData.coachingSessionId,
+                  "ongoing"
+                );
+              }
+              window.open(appointmentData.meetingLink, "_blank");
+            }}
+            variant="contained"
+            startIcon={<DuoIcon />}
+          >
+            Join Google Meet
+          </Button>
+          <Typography
+
             align="center"
             variant="subtitle2"
           >
             {!meetingAvailable || dayBehind ? "" : appointmentData.meetingLink}
           </Typography>
-          <Button
-            className={classes.denyMeetingButton}
-            onClick={() => {
-              onUpdateStatusButtonPressed(
-                appointmentData.coachingSessionId,
-                "cancelled"
-              );
-            }}
-            variant="contained"
-          >
-            Cancel
-          </Button>
+         
+       {loggedInUser.type !== "student" ?  <Button
+          className={classes.denyMeetingButton}
+          onClick={() => {
+            onUpdateStatusButtonPressed(appointmentData.coachingSessionId,
+              "cancelled"
+            );
+          }}
+          variant="contained"
+        >
+          Cancel
+        </Button> : null}
         </Grid>
       );
     };
@@ -320,7 +389,66 @@ const AppointmentTooltipContent = withStyles({
       </AppointmentTooltip.Content>
     );
   }
+  
 );
+
+const AppointmentContent = withStyles({
+  title: {
+    fontWeight: 'bold',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    color: "white"
+  },
+  textContainer: {
+    lineHeight: 1,
+    whiteSpace: 'pre-wrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    width: '100%',
+  },
+  time: {
+    display: 'inline-block',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    color: "white"
+  },
+  text: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    color: "white"
+  },
+  container: {
+    width: '100%',
+  },
+})(({    children,
+  appointmentData,
+  data,
+  classes,
+  formatDate,
+  ...restProps}) => {
+    return <Appointments.Container formatDate={formatDate} data={data} {...restProps}>
+      <div className={classes.container}>
+    <div className={classes.title}>
+      {data.title}
+    </div>
+    <div className={classes.text}>
+      {data.location}
+    </div>
+    <div className={classes.textContainer}>
+      <div className={classes.time}>
+        {formatDate(data.startDate.toString(), { hour: 'numeric', minute: 'numeric' })}
+      </div>
+      <div className={classes.time}>
+        {' - '}
+      </div>
+      <div className={classes.time}>
+        {formatDate(data.endDate.toString(), { hour: 'numeric', minute: 'numeric' })}
+      </div>
+    </div>
+  </div></Appointments.Container>;
+})
 
 const CustomScheduler = ({
   coachingSchedules,
@@ -330,6 +458,8 @@ const CustomScheduler = ({
   showModal,
   hideModal,
   updateCoachingScheduleStatus,
+  loggedInUser,
+  confirmCoachingSchedule,
 }) => {
   const studentInstances = _.flatten(
     coachingSchedules.map((schedule) =>
@@ -349,7 +479,7 @@ const CustomScheduler = ({
     {
       text: "Pending",
       id: "pending",
-      color: "#ffeb3b",
+      color: "#8C7E10",
     },
     {
       text: "Finished",
@@ -359,22 +489,22 @@ const CustomScheduler = ({
     {
       text: "Cancelled",
       id: "cancelled",
-      color: "#b71c1c",
+      color: "#7A1313",
     },
     {
       text: "Request Denied",
       id: "denied",
-      color: "#b71c1c",
+      color: "#7A1313",
     },
     {
       text: "Waiting For Response",
       id: "waiting_for_response",
-      color: "#ffff6b",
+      color: "#BDA911",
     },
     {
       text: "Overdue",
       id: "overdue",
-      color: "#e65100",
+      color: "#C87142",
     },
   ];
 
@@ -401,24 +531,28 @@ const CustomScheduler = ({
   const onUpdateStatusButtonPressed = (eventId, status) => {
     let title = "";
     let content = "";
-    if (status === "pending") {
-      title = "Accept Schedule Request?";
-      content = "Are you sure that you are available at this date?";
-    } else if (status === "cancelled") {
-      title = "Cancel Schedule?";
-      content = "Are you sure that you want to cancel this session?";
-    } else if (status === "denied") {
-      title = "Deny Schedule Request?";
-      content = "Are you sure that you want to deny this session?";
+    if(status === "ongoing"){
+      updateCoachingScheduleStatus(eventId,status)  ;
+    } else {
+      if (status === "pending") {
+        title = "Accept Schedule Request?";
+        content = "Are you sure that you are available at this date?";
+      } else if (status === "cancelled") {
+        title = "Cancel Schedule?";
+        content = "Are you sure that you want to cancel this session?";
+      } else if (status === "denied") {
+        title = "Deny Schedule Request?";
+        content = "Are you sure that you want to deny this session?";
+      }
+  
+      showModal("CONFIRMATION_MODAL", {
+        onDialogClose: onDialogClose,
+        title,
+        content,
+        onNegativeClick: onDialogClose,
+        onPositiveClick: () => updateCoachingScheduleStatus(eventId, status),
+      });
     }
-
-    showModal("CONFIRMATION_MODAL", {
-      onDialogClose: onDialogClose,
-      title,
-      content,
-      onNegativeClick: onDialogClose,
-      onPositiveClick: () => updateCoachingScheduleStatus(eventId, status),
-    });
   };
 
   const weekTableCell = connectProps(WeekTableCell, () => {
@@ -444,7 +578,7 @@ const CustomScheduler = ({
   });
 
   const appointmentContent = connectProps(AppointmentTooltipContent, () => {
-    return { accessType, onUpdateStatusButtonPressed };
+    return { accessType, onUpdateStatusButtonPressed , loggedInUser,confirmCoachingSchedule};
   });
 
   return (
@@ -462,20 +596,20 @@ const CustomScheduler = ({
       <ViewSwitcher />
       <MonthView timeTableCellComponent={monthTableCell} />
       <DayView
-        startDayHour={1}
+        startDayHour={0}
         endDayHour={24}
         d
         timeTableCellComponent={dayTableCell}
       />
       <WeekView
-        startDayHour={1}
+        startDayHour={0}
         endDayHour={24}
         onCellClick={openAddEventDrawer}
         timeTableCellComponent={weekTableCell}
       />
       <DateNavigator />
       <TodayButton />
-      <Appointments />
+      <Appointments appointmentContentComponent={AppointmentContent} />
       <Resources data={resources} mainResourceName="status" />
       <AppointmentTooltip
         contentComponent={appointmentContent}
@@ -489,11 +623,12 @@ const mapStateToProps = (state) => {
   return {
     coachingSchedules: state.coaching.coachingSchedules,
     loggedInStudentEmail: state.auth.data?.user?.email,
+    loggedInUser: state.auth.data.user,
   };
 };
 export default connect(mapStateToProps, {
   openAddEventDrawer,
   updateCoachingScheduleStatus,
   showModal,
-  hideModal,
+  hideModal,confirmCoachingSchedule
 })(CustomScheduler);

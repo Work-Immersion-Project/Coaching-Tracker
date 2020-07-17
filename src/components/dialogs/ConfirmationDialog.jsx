@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
   buttonText: {
     color: "black",
+    backgroundColor: "#84DCC6",
     "&:hover": {
       backgroundColor: "#52aa95",
     }

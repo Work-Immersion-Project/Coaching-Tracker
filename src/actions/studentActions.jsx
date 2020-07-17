@@ -97,6 +97,7 @@ export const addStudent = ({
   lastName = "",
   email,
   createdAt,
+  course,
 }) => async (dispatch) => {
   dispatch(hideModal());
   dispatch(showModal("LOADING_MODAL"));
@@ -113,7 +114,11 @@ export const addStudent = ({
     const coachingStats = {
       pending: 0,
       finished: 0,
-      canceled: 0,
+      cancelled: 0,
+      overdue: 0,
+      ongoing: 0,
+      requests: 0,
+      waiting_for_response:0,
     };
 
     await studentsCollection.doc(email).set({
@@ -122,6 +127,7 @@ export const addStudent = ({
       id,
       enrolledSubjects: [],
       coachingStats,
+      course,
     });
 
     dispatch(hideModal());

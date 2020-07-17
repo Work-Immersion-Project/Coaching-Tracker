@@ -6,7 +6,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import { openDrawer, closeDrawer } from "../../actions";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import _, { split } from "lodash";
+import _  from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {

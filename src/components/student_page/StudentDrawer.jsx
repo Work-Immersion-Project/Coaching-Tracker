@@ -6,15 +6,12 @@ import {
   ListItemIcon,
   ListItemText,
   Hidden,
-  Button,
 } from "@material-ui/core";
 // Icons
 import HomeIcon from "@material-ui/icons/Home";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import ChatIcon from "@material-ui/icons/Chat";
-import FaceIcon from "@material-ui/icons/Face";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
-import history from "../../history";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { signOut, showModal, hideModal, closeDrawer } from "../../actions";
@@ -54,9 +51,9 @@ const StudentDrawer = (props) => {
       path: "/schedules",
     },
     {
-      text: "Teacher List",
-      icon: <FaceIcon />,
-      path: "/teacher-list",
+      text: "Notifications",
+      icon: <NotificationsIcon />,
+      path: "/notifications",
     },
   ];
   const onDialogClose = () => {

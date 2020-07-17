@@ -37,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
 const RequestEventDrawer = ({
   addEventDrawerData,
   closeAddEventDrawer,
-  clearCoachingAttendees,
 }) => {
   const { isOpen, selectedDate } = addEventDrawerData;
   const classes = useStyles();
@@ -73,8 +72,7 @@ const RequestEventDrawer = ({
         }}
         onClose={() => {
           closeAddEventDrawer();
-          clearCoachingAttendees();
-        }}
+          }}
         ModalProps={{
           keepMounted: true,
         }}

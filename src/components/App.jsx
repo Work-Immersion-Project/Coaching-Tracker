@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Route, Switch, Router } from "react-router-dom";
 import { initializeGapiAuth, checkAuth, getNotifications } from "../actions";
 import { connect } from "react-redux";
+import MomentUtils from "@material-ui/pickers/adapter/moment";
 import DateFnsUtils from "@material-ui/pickers/adapter/date-fns";
 import { LocalizationProvider } from "@material-ui/pickers";
 import LoginPage from "./login_page/LoginPage";
@@ -12,6 +13,7 @@ import history from "../history";
 import PrivateRoute from "./PrivateRoute";
 import ModalRoot from "./ModalRoot";
 import AlertRoot from "./AlertRoot";
+import moment from "moment";
 import "./App.css";
 
 const App = (props) => {
@@ -32,13 +34,12 @@ const App = (props) => {
       getNotifications();
     }
   }, [authData]);
-
   useEffect(() => {
     initializeGapiAuth();
   }, [initializeGapiAuth]);
 
   return !props.gapiAuth ? null : (
-    <LocalizationProvider dateAdapter={DateFnsUtils}>
+    <LocalizationProvider dateAdapter={MomentUtils}>
       <Router history={history}>
         <Switch>
           <Route path="/login" component={LoginPage} exact />

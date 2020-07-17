@@ -7,8 +7,10 @@ import {
   UPDATE_NOTIFICATION_SUCCESS,
 } from "../types";
 import { setError, showAlert } from "./";
+import _ from 'lodash';
 import { v4 as uuidV4 } from "uuid";
 import { db } from "../firebase";
+import moment from "moment";
 
 const collections = {
   student: db.collection("students"),
@@ -17,17 +19,22 @@ const collections = {
 
 export const getNotifications = () => async (dispatch, getState) => {
   const currentLoggedInUser = getState().auth.data.user;
-  if (!currentLoggedInUser.type !== "admin") {
+  if (currentLoggedInUser.type !== "admin") {
     dispatch(getNotificationsRequest());
     collections[currentLoggedInUser.type]
       .doc(currentLoggedInUser.email)
       .collection("notifications")
       .onSnapshot((snapshot) => {
-        const userNotifications = snapshot.docs.map((doc) => doc.data());
+        const userNotifications = snapshot.docs.map((doc) => {
+          return {
+            ...doc.data(),
+            notificationId: doc.id,
+          }
+        });
         const unseenNotificationCount = userNotifications.filter(
           (notif) => !notif.seen
         ).length;
-        dispatch(getNotificationsSuccess(userNotifications));
+        dispatch(getNotificationsSuccess(_.orderBy(userNotifications, 'createdAt', 'desc')));
         if (unseenNotificationCount > 0) {
           dispatch(
             showAlert(
@@ -60,7 +67,7 @@ export const addNotification = (
     dispatch(addNotificationRequest());
     const notificationId = uuidV4();
     const sender = getState().auth.data.user;
-    console.log(recepient);
+
     await collections[recepient.type]
       .doc(recepient.email)
       .collection("notifications")
@@ -72,6 +79,7 @@ export const addNotification = (
           email: sender.email,
           fullName: sender.metadata.fullName,
         },
+        createdAt: moment().format(),
         seen: false,
         type,
       });

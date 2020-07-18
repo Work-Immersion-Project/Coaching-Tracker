@@ -12,5 +12,11 @@ const app = firebase.initializeApp({
 });
 
 export const db = app.firestore();
+export const userCollection = db.collection("users");
+export const studentCollection = db.collection("students");
+export const teacherCollection = db.collection("teachers");
+export const subjectCollection = db.collection("subjects");
+export const adminCollection = db.collection("admins");
+export const coachingSessionCollection = db.collection("coachingSessions");
 
 export default app;

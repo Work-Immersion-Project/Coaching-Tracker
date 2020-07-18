@@ -6,7 +6,6 @@ import {
   ListItemIcon,
   ListItemText,
   Hidden,
-  Button,
 } from "@material-ui/core";
 import { signOut, showModal, hideModal, closeDrawer } from "../../actions";
 import { connect } from "react-redux";

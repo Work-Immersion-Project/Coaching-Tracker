@@ -8,9 +8,8 @@ import {
   DialogContentText,
   Button,
 } from "@material-ui/core";
-import { useSelector } from "react-redux";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   content: {
     backgroundColor: "#222222",
   },
@@ -23,8 +22,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#84DCC6",
     "&:hover": {
       backgroundColor: "#52aa95",
-    }
-  }
+    },
+  },
 }));
 
 export const ConfirmationDialog = ({

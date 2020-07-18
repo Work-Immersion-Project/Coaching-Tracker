@@ -1,7 +1,6 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  Paper,
   Grid,
   Card,
   List,
@@ -14,9 +13,9 @@ import {
   Divider,
 } from "@material-ui/core";
 import { connect } from "react-redux";
-import { showModal, hideModal,updateNotification } from "../actions";
+import { showModal, hideModal, updateNotification } from "../actions";
 import DeleteIcon from "@material-ui/icons/Delete";
-import Lens from '@material-ui/icons/Lens';
+import Lens from "@material-ui/icons/Lens";
 import _ from "lodash";
 import moment from "moment";
 const useStyles = makeStyles(() => ({
@@ -32,29 +31,28 @@ const useStyles = makeStyles(() => ({
     backgroundColor: "#222222",
   },
   emptyContent: {
-      width: "100%",
-      height: "100%",
-      color: "#84DCC6"
+    width: "100%",
+    height: "100%",
+    color: "#84DCC6",
   },
   content: {
     width: "100%",
     padding: "2em",
-    color: "#84DCC6"
+    color: "#84DCC6",
   },
   unseenIndicator: {
-      color: "#4B4E6D"
+    color: "#4B4E6D",
   },
   divider: {
     height: "0.1px",
     backgroundColor: "#95a3b3",
   },
   deleteIcon: {
-    color: "#84DCC6"
+    color: "#84DCC6",
   },
   notifMessage: {
-    padding: "0.5em 0.5em"
+    padding: "0.5em 0.5em",
   },
-
 }));
 
 const NotificationPage = (props) => {
@@ -63,17 +61,17 @@ const NotificationPage = (props) => {
   };
 
   useEffect(() => {
-moment.updateLocale('en',{
-    relativeTime:{
-        ss: '%d secs',
+    moment.updateLocale("en", {
+      relativeTime: {
+        ss: "%d secs",
         m: "a minute",
-        mm: "%d mins"
-    }
-})
-  },[])
-  const onNotificationClick = ({coachingSessionId, notificationId, seen}) => {
-    if(!seen){
-        props.updateNotification(notificationId);
+        mm: "%d mins",
+      },
+    });
+  }, []);
+  const onNotificationClick = ({ coachingSessionId, notificationId, seen }) => {
+    if (!seen) {
+      props.updateNotification(notificationId);
     }
     props.showModal("COACHING_SESSION_MODAL", {
       onDialogClose: onDialogClose,
@@ -81,25 +79,35 @@ moment.updateLocale('en',{
     });
   };
 
-  
   const renderContent = () => {
-      if(_.isEmpty(props.notifications)){
-          return       <Grid className={classes.emptyContent} item container direction="column" justify="center" alignItems='center'>
-              <Typography>You currently have no notifications.</Typography>
+    if (_.isEmpty(props.notifications)) {
+      return (
+        <Grid
+          className={classes.emptyContent}
+          item
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+        >
+          <Typography>You currently have no notifications.</Typography>
         </Grid>
-      }
+      );
+    }
 
-      return   <Grid className={classes.content} item container direction="column">
-      <Grid container justify="flex-end">
-        <IconButton>
-          <DeleteIcon className={classes.deleteIcon}/>
-        </IconButton>
+    return (
+      <Grid className={classes.content} item container direction="column">
+        <Grid container justify="flex-end">
+          <IconButton>
+            <DeleteIcon className={classes.deleteIcon} />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <List>{renderNotification()}</List>
+        </Grid>
       </Grid>
-      <Grid item>
-        <List>{renderNotification()}</List>
-      </Grid>
-    </Grid>
-  }
+    );
+  };
 
   const renderNotification = () => {
     return props.notifications.map((notif) => {
@@ -113,17 +121,25 @@ moment.updateLocale('en',{
             }}
             key={notif.coachingSessionId}
           >
-            {notif.seen ? null : <ListItemIcon>
-            <Lens  className={classes.unseenIndicator}/>
-          </ListItemIcon>}
-      
-            <ListItemText className={classes.notifMessage}>   {notif.message}
-        </ListItemText>
-            <ListItemSecondaryAction>    <Typography variant="caption">{notif.createdAt ? moment(notif.createdAt).fromNow() : ''}</Typography></ListItemSecondaryAction>
-          </ListItem>
-          <Divider className = {classes.divider} component='li'/>
-        </>
+            {notif.seen ? null : (
+              <ListItemIcon>
+                <Lens className={classes.unseenIndicator} />
+              </ListItemIcon>
+            )}
 
+            <ListItemText className={classes.notifMessage}>
+              {" "}
+              {notif.message}
+            </ListItemText>
+            <ListItemSecondaryAction>
+              {" "}
+              <Typography variant="caption">
+                {notif.createdAt ? moment(notif.createdAt).fromNow() : ""}
+              </Typography>
+            </ListItemSecondaryAction>
+          </ListItem>
+          <Divider className={classes.divider} component="li" />
+        </>
       );
     });
   };
@@ -153,5 +169,5 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   showModal,
   hideModal,
-  updateNotification
+  updateNotification,
 })(NotificationPage);

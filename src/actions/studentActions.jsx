@@ -1,6 +1,5 @@
 import {
   ADD_STUDENT_REQUEST,
-  ADD_STUDENT_ERROR,
   ADD_STUDENT_SUCCESS,
   GET_STUDENTS_REQUEST,
   GET_STUDENTS_SUCCESS,
@@ -20,9 +19,9 @@ import _ from "lodash";
 const studentsCollection = db.collection("students");
 const subjectsCollection = db.collection("subjects");
 
-export const getStudent = (studentEmail) => async (dispatch) => {
-  const studentDocument = await studentsCollection.doc(studentEmail).get();
-};
+// export const getStudent = (studentEmail) => async (dispatch) => {
+//   const studentDocument = await studentsCollection.doc(studentEmail).get();
+// };
 
 export const getStudentRequest = () => {
   return {
@@ -118,7 +117,7 @@ export const addStudent = ({
       overdue: 0,
       ongoing: 0,
       requests: 0,
-      waiting_for_response:0,
+      waiting_for_response: 0,
     };
 
     await studentsCollection.doc(email).set({

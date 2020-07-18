@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Field, reduxForm, FieldArray } from "redux-form";
+import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import {
@@ -16,7 +16,6 @@ import {
   Button,
   Divider,
 } from "@material-ui/core";
-import _ from "lodash";
 
 import CustomDatePicker from "../../custom/CustomDatePicker";
 import CustomTimePicker from "../../custom/CustomTimePicker";
@@ -183,11 +182,11 @@ const formTheme = createMuiTheme({
     MuiPaper: {
       root: {
         backgroundColor: "#222222",
-        color: "white"
-      }
+        color: "white",
+      },
     },
   },
-  
+
   MuiButton: {
     root: {
       backgroundColor: "#84DCC6",
@@ -217,24 +216,31 @@ const StyledAddTitle = styled(TextField)({
 });
 
 const RequestEventForm = (props) => {
-  const { handleSubmit, reset, pristine, submitting } = props;
+  const { handleSubmit, pristine, submitting } = props;
+  const {
+    getTeachersBySubject,
+    hideModal,
+    showModal,
+    requestCoachingSchedule,
+    closeAddEventDrawer,
+  } = props;
   const classes = useStyles();
 
   useEffect(() => {
-    props.getTeachersBySubject();
-  }, []);
+    getTeachersBySubject();
+  }, [getTeachersBySubject]);
 
   const onDialogClose = () => {
-    props.hideModal();
+    hideModal();
   };
 
   const requestCoachingEvent = (values) => {
-    props.requestCoachingSchedule(values);
-    props.closeAddEventDrawer();
+    requestCoachingSchedule(values);
+    closeAddEventDrawer();
   };
 
   const handleOnSubmit = (values) => {
-    props.showModal("CONFIRMATION_MODAL", {
+    showModal("CONFIRMATION_MODAL", {
       onDialogClose: onDialogClose,
       title: "Request Coaching?",
       content:
@@ -254,7 +260,7 @@ const RequestEventForm = (props) => {
           component={CustomMaterialTextField}
         />
 
-        <Divider className={classes.divider}/>
+        <Divider className={classes.divider} />
         <Field
           label="Start Date"
           name="startDate"
@@ -268,7 +274,7 @@ const RequestEventForm = (props) => {
           name="startTime"
           component={CustomTimePicker}
         />
-        <Divider className={classes.divider2}/>
+        <Divider className={classes.divider2} />
         <Field
           inputComponent={StyledDatePicker}
           label="End Date"
@@ -282,7 +288,7 @@ const RequestEventForm = (props) => {
           name="endTime"
           component={CustomTimePicker}
         />
-        <Divider className={classes.divider2}/>
+        <Divider className={classes.divider2} />
         <Field
           name="teacherAttendee"
           multiple={false}
@@ -294,7 +300,11 @@ const RequestEventForm = (props) => {
         />
 
         <Divider className={classes.divider2} />
-        <Button type="submit" className={classes.button} disabled={pristine || submitting}>
+        <Button
+          type="submit"
+          className={classes.button}
+          disabled={pristine || submitting}
+        >
           Create Coaching Schedule
         </Button>
       </form>

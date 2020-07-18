@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch, Switch, Redirect } from "react-router-dom";
 import CustomAppbar from "../custom/CustomAppbar";
 import TeacherDashboard from "./TeacherDashboard";
-
 import TeacherDrawer from "./TeacherDrawer";
 import TeacherSchedules from "./TeacherSchedules";
 import NotificationPage from "../NotificationPage";
@@ -33,7 +32,7 @@ const TeacherPage = () => {
 
   useEffect(() => {
     dispatch(getCoachingSchedules());
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className={classes.container}>

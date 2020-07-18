@@ -2,23 +2,27 @@ import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Dialog,
-  createMuiTheme, 
+  createMuiTheme,
   ThemeProvider,
-  DialogTitle,
-  DialogActions,
   DialogContent,
-  DialogContentText,
   Button,
   Grid,
   CircularProgress,
   Typography,
 } from "@material-ui/core";
-import DuoIcon from '@material-ui/icons/Duo';
-import Lens from '@material-ui/icons/Lens';
-import AccessTime from '@material-ui/icons/AccessTime';
-import { getCoachingSchedule, updateNotification, showModal, hideModal, updateCoachingScheduleStatus,confirmCoachingSchedule } from "../../actions";
+import DuoIcon from "@material-ui/icons/Duo";
+import Lens from "@material-ui/icons/Lens";
+import AccessTime from "@material-ui/icons/AccessTime";
+import {
+  getCoachingSchedule,
+  updateNotification,
+  showModal,
+  hideModal,
+  updateCoachingScheduleStatus,
+  confirmCoachingSchedule,
+} from "../../actions";
 import { connect } from "react-redux";
-import {isDayBehind, isMeetingAvailable } from "../../utils";
+import { isDayBehind, isMeetingAvailable } from "../../utils";
 import moment from "moment";
 import classNames from "clsx";
 
@@ -27,53 +31,52 @@ import _ from "lodash";
 const statusColors = {
   pending: "#8C7E10",
   finished: "#2e7d32",
-  denied: "#7A1313", 
+  denied: "#7A1313",
   ongoing: "blue",
   waiting_for_response: "#BDA911",
   overdue: "#C87142",
-}
+};
 
-const useStyles = makeStyles(({ spacing, palette, typography } ) => ({
+const useStyles = makeStyles(({ spacing, palette, typography }) => ({
   content: {
     minWidth: "250px",
     minHeight: "190px",
     padding: spacing(1.5),
     paddingTop: spacing(1),
     background: "#222222",
-    boxSizing: 'border-box',
+    boxSizing: "border-box",
     ...typography.body2,
   },
   text: {
-    display: 'inline-block',
-    color: "white"
+    display: "inline-block",
+    color: "white",
   },
   title: {
     ...typography.h6,
-    color: palette.text.secondary,
     fontWeight: typography.fontWeightBold,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    color: "white"
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    color: "white",
   },
   icon: {
-    verticalAlign: 'middle',
+    verticalAlign: "middle",
     color: "#84DCC6",
   },
   lens: {
-    color: (coachingSession)=> statusColors[coachingSession.status],
+    color: (coachingSession) => statusColors[coachingSession.status],
     width: spacing(4.5),
     height: spacing(4.5),
-    verticalAlign: 'super',
-    position: 'absolute',
-    left: '50%',
-    transform: 'translate(-50%,0)',
+    verticalAlign: "super",
+    position: "absolute",
+    left: "50%",
+    transform: "translate(-50%,0)",
   },
   lensMini: {
     width: spacing(2.5),
     height: spacing(2.5),
   },
   textCenter: {
-    textAlign: 'center',
+    textAlign: "center",
     height: spacing(2.5),
   },
   dateAndTitle: {
@@ -93,10 +96,10 @@ const useStyles = makeStyles(({ spacing, palette, typography } ) => ({
   },
 
   relativeContainer: {
-    position: 'relative',
-    width: '100%',
-    height: '100%',
-  },  
+    position: "relative",
+    width: "100%",
+    height: "100%",
+  },
   container: {
     width: "100%",
   },
@@ -132,12 +135,12 @@ const useStyles = makeStyles(({ spacing, palette, typography } ) => ({
   },
 }));
 
-const formTheme = createMuiTheme({ 
+const formTheme = createMuiTheme({
   overrides: {
     MuiDialogContent: {
-      root : {
-        backgroundColor: "#222222"
-      }
+      root: {
+        backgroundColor: "#222222",
+      },
     },
   },
 });
@@ -147,7 +150,6 @@ const CoachingSessionDialog = ({
   onDialogClose,
   updateCoachingScheduleStatus,
   showModal,
-  hideModal,
   coachingSession,
   coachingSessionId,
   confirmCoachingSchedule,
@@ -158,7 +160,7 @@ const CoachingSessionDialog = ({
 
   useEffect(() => {
     getCoachingSchedule(coachingSessionId);
-  }, []);
+  }, [coachingSessionId, getCoachingSchedule]);
 
   const onUpdateStatusButtonPressed = (status) => {
     let title = "";
@@ -179,47 +181,55 @@ const CoachingSessionDialog = ({
       title,
       content,
       onNegativeClick: onDialogClose,
-      onPositiveClick: () => updateCoachingScheduleStatus(coachingSessionId, status),
+      onPositiveClick: () =>
+        updateCoachingScheduleStatus(coachingSessionId, status),
     });
   };
 
   const renderConfirmationButton = () => {
-    if(loggedInUser.type === "teacher"){
-      return <Button
-      className={classes.acceptMeetingButton}
-      onClick={() => {
-        confirmCoachingSchedule(coachingSessionId);
-      }}
-      variant="contained"
-    >
-      Finish Session
-    </Button>
-    } else if (loggedInUser.type === "student"){
+    if (loggedInUser.type === "teacher") {
+      return (
+        <Button
+          className={classes.acceptMeetingButton}
+          onClick={() => {
+            confirmCoachingSchedule(coachingSessionId);
+          }}
+          variant="contained"
+        >
+          Finish Session
+        </Button>
+      );
+    } else if (loggedInUser.type === "student") {
       let disabled = true;
 
-      if(coachingSession.studentsConfirmed){
-        disabled = !coachingSession.studentsConfirmed.filter((student) => student.email === loggedInUser.email).length === 0;
+      if (coachingSession.studentsConfirmed) {
+        disabled =
+          !coachingSession.studentsConfirmed.filter(
+            (student) => student.email === loggedInUser.email
+          ).length === 0;
       }
 
-      return <Button
-      disabled={disabled}
-      className={classes.acceptMeetingButton}
-      onClick={() => {
-        confirmCoachingSchedule(coachingSessionId);
-      }}
-      variant="contained"
-    >
-      Finish Session
-    </Button>
+      return (
+        <Button
+          disabled={disabled}
+          className={classes.acceptMeetingButton}
+          onClick={() => {
+            confirmCoachingSchedule(coachingSessionId);
+          }}
+          variant="contained"
+        >
+          Finish Session
+        </Button>
+      );
     }
-  }
+  };
 
   const renderButtons = () => {
     if (
       coachingSession.status === "denied" ||
       coachingSession.status === "overdue" ||
       coachingSession.status === "cancelled" ||
-      coachingSession.status === "finished" 
+      coachingSession.status === "finished"
     ) {
       return null;
     }
@@ -242,9 +252,7 @@ const CoachingSessionDialog = ({
           <Button
             className={classes.acceptMeetingButton}
             onClick={() => {
-              onUpdateStatusButtonPressed(
-                "pending"
-              );
+              onUpdateStatusButtonPressed("pending");
             }}
             variant="contained"
           >
@@ -253,10 +261,7 @@ const CoachingSessionDialog = ({
           <Button
             className={classes.denyMeetingButton}
             onClick={() => {
-              onUpdateStatusButtonPressed(
-  
-                "denied"
-              );
+              onUpdateStatusButtonPressed("denied");
             }}
             variant="contained"
           >
@@ -273,7 +278,7 @@ const CoachingSessionDialog = ({
       new Date(coachingSession.endDate)
     );
 
-    if(coachingSession.status === 'ongoing' ){
+    if (coachingSession.status === "ongoing") {
       return (
         <Grid
           className={classes.meetingButtonWrapper}
@@ -282,25 +287,20 @@ const CoachingSessionDialog = ({
           justify="center"
         >
           <Button
-          disabled={!meetingAvailable || dayBehind}
-          className={classes.meetingButton}
-          onClick={() => {
-    
-            window.open(coachingSession.meetingLink, "_blank");
-          }}
-          variant="contained"
-          startIcon={<DuoIcon />}
-        >
-          Join Google Meet
-        </Button>
-        <Typography
-        
-          align="center"
-          variant="subtitle2"
-        >
-          {coachingSession.meetingLink}
-        </Typography>
-        {renderConfirmationButton()}
+            disabled={!meetingAvailable || dayBehind}
+            className={classes.meetingButton}
+            onClick={() => {
+              window.open(coachingSession.meetingLink, "_blank");
+            }}
+            variant="contained"
+            startIcon={<DuoIcon />}
+          >
+            Join Google Meet
+          </Button>
+          <Typography align="center" variant="subtitle2">
+            {coachingSession.meetingLink}
+          </Typography>
+          {renderConfirmationButton()}
         </Grid>
       );
     }
@@ -316,9 +316,8 @@ const CoachingSessionDialog = ({
           disabled={!meetingAvailable || dayBehind}
           className={classes.meetingButton}
           onClick={() => {
-            if(loggedInUser.type !== "student"){
-
-              updateCoachingScheduleStatus(coachingSessionId,"ongoing");
+            if (loggedInUser.type !== "student") {
+              updateCoachingScheduleStatus(coachingSessionId, "ongoing");
             }
             window.open(coachingSession.meetingLink, "_blank");
           }}
@@ -334,99 +333,114 @@ const CoachingSessionDialog = ({
         >
           {!meetingAvailable || dayBehind ? "" : coachingSession.meetingLink}
         </Typography>
-  
-       {loggedInUser.type !== "student" ?  <Button
-          className={classes.denyMeetingButton}
-          onClick={() => {
-            onUpdateStatusButtonPressed(
-              "cancelled"
-            );
-          }}
-          variant="contained"
-        >
-          Cancel
-        </Button> : null}
+
+        {loggedInUser.type !== "student" ? (
+          <Button
+            className={classes.denyMeetingButton}
+            onClick={() => {
+              onUpdateStatusButtonPressed("cancelled");
+            }}
+            variant="contained"
+          >
+            Cancel
+          </Button>
+        ) : null}
       </Grid>
     );
   };
 
   const renderContent = () => {
-    if (_.isEmpty(coachingSession) || coachingSessionId !== coachingSession.coachingSessionId) {
+    if (
+      _.isEmpty(coachingSession) ||
+      coachingSessionId !== coachingSession.coachingSessionId
+    ) {
       return <CircularProgress />;
     }
-    const titleDate = moment(coachingSession.startDate).format('dddd, MMMM D, YYYY');
+    const titleDate = moment(coachingSession.startDate).format(
+      "dddd, MMMM D, YYYY"
+    );
     const titleStartHours = moment(coachingSession.startDate).format("h:mm A");
-    const titleEndHours = moment(coachingSession.endDate).format('h:mm A');
+    const titleEndHours = moment(coachingSession.endDate).format("h:mm A");
 
     return (
-      <div  className={classes.content}>
-      <Grid container alignItems="flex-start" className={classes.titleContainer}>
-        <Grid item xs={3}>
-          <div className={classes.relativeContainer}>
-            <Lens className={classes.lens} />
-          </div>
-        </Grid>
-        <Grid item xs={9}>
+      <div className={classes.content}>
+        <Grid
+          container
+          alignItems="flex-start"
+          className={classes.titleContainer}
+        >
+          <Grid item xs={3}>
+            <div className={classes.relativeContainer}>
+              <Lens className={classes.lens} />
+            </div>
+          </Grid>
+          <Grid item xs={9}>
             <div className={classNames(classes.title, classes.dateAndTitle)}>
               {coachingSession.title}
             </div>
             <div className={classNames(classes.text, classes.dateAndTitle)}>
               {titleDate}
             </div>
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid container alignItems="center" className={classes.contentContainer}>
-        <Grid item xs={3} className={classes.textCenter}>
-          <AccessTime className={classes.icon} />
-        </Grid>
-        <Grid item xs={9}>
-          <div className={classes.text}>
-            {`${titleStartHours}
+        <Grid
+          container
+          alignItems="center"
+          className={classes.contentContainer}
+        >
+          <Grid item xs={3} className={classes.textCenter}>
+            <AccessTime className={classes.icon} />
+          </Grid>
+          <Grid item xs={9}>
+            <div className={classes.text}>
+              {`${titleStartHours}
               - ${titleEndHours}`}
-          </div>
+            </div>
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid container alignItems="center" className={classes.resourceContainer}>
+        <Grid
+          container
+          alignItems="center"
+          className={classes.resourceContainer}
+        >
           <Grid item xs={3} className={classes.textCenter}>
             <div className={classes.relativeContainer}>
-              <Lens
-                className={classNames(classes.lens, classes.lensMini)}/>
+              <Lens className={classNames(classes.lens, classes.lensMini)} />
             </div>
           </Grid>
           <Grid item xs={9}>
-            <div className={classes.text}>
-              {coachingSession.status}
-            </div>
+            <div className={classes.text}>{coachingSession.status}</div>
           </Grid>
         </Grid>
-      {coachingSession.studentAttendees.map(student => (
-        <Grid container alignItems="center" className={classes.resourceContainer} key={`${student.email}`}>
-          <Grid item xs={3} className={classes.textCenter}>
-            <div className={classes.relativeContainer}>
-              <Lens
-                className={classNames(classes.lens, classes.lensMini)}
-                style={{color: "red"}}
-              />
-            </div>
+        {coachingSession.studentAttendees.map((student) => (
+          <Grid
+            container
+            alignItems="center"
+            className={classes.resourceContainer}
+            key={`${student.email}`}
+          >
+            <Grid item xs={3} className={classes.textCenter}>
+              <div className={classes.relativeContainer}>
+                <Lens
+                  className={classNames(classes.lens, classes.lensMini)}
+                  style={{ color: "red" }}
+                />
+              </div>
+            </Grid>
+            <Grid item xs={9}>
+              <div className={classes.text}>{student.fullName}</div>
+            </Grid>
           </Grid>
-          <Grid item xs={9}>
-            <div className={classes.text}>
-              {student.fullName}
-            </div>
-          </Grid>
-        </Grid>
-      ))}
-      {renderButtons()}
-    </div>
+        ))}
+        {renderButtons()}
+      </div>
     );
   };
   return (
     <ThemeProvider theme={formTheme}>
-    <Dialog open={open} onClose={onDialogClose}>
-      <DialogContent>
-        {renderContent()}
-      </DialogContent>
-    </Dialog>
+      <Dialog open={open} onClose={onDialogClose}>
+        <DialogContent>{renderContent()}</DialogContent>
+      </Dialog>
     </ThemeProvider>
   );
 };

@@ -3,7 +3,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemAvatar,
   ListItemSecondaryAction,
   IconButton,
 } from "@material-ui/core";

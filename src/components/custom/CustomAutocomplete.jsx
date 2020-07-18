@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { CircularProgress, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AutoComplete from "@material-ui/lab/Autocomplete";
 import renderHelperFormText from "../helpers/renderHelperFormText";
@@ -19,7 +18,7 @@ const CustomAutoComplete = ({
   multiple,
   limitTags,
   inputComponent: InputComponent,
-  meta: { touched, invalid, error },
+  meta: { touched, error },
   ...custom
 }) => {
   const classes = useStyles();

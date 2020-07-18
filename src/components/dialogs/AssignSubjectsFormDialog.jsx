@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
-import { reduxForm, Field, FieldArray, formValueSelector } from "redux-form";
+import { reduxForm, FieldArray, formValueSelector } from "redux-form";
 import { connect } from "react-redux";
 import { getSubjectFields } from "../../actions";
 import CustomAutoComplete from "../custom/CustomAutocomplete";
-import _ from "lodash";
 import {
   Dialog,
   DialogTitle,
@@ -12,19 +11,8 @@ import {
   Button,
   InputLabel,
   Grid,
-  Chip,
   TextField,
-  makeStyles,
 } from "@material-ui/core";
-
-const useStyles = makeStyles(() => ({
-  textField: {
-    margin: "1em",
-  },
-  chipsWrapper: {
-    margin: "1em 0.25em",
-  },
-}));
 
 const subjectsFieldSelector = formValueSelector("AssignSubjectsFormDialog");
 
@@ -42,12 +30,10 @@ const AssignSubjectsFormDialog = (props) => {
     getSubjectFields,
     currentSubjects,
   } = props;
-  const classes = useStyles();
 
   useEffect(() => {
     getSubjectFields();
-  }, []);
-
+  }, [getSubjectFields]);
 
   return (
     <Dialog open={open} onClose={onDialogClose}>

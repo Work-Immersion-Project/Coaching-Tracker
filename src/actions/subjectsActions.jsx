@@ -3,11 +3,8 @@ import {
   ADD_SUBJECT_SUCCESS,
   GET_SUBJECTS_REQUEST,
   GET_SUBJECTS_SUCCESS,
-  GET_SUBJECT_REQUEST,
-  GET_SUBJECT_SUCCESS,
 } from "../types";
-import { delayInSeconds } from "../utils";
-import { showAlert, hideAlert } from ".";
+import { showAlert } from ".";
 import { db } from "../firebase";
 
 const subjectsCollection = db.collection("subjects");
@@ -20,7 +17,7 @@ export const addSubject = (values) => async (dispatch, getState) => {
         (subject) => subject.subjectName === values.subjectName
       ).length !== 0;
     if (isSubjectExisting) {
-      throw "Subject already exists!";
+      throw new Error("Subject Already Exists");
     } else {
       subjectsCollection
         .doc(values.subjectName)
@@ -28,7 +25,7 @@ export const addSubject = (values) => async (dispatch, getState) => {
       dispatch(addSubjectSuccess());
     }
   } catch (error) {
-    dispatch(showAlert("ERROR", error));
+    dispatch(showAlert("ERROR", error.message));
   }
 };
 

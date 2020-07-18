@@ -32,7 +32,7 @@ const StudentPage = () => {
 
   useEffect(() => {
     dispatch(getCoachingSchedules());
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className={classes.container}>
@@ -47,8 +47,8 @@ const StudentPage = () => {
         </Route>
 
         <Route path={`${path}/notifications`} exact>
-            <NotificationPage />
-          </Route>
+          <NotificationPage />
+        </Route>
       </div>
       <RequestEventDrawer />
     </div>

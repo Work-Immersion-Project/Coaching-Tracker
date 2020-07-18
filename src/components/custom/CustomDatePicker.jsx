@@ -1,10 +1,9 @@
 import React from "react";
 import { DatePicker } from "@material-ui/pickers";
-import renderHelperFormText from "../helpers/renderHelperFormText";
 
 const CustomDatePicker = ({
   input: { onBlur, value, ...inputProps },
-  meta: { submitting, touched, error },
+  meta: { touched, error },
   inputComponent: InputComponent,
   label,
   dateFormat,

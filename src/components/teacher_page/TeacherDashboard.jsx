@@ -1,9 +1,9 @@
- import React, { useState } from "react";
+import React from "react";
 import { Grid, Card, CardContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   content: {
     height: "100vh",
     width: "100%",

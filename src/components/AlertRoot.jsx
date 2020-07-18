@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Snackbar } from "@material-ui/core";
-import { styled } from "@material-ui/core/styles";
 import { hideAlert, hideError } from "../actions";
 import MuiAlert from "@material-ui/lab/Alert";
 

@@ -7,9 +7,6 @@ import ManageStudentsPage from "./ManageStudentsPage";
 import AdminCoachingLog from "./AdminCoachingLog";
 import AdminRegistration from "./AdminRegistration";
 import AdminDashboard from "./AdminDashboard";
-
-import TeacherList from "./TeacherList";
-import StudentList from "./StudentList";
 import CustomAppbar from "../custom/CustomAppbar";
 import AdminDrawer from "./AdminDrawer";
 

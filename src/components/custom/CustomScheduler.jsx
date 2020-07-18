@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 import { connectProps } from "@devexpress/dx-react-core";
-import { Grid, Typography, Button, IconButton } from "@material-ui/core";
+import { Grid, Typography, Button } from "@material-ui/core";
 import DuoIcon from "@material-ui/icons/Duo";
 import {
   Scheduler,
@@ -16,12 +16,11 @@ import {
   AppointmentTooltip,
   Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import { fade } from "@material-ui/core/styles/colorManipulator";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import {
   openAddEventDrawer,
-  removeCoachingSchedule,
   showModal,
   hideModal,
   updateCoachingScheduleStatus,
@@ -118,25 +117,12 @@ const AppointmentTooltipHeader = withStyles({
     margin: "0.5em 0",
   },
   headerFontColor: {
-    color: "#84DCC6"
+    color: "#84DCC6",
   },
   emailFontColor: {
-    color: "white"
+    color: "white",
   },
 })(({ children, appointmentData, classes, accessType, ...restProps }) => {
-  const dispatch = useDispatch();
-
-  const onDialogClose = () => {
-    dispatch(hideModal());
-  };
-
-  const removeSchedule = () => {
-    dispatch(hideModal());
-    restProps.onHide();
-    dispatch(removeCoachingSchedule(appointmentData.eventId));
-  };
-
-
   return (
     <AppointmentTooltip.Header {...restProps} appointmentData={appointmentData}>
       <Grid container justify="flex-end" direction="column">
@@ -148,10 +134,18 @@ const AppointmentTooltipHeader = withStyles({
           justify="center"
           alignContent="center"
         >
-          <Typography className = {classes.headerFontColor} variant="h6" align="center">
+          <Typography
+            className={classes.headerFontColor}
+            variant="h6"
+            align="center"
+          >
             {appointmentData.teacher.fullName}
           </Typography>
-          <Typography className = {classes.emailFontColor} variant="caption" align="center">
+          <Typography
+            className={classes.emailFontColor}
+            variant="caption"
+            align="center"
+          >
             {appointmentData.teacher.email}
           </Typography>
         </Grid>
@@ -206,42 +200,49 @@ const AppointmentTooltipContent = withStyles({
     ...restProps
   }) => {
     const renderConfirmationButton = () => {
-      if(loggedInUser.type === "teacher"){
-        return <Button
-        className={classes.acceptMeetingButton}
-        onClick={() => {
-          confirmCoachingSchedule(appointmentData.coachingSessionId);
-        }}
-        variant="contained"
-      >
-        Finish Session
-      </Button>
-      } else if (loggedInUser.type === "student"){
+      if (loggedInUser.type === "teacher") {
+        return (
+          <Button
+            className={classes.acceptMeetingButton}
+            onClick={() => {
+              confirmCoachingSchedule(appointmentData.coachingSessionId);
+            }}
+            variant="contained"
+          >
+            Finish Session
+          </Button>
+        );
+      } else if (loggedInUser.type === "student") {
         let disabled = true;
-  
-        if(appointmentData.studentsConfirmed){
-          disabled = !appointmentData.studentsConfirmed.filter((student) => student.email === loggedInUser.email).length === 0;
+
+        if (appointmentData.studentsConfirmed) {
+          disabled =
+            !appointmentData.studentsConfirmed.filter(
+              (student) => student.email === loggedInUser.email
+            ).length === 0;
         }
-  
-        return <Button
-        disabled={disabled}
-        className={classes.acceptMeetingButton}
-        onClick={() => {
-          confirmCoachingSchedule(appointmentData.coachingSessionId);
-        }}
-        variant="contained"
-      >
-        Finish Session
-      </Button>
+
+        return (
+          <Button
+            disabled={disabled}
+            className={classes.acceptMeetingButton}
+            onClick={() => {
+              confirmCoachingSchedule(appointmentData.coachingSessionId);
+            }}
+            variant="contained"
+          >
+            Finish Session
+          </Button>
+        );
       }
-    }
-  
+    };
+
     const renderContent = () => {
       if (
         appointmentData.status === "denied" ||
         appointmentData.status === "overdue" ||
-        appointmentData.status === "cancelled"||
-        appointmentData.status === "finished" 
+        appointmentData.status === "cancelled" ||
+        appointmentData.status === "finished"
       ) {
         return null;
       }
@@ -296,7 +297,7 @@ const AppointmentTooltipContent = withStyles({
         new Date(appointmentData.endDate)
       );
 
-      if(appointmentData.status === 'ongoing' ){
+      if (appointmentData.status === "ongoing") {
         return (
           <Grid
             className={classes.meetingButtonWrapper}
@@ -305,24 +306,20 @@ const AppointmentTooltipContent = withStyles({
             justify="center"
           >
             <Button
-            disabled={!meetingAvailable || dayBehind}
-            className={classes.meetingButton}
-            onClick={() => {
-              window.open(appointmentData.meetingLink, "_blank");
-            }}
-            variant="contained"
-            startIcon={<DuoIcon />}
-          >
-            Join Google Meet
-          </Button>
-          <Typography
-          
-            align="center"
-            variant="subtitle2"
-          >
-            {appointmentData.meetingLink}
-          </Typography>
-          {renderConfirmationButton()}
+              disabled={!meetingAvailable || dayBehind}
+              className={classes.meetingButton}
+              onClick={() => {
+                window.open(appointmentData.meetingLink, "_blank");
+              }}
+              variant="contained"
+              startIcon={<DuoIcon />}
+            >
+              Join Google Meet
+            </Button>
+            <Typography align="center" variant="subtitle2">
+              {appointmentData.meetingLink}
+            </Typography>
+            {renderConfirmationButton()}
           </Grid>
         );
       }
@@ -337,9 +334,9 @@ const AppointmentTooltipContent = withStyles({
             disabled={!meetingAvailable || dayBehind}
             className={classes.meetingButton}
             onClick={() => {
-              if(loggedInUser.type !== "student"){
-
-                onUpdateStatusButtonPressed(   appointmentData.coachingSessionId,
+              if (loggedInUser.type !== "student") {
+                onUpdateStatusButtonPressed(
+                  appointmentData.coachingSessionId,
                   "ongoing"
                 );
               }
@@ -350,25 +347,24 @@ const AppointmentTooltipContent = withStyles({
           >
             Join Google Meet
           </Button>
-          <Typography
-
-            align="center"
-            variant="subtitle2"
-          >
+          <Typography align="center" variant="subtitle2">
             {!meetingAvailable || dayBehind ? "" : appointmentData.meetingLink}
           </Typography>
-         
-       {loggedInUser.type !== "student" ?  <Button
-          className={classes.denyMeetingButton}
-          onClick={() => {
-            onUpdateStatusButtonPressed(appointmentData.coachingSessionId,
-              "cancelled"
-            );
-          }}
-          variant="contained"
-        >
-          Cancel
-        </Button> : null}
+
+          {loggedInUser.type !== "student" ? (
+            <Button
+              className={classes.denyMeetingButton}
+              onClick={() => {
+                onUpdateStatusButtonPressed(
+                  appointmentData.coachingSessionId,
+                  "cancelled"
+                );
+              }}
+              variant="contained"
+            >
+              Cancel
+            </Button>
+          ) : null}
         </Grid>
       );
     };
@@ -389,66 +385,63 @@ const AppointmentTooltipContent = withStyles({
       </AppointmentTooltip.Content>
     );
   }
-  
 );
 
 const AppointmentContent = withStyles({
   title: {
-    fontWeight: 'bold',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    color: "white"
+    fontWeight: "bold",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    color: "white",
   },
   textContainer: {
     lineHeight: 1,
-    whiteSpace: 'pre-wrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    width: '100%',
+    whiteSpace: "pre-wrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    width: "100%",
   },
   time: {
-    display: 'inline-block',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    color: "white"
+    display: "inline-block",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    color: "white",
   },
   text: {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    color: "white"
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    color: "white",
   },
   container: {
-    width: '100%',
+    width: "100%",
   },
-})(({    children,
-  appointmentData,
-  data,
-  classes,
-  formatDate,
-  ...restProps}) => {
-    return <Appointments.Container formatDate={formatDate} data={data} {...restProps}>
+})(({ children, appointmentData, data, classes, formatDate, ...restProps }) => {
+  return (
+    <Appointments.Container formatDate={formatDate} data={data} {...restProps}>
       <div className={classes.container}>
-    <div className={classes.title}>
-      {data.title}
-    </div>
-    <div className={classes.text}>
-      {data.location}
-    </div>
-    <div className={classes.textContainer}>
-      <div className={classes.time}>
-        {formatDate(data.startDate.toString(), { hour: 'numeric', minute: 'numeric' })}
+        <div className={classes.title}>{data.title}</div>
+        <div className={classes.text}>{data.location}</div>
+        <div className={classes.textContainer}>
+          <div className={classes.time}>
+            {formatDate(data.startDate.toString(), {
+              hour: "numeric",
+              minute: "numeric",
+            })}
+          </div>
+          <div className={classes.time}>{" - "}</div>
+          <div className={classes.time}>
+            {formatDate(data.endDate.toString(), {
+              hour: "numeric",
+              minute: "numeric",
+            })}
+          </div>
+        </div>
       </div>
-      <div className={classes.time}>
-        {' - '}
-      </div>
-      <div className={classes.time}>
-        {formatDate(data.endDate.toString(), { hour: 'numeric', minute: 'numeric' })}
-      </div>
-    </div>
-  </div></Appointments.Container>;
-})
+    </Appointments.Container>
+  );
+});
 
 const CustomScheduler = ({
   coachingSchedules,
@@ -531,8 +524,8 @@ const CustomScheduler = ({
   const onUpdateStatusButtonPressed = (eventId, status) => {
     let title = "";
     let content = "";
-    if(status === "ongoing"){
-      updateCoachingScheduleStatus(eventId,status)  ;
+    if (status === "ongoing") {
+      updateCoachingScheduleStatus(eventId, status);
     } else {
       if (status === "pending") {
         title = "Accept Schedule Request?";
@@ -544,7 +537,7 @@ const CustomScheduler = ({
         title = "Deny Schedule Request?";
         content = "Are you sure that you want to deny this session?";
       }
-  
+
       showModal("CONFIRMATION_MODAL", {
         onDialogClose: onDialogClose,
         title,
@@ -578,7 +571,12 @@ const CustomScheduler = ({
   });
 
   const appointmentContent = connectProps(AppointmentTooltipContent, () => {
-    return { accessType, onUpdateStatusButtonPressed , loggedInUser,confirmCoachingSchedule};
+    return {
+      accessType,
+      onUpdateStatusButtonPressed,
+      loggedInUser,
+      confirmCoachingSchedule,
+    };
   });
 
   return (
@@ -630,5 +628,6 @@ export default connect(mapStateToProps, {
   openAddEventDrawer,
   updateCoachingScheduleStatus,
   showModal,
-  hideModal,confirmCoachingSchedule
+  hideModal,
+  confirmCoachingSchedule,
 })(CustomScheduler);

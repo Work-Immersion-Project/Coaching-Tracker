@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Grid, Card, CardContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 //import { connect } from "react-redux";
@@ -25,37 +25,40 @@ const StudentDashboard = (props) => {
       justify="space-evenly"
       alignItems="center"
     >
-        <Grid>
-          <Card className={classes.colorCard}>
-            <CardContent>
-              <Typography align="center" variant="h3">
-                Jose Marjosep
-              </Typography>
-              <Typography variant="h5" align = "center"> Student Name </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid>
-          <Card className={classes.colorCard}>
-            <CardContent>
-              <Typography align="center" variant="h3">
-                5
-              </Typography>
-              <Typography variant="h5"> Sessions Attended </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid>
-          <Card className={classes.colorCard}>
-            <CardContent>
-              <Typography align="center" variant="h3">
-                01
-              </Typography>
-              <Typography variant="h5"> Pending Sessions </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+      <Grid>
+        <Card className={classes.colorCard}>
+          <CardContent>
+            <Typography align="center" variant="h3">
+              Jose Marjosep
+            </Typography>
+            <Typography variant="h5" align="center">
+              {" "}
+              Student Name{" "}
+            </Typography>
+          </CardContent>
+        </Card>
       </Grid>
+      <Grid>
+        <Card className={classes.colorCard}>
+          <CardContent>
+            <Typography align="center" variant="h3">
+              5
+            </Typography>
+            <Typography variant="h5"> Sessions Attended </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid>
+        <Card className={classes.colorCard}>
+          <CardContent>
+            <Typography align="center" variant="h3">
+              01
+            </Typography>
+            <Typography variant="h5"> Pending Sessions </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
   );
 };
 

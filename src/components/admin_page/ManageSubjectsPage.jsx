@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
-import { makeStyles, styled, withStyles } from "@material-ui/core/styles";
-import { Grid, Chip, createMuiTheme, ThemeProvider,} from "@material-ui/core";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { Grid, Chip, createMuiTheme, ThemeProvider } from "@material-ui/core";
 import { hideModal, showModal, addSubject, getSubjects } from "../../actions";
-import _ from "lodash";
 import { connect } from "react-redux";
-import MaterialTable, {MTableHeader} from "material-table";
+import MaterialTable, { MTableHeader } from "material-table";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -22,21 +21,19 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const StyledTableHeader = withStyles({
-})(({    children,
-  classes,
-  ...restProps}) => {
-    return <MTableHeader className={classes.test} {...restProps}/>;
-})
-
+const StyledTableHeader = withStyles({})(
+  ({ children, classes, ...restProps }) => {
+    return <MTableHeader className={classes.test} {...restProps} />;
+  }
+);
 
 const formTheme = createMuiTheme({
   overrides: {
-    MuiPaper:{
+    MuiPaper: {
       root: {
         color: "#84DCC6",
-        backgroundColor: "#222222"
-      }
+        backgroundColor: "#222222",
+      },
     },
     MuiInput: {
       root: {
@@ -70,45 +67,45 @@ const formTheme = createMuiTheme({
     MuiInputBase: {
       input: {
         color: "#84DCC6",
-      }
+      },
     },
     MuiSelect: {
       icon: {
         color: "#84DCC6",
-      }
+      },
     },
     MuiTypography: {
       caption: {
         color: "#84DCC6",
-      }
+      },
     },
     MuiTableCell: {
       head: {
         color: "#84DCC6",
-      }
+      },
     },
   },
 });
 
 const ManageSubjectsPage = (props) => {
   const classes = useStyles();
-  console.log(props);
+  const { getSubjects, hideModal, addSubject } = props;
+
   useEffect(() => {
-    props.getSubjects();
-  }, []);
+    getSubjects();
+  }, [getSubjects]);
 
   const onDialogClose = () => {
-    props.hideModal();
+    hideModal();
   };
 
   const handleOnSubmit = (values) => {
-  
-    props.hideModal();
-    props.addSubject(values);
+    hideModal();
+    addSubject(values);
   };
 
   const onAddSubjectPressed = () => {
-    props.showModal("ADD_SUBJECT_FORM_MODAL", {
+    showModal("ADD_SUBJECT_FORM_MODAL", {
       onDialogClose: onDialogClose,
       title: "Add Subject",
       onNegativeClick: onDialogClose,
@@ -118,66 +115,64 @@ const ManageSubjectsPage = (props) => {
 
   return (
     <ThemeProvider theme={formTheme}>
-    <Grid
-      className={classes.root}
-      container
-      direction="column"
-      justify="center"
-    >
-      <MaterialTable
-        data={props.subjects ? props.subjects : []}
-        title="Subjects"
-        columns={[
-          { title: "Subject Name", field: "subjectName" },
-          {
-            title: "Assigned Teacher",
-            field: "teachers",
-            render: (rowData) =>
-              rowData.teachers === null && rowData.teachers.length === 0
-                ? ""
-                : rowData.teachers.map((teacher) => (
-                    <Chip
-                      className={classes.teacherChip}
-                      label={teacher.email}
-                    />
-                  )),
-          },
-          {
-            title: "Enrolled Students",
-            field: "enrolledStudents",
-            render: ({ enrolledStudents }) =>
-              enrolledStudents && enrolledStudents.length === 0
-                ? ""
-                : enrolledStudents.map((student) => (
-                    <Chip
-                      className={classes.studentChip}
-                      label={student.email}
-                    />
-                  )),
-          },
-        ]}
-
-  
-        isLoading={!props.subjects}
-        components={{
-          Header: (props) => <StyledTableHeader {...props}/>
-        }}
-        actions={[
-          {
-            icon: "add",
-            tooltip: "Add Subject",
-            isFreeAction: true,
-            onClick: onAddSubjectPressed,
-          },
-        ]}
-        options={{
-          headerStyle: {
-            backgroundColor: "#222222",
-            color: "#84DCC6",
-          }
-        }}
-      />
-    </Grid>
+      <Grid
+        className={classes.root}
+        container
+        direction="column"
+        justify="center"
+      >
+        <MaterialTable
+          data={props.subjects ? props.subjects : []}
+          title="Subjects"
+          columns={[
+            { title: "Subject Name", field: "subjectName" },
+            {
+              title: "Assigned Teacher",
+              field: "teachers",
+              render: (rowData) =>
+                rowData.teachers === null && rowData.teachers.length === 0
+                  ? ""
+                  : rowData.teachers.map((teacher) => (
+                      <Chip
+                        className={classes.teacherChip}
+                        label={teacher.email}
+                      />
+                    )),
+            },
+            {
+              title: "Enrolled Students",
+              field: "enrolledStudents",
+              render: ({ enrolledStudents }) =>
+                enrolledStudents && enrolledStudents.length === 0
+                  ? ""
+                  : enrolledStudents.map((student) => (
+                      <Chip
+                        className={classes.studentChip}
+                        label={student.email}
+                      />
+                    )),
+            },
+          ]}
+          isLoading={!props.subjects}
+          components={{
+            Header: (props) => <StyledTableHeader {...props} />,
+          }}
+          actions={[
+            {
+              icon: "add",
+              tooltip: "Add Subject",
+              isFreeAction: true,
+              onClick: onAddSubjectPressed,
+            },
+          ]}
+          options={{
+            headerStyle: {
+              backgroundColor: "#222222",
+              color: "#84DCC6",
+            },
+          }}
+        />
+      </Grid>
     </ThemeProvider>
   );
 };

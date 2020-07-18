@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Button,
-  Grid,
-  InputLabel,
-  TextField,
-  InputBase,
-  Chip,
-} from "@material-ui/core";
+import { Button, Grid, InputLabel } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CustomTextField from "../custom/CustomTextField";
 import CustomSelectField from "../custom/CustomSelectField";
@@ -142,7 +135,6 @@ const AdminRegistration = (props) => {
   const onDialogClose = () => {
     props.hideModal();
   };
-
 
   const renderStudentForms = () => {
     return (

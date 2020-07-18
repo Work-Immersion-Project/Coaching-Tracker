@@ -18,9 +18,7 @@ import {
   Button,
   Divider,
 } from "@material-ui/core";
-import _ from "lodash";
 import AddEventStudentList from "./AddEventStudentList";
-import AutoComplete from "@material-ui/lab/Autocomplete";
 import CustomDatePicker from "../../custom/CustomDatePicker";
 import CustomTimePicker from "../../custom/CustomTimePicker";
 import CustomMaterialTextField from "../../custom/CustomMaterialTextField";
@@ -186,8 +184,8 @@ const formTheme = createMuiTheme({
     MuiPaper: {
       root: {
         backgroundColor: "#222222",
-        color: "white"
-      }
+        color: "white",
+      },
     },
     MuiButton: {
       root: {
@@ -202,8 +200,8 @@ const formTheme = createMuiTheme({
       text: {
         color: "#000000",
       },
+    },
   },
- },
 });
 
 const StyledDatePicker = styled(TextField)({
@@ -219,24 +217,31 @@ const StyledAddTitle = styled(TextField)({
 });
 
 const AddEventForm = (props) => {
-  const { handleSubmit, reset, pristine, submitting } = props;
+  const { handleSubmit, pristine, submitting } = props;
+  const {
+    getStudents,
+    hideModal,
+    addCoachingSchedule,
+    closeAddEventDrawer,
+    showModal,
+  } = props;
   const classes = useStyles();
 
   useEffect(() => {
-    props.getStudents();
-  }, []);
+    getStudents();
+  }, [getStudents]);
 
   const onDialogClose = () => {
-    props.hideModal();
+    hideModal();
   };
 
   const addCoachingEvent = (values) => {
-    props.addCoachingSchedule(values);
-    props.closeAddEventDrawer();
+    addCoachingSchedule(values);
+    closeAddEventDrawer();
   };
 
   const handleOnSubmit = (values) => {
-    props.showModal("CONFIRMATION_MODAL", {
+    showModal("CONFIRMATION_MODAL", {
       onDialogClose: onDialogClose,
       title: "Schedule Coaching?",
       content:
@@ -298,7 +303,9 @@ const AddEventForm = (props) => {
         <Button
           type="submit"
           className={classes.button}
-          disabled={pristine || (submitting && props.addedStudents.length == 0)}
+          disabled={
+            pristine || (submitting && props.addedStudents.length === 0)
+          }
         >
           Create Coaching Schedule
         </Button>

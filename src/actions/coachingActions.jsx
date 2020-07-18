@@ -1,5 +1,4 @@
 import {
-
   GET_COACHING_SCHEDULE_REQUEST,
   GET_COACHING_SCHEDULE_SUCCESS,
   GET_COACHING_SCHEDULES_REQUEST,
@@ -13,7 +12,7 @@ import {
 } from "../types";
 
 import { showAlert, showModal, hideModal, addNotification } from "../actions";
-import { isDayBehind , convertCoachingScheduleDates} from "../utils";
+import { convertCoachingScheduleDates } from "../utils";
 import firebase from "firebase";
 import { db } from "../firebase";
 import { v4 as uuidV4 } from "uuid";
@@ -23,107 +22,131 @@ const coachingLogsCollection = db.collection("coachingLogs");
 const teacherCollection = db.collection("teachers");
 const studentCollection = db.collection("students");
 
-
-export const confirmCoachingSchedule = (oldCoachingSessionId) => async (dispatch,getState) => {
+export const confirmCoachingSchedule = (oldCoachingSessionId) => async (
+  dispatch,
+  getState
+) => {
   dispatch(hideModal());
-  const {type, metadata, email} = getState().auth.data.user;
-  const oldCoachingSessionRef = coachingLogsCollection.doc(oldCoachingSessionId);
+  const { type, metadata, email } = getState().auth.data.user;
+  const oldCoachingSessionRef = coachingLogsCollection.doc(
+    oldCoachingSessionId
+  );
   const newCoachingSessionId = uuidV4();
-  const updatedCoachingSessionRef = coachingLogsCollection.doc(newCoachingSessionId);
+  const updatedCoachingSessionRef = coachingLogsCollection.doc(
+    newCoachingSessionId
+  );
 
-  await db.runTransaction(async (transaction ) => {
-    // Fetch all data first
-    const oldCoachingDoc = await transaction
-    .get(oldCoachingSessionRef);
-    const oldCoachingData = oldCoachingDoc.data();
-    let studentsConfirmed =  [];
-    const sessionStatus = oldCoachingData.status;
-    const teacherRef = teacherCollection.doc(oldCoachingData.teacher.email);
-    const teacherCoachingSessionRef = teacherRef
-      .collection("coachingSessions")
-      .doc(oldCoachingSessionId);
-    
-    const teacherDoc = await transaction
-      .get(teacherRef);
-    const teacherData = teacherDoc.data();
-    const studentRefs = oldCoachingData.studentAttendees.map((student) => {
-      const studentRef = studentCollection.doc(student.email);
-      console.log(student);
-      return {
-        studentSessionCollectionRef : studentRef.collection('coachingSessions').doc(oldCoachingSessionId),
-        studentRef,
-      }
-    });
-    const studentDatas = await Promise.all(studentRefs.map( ({studentRef}) => transaction.get(studentRef)));
-    const studentSessionDatas = await Promise.all(studentRefs.map(({studentSessionCollectionRef}) => transaction.get(studentSessionCollectionRef)));
-    console.log(studentDatas.length);
-    for (let i = 0; i < studentDatas.length; i++){
- 
-    const {studentRef, studentSessionCollectionRef} = studentRefs[i];
+  await db
+    .runTransaction(async (transaction) => {
+      // Fetch all data first
+      const oldCoachingDoc = await transaction.get(oldCoachingSessionRef);
+      const oldCoachingData = oldCoachingDoc.data();
+      let studentsConfirmed = [];
+      const sessionStatus = oldCoachingData.status;
+      const teacherRef = teacherCollection.doc(oldCoachingData.teacher.email);
+      const teacherCoachingSessionRef = teacherRef
+        .collection("coachingSessions")
+        .doc(oldCoachingSessionId);
 
-    const studentSessionData = studentSessionDatas[i].data();
-    studentsConfirmed = studentSessionData.studentsConfirmed ? studentSessionData.studentsConfirmed : [];
-    const {coachingStats} = studentDatas[i].data();
-    if(type === "student"){
-      if(studentsConfirmed.filter((student) => student.email === email).length === 0){
-        studentsConfirmed.push({email, fullName: metadata.fullName})
-      }
-      if(studentsConfirmed.length === oldCoachingData.studentAttendees.length){
-    
-        // Update Student Coaching Sessions
-        coachingStats[sessionStatus] -= 1;
-        coachingStats['finished'] += 1;
-        transaction.update(studentRef, { coachingStats });
-        transaction.update(studentSessionCollectionRef, {   status: 'finished', studentsConfirmed });
-        // Update Teacher Coaching Sessions
-        teacherData.coachingStats[sessionStatus] -= 1;
-        teacherData.coachingStats['finished'] += 1;
-        transaction.update(teacherRef, {
-          coachingStats: { ...teacherData.coachingStats },
-        });
-        transaction.update(teacherCoachingSessionRef, {
-          ...oldCoachingData,
-          status: 'finished',
-          studentsConfirmed
-        });
-        transaction.set(updatedCoachingSessionRef, {
-          ...oldCoachingData,
-          status: 'finished',
-          studentsConfirmed
-        });
-   
-      }else {
-        transaction.update(studentSessionCollectionRef, { studentsConfirmed });
-      }
-    } else {
-      transaction.update(studentSessionCollectionRef, { studentsConfirmed });
-    }
-  }
-  transaction.update(teacherCoachingSessionRef, {
-    studentsConfirmed
-  });
-  transaction.update(oldCoachingSessionRef, {studentsConfirmed})
-  return  oldCoachingData.studentAttendees;
-
-  }).then((students) => {
-    if(type === "teacher"){
-      let message = `Your teacher ${metadata.fullName} has request you to confirm the completion of the session.`;
-      students.forEach((student) => {
-        dispatch(
-          addNotification(
-            { ...student, type: "student" },
-            message,
-            oldCoachingSessionId,
-            "ongoing"
-          )
-        );
+      const teacherDoc = await transaction.get(teacherRef);
+      const teacherData = teacherDoc.data();
+      const studentRefs = oldCoachingData.studentAttendees.map((student) => {
+        const studentRef = studentCollection.doc(student.email);
+        console.log(student);
+        return {
+          studentSessionCollectionRef: studentRef
+            .collection("coachingSessions")
+            .doc(oldCoachingSessionId),
+          studentRef,
+        };
       });
-    }
-  }).catch((error)=> {
-    console.log(error);
-  })
+      const studentDatas = await Promise.all(
+        studentRefs.map(({ studentRef }) => transaction.get(studentRef))
+      );
+      const studentSessionDatas = await Promise.all(
+        studentRefs.map(({ studentSessionCollectionRef }) =>
+          transaction.get(studentSessionCollectionRef)
+        )
+      );
+      console.log(studentDatas.length);
+      for (let i = 0; i < studentDatas.length; i++) {
+        const { studentRef, studentSessionCollectionRef } = studentRefs[i];
 
-}
+        const studentSessionData = studentSessionDatas[i].data();
+        studentsConfirmed = studentSessionData.studentsConfirmed
+          ? studentSessionData.studentsConfirmed
+          : [];
+        const { coachingStats } = studentDatas[i].data();
+        if (type === "student") {
+          if (
+            studentsConfirmed.filter((student) => student.email === email)
+              .length === 0
+          ) {
+            studentsConfirmed.push({ email, fullName: metadata.fullName });
+          }
+          if (
+            studentsConfirmed.length === oldCoachingData.studentAttendees.length
+          ) {
+            // Update Student Coaching Sessions
+            coachingStats[sessionStatus] -= 1;
+            coachingStats["finished"] += 1;
+            transaction.update(studentRef, { coachingStats });
+            transaction.update(studentSessionCollectionRef, {
+              status: "finished",
+              studentsConfirmed,
+            });
+            // Update Teacher Coaching Sessions
+            teacherData.coachingStats[sessionStatus] -= 1;
+            teacherData.coachingStats["finished"] += 1;
+            transaction.update(teacherRef, {
+              coachingStats: { ...teacherData.coachingStats },
+            });
+            transaction.update(teacherCoachingSessionRef, {
+              ...oldCoachingData,
+              status: "finished",
+              studentsConfirmed,
+            });
+            transaction.set(updatedCoachingSessionRef, {
+              ...oldCoachingData,
+              status: "finished",
+              studentsConfirmed,
+            });
+          } else {
+            transaction.update(studentSessionCollectionRef, {
+              studentsConfirmed,
+            });
+          }
+        } else {
+          transaction.update(studentSessionCollectionRef, {
+            studentsConfirmed,
+          });
+        }
+      }
+      transaction.update(teacherCoachingSessionRef, {
+        studentsConfirmed,
+      });
+      transaction.update(oldCoachingSessionRef, { studentsConfirmed });
+      return oldCoachingData.studentAttendees;
+    })
+    .then((students) => {
+      if (type === "teacher") {
+        let message = `Your teacher ${metadata.fullName} has request you to confirm the completion of the session.`;
+        students.forEach((student) => {
+          dispatch(
+            addNotification(
+              { ...student, type: "student" },
+              message,
+              oldCoachingSessionId,
+              "ongoing"
+            )
+          );
+        });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
 export const updateCoachingScheduleStatus = (
   oldCoachingSessionId,
@@ -142,10 +165,9 @@ export const updateCoachingScheduleStatus = (
 
   await db
     .runTransaction(async (transaction) => {
-      const oldCoachingDoc = await transaction
-        .get(oldCoachingSessionRef);
+      const oldCoachingDoc = await transaction.get(oldCoachingSessionRef);
       const oldCoachingData = oldCoachingDoc.data();
-      
+
       const sessionStatus =
         oldCoachingData.status === "waiting_for_response"
           ? "requests"
@@ -154,26 +176,30 @@ export const updateCoachingScheduleStatus = (
       const teacherCoachingSessionRef = teacherRef
         .collection("coachingSessions")
         .doc(oldCoachingSessionId);
-      const teacherDoc = await transaction
-        .get(teacherRef)
-        
-        const teacherData = teacherDoc.data();
+      const teacherDoc = await transaction.get(teacherRef);
+
+      const teacherData = teacherDoc.data();
       const studentRefs = oldCoachingData.studentAttendees.map((student) => {
         const studentRef = studentCollection.doc(student.email);
         return {
-          studentSessionCollectionRef : studentRef.collection('coachingSessions').doc(oldCoachingSessionId),
+          studentSessionCollectionRef: studentRef
+            .collection("coachingSessions")
+            .doc(oldCoachingSessionId),
           studentRef,
-        }
+        };
       });
-      const studentDatas = await Promise.all(studentRefs.map( ({studentRef}) => transaction.get(studentRef)));
+      const studentDatas = await Promise.all(
+        studentRefs.map(({ studentRef }) => transaction.get(studentRef))
+      );
 
-        
-      for (let i = 0; i< studentDatas.length; i++){
-        const {coachingStats} = studentDatas[i].data();
+      for (let i = 0; i < studentDatas.length; i++) {
+        const { coachingStats } = studentDatas[i].data();
         coachingStats[sessionStatus] -= 1;
         coachingStats[status] += 1;
         transaction.update(studentRefs[i].studentRef, { coachingStats });
-        transaction.update(studentRefs[i].studentSessionCollectionRef, { status });
+        transaction.update(studentRefs[i].studentSessionCollectionRef, {
+          status,
+        });
       }
       teacherData.coachingStats[sessionStatus] -= 1;
       teacherData.coachingStats[status] += 1;
@@ -190,38 +216,40 @@ export const updateCoachingScheduleStatus = (
         ...oldCoachingData,
         status,
       });
-    
+
       return oldCoachingData.studentAttendees;
     })
     .then(async (students) => {
       let message = "";
-      switch(status){
-        case 'cancelled':
-        message = `Your teacher ${currentLoggedinUser.metadata.fullName} has cancelled the coaching session.`;
-        break;
-        case 'denied':
-        message = `Your teacher ${currentLoggedinUser.metadata.fullName} has cancelled the coaching session.`;
-        break;
-        case 'pending':
-        message = `Your teacher ${currentLoggedinUser.metadata.fullName} has accepted your coaching request.`;
-        break;
-        case 'ongoing':
+      switch (status) {
+        case "cancelled":
+          message = `Your teacher ${currentLoggedinUser.metadata.fullName} has cancelled the coaching session.`;
+          break;
+        case "denied":
+          message = `Your teacher ${currentLoggedinUser.metadata.fullName} has cancelled the coaching session.`;
+          break;
+        case "pending":
+          message = `Your teacher ${currentLoggedinUser.metadata.fullName} has accepted your coaching request.`;
+          break;
+        case "ongoing":
           message = `Your teacher ${currentLoggedinUser.metadata.fullName} has started the coaching session`;
+          break;
+        default:
           break;
       }
 
-     if(message !== ''){
-      for  (const student of students) {
-        await dispatch(
-           addNotification(
-             { ...student, type: "student" },
-             message,
-             oldCoachingSessionId,
-             status
-           )
-         );
-       }
-     }
+      if (message !== "") {
+        for (const student of students) {
+          await dispatch(
+            addNotification(
+              { ...student, type: "student" },
+              message,
+              oldCoachingSessionId,
+              status
+            )
+          );
+        }
+      }
     });
 
   dispatch(showAlert("SUCCESS", "Schedule Updated Successfully!"));
@@ -278,19 +306,6 @@ const getTeacherCoachingSchedule = (teacherEmail) => async (dispatch) => {
   });
 };
 
-const updateOverdueCoachingSchedules = () => async (dispatch) => {
-  const coachingDocs = await coachingLogsCollection
-    .get()
-    .then((snapshot) => snapshot.docs.map((doc) => doc.data()));
-  for (const coachingData of coachingDocs) {
-    if (isDayBehind(new Date(coachingData.endDate))) {
-      await dispatch(
-        updateCoachingScheduleStatus(coachingData.eventId, "overdue")
-      );
-    }
-  }
-};
-
 const getCoachingSchedulesRequest = () => {
   return {
     type: GET_COACHING_SCHEDULES_REQUEST,
@@ -308,7 +323,7 @@ export const getCoachingSchedule = (coachingSessionId) => async (
   dispatch,
   getState
 ) => {
-  const { email, type,metadata:{fullName} } = getState().auth.data.user;
+  const { email, type } = getState().auth.data.user;
   const currentSchedules = getState().coaching.coachingSchedules;
   // Check if it is existing
   let coachingSchedule = currentSchedules.filter(
@@ -371,16 +386,16 @@ export const addCoachingSchedule = (coachingDetails) => async (
     };
   });
 
-
-  const {formattedStartingDate, formattedEndingDate} = 
-  convertCoachingScheduleDates(startDate,endDate,startTime,endTime);
-  
+  const {
+    formattedStartingDate,
+    formattedEndingDate,
+  } = convertCoachingScheduleDates(startDate, endDate, startTime, endTime);
 
   const event = {
     summary: title,
     description: title,
     start: {
-      dateTime: formattedStartingDate
+      dateTime: formattedStartingDate,
     },
     end: {
       dateTime: formattedEndingDate,
@@ -430,43 +445,45 @@ export const addCoachingSchedule = (coachingDetails) => async (
     };
     const fieldValue = firebase.firestore.FieldValue;
 
-    await db.runTransaction(async (transaction) => {
-      const teacherCoachingSessionRef = teacherRef
-        .collection("coachingSessions")
-        .doc(coachingSessionId);
-      transaction.update(teacherRef, {
-        "coachingStats.pending": fieldValue.increment(1),
-      });
-      transaction.set(coachingSessionRef, coachingSessionData);
-      transaction.set(teacherCoachingSessionRef, coachingSessionData);
-      //Iterate for each student
-      studentAttendees.forEach((student) => {
-        const studentRef = studentCollection.doc(student.email);
-        const studentCoachingSessionCollectionRef = studentRef
+    await db
+      .runTransaction(async (transaction) => {
+        const teacherCoachingSessionRef = teacherRef
           .collection("coachingSessions")
           .doc(coachingSessionId);
-        transaction.update(studentRef, {
+        transaction.update(teacherRef, {
           "coachingStats.pending": fieldValue.increment(1),
         });
-        transaction.set(
-          studentCoachingSessionCollectionRef,
-          coachingSessionData
-        );
+        transaction.set(coachingSessionRef, coachingSessionData);
+        transaction.set(teacherCoachingSessionRef, coachingSessionData);
+        //Iterate for each student
+        studentAttendees.forEach((student) => {
+          const studentRef = studentCollection.doc(student.email);
+          const studentCoachingSessionCollectionRef = studentRef
+            .collection("coachingSessions")
+            .doc(coachingSessionId);
+          transaction.update(studentRef, {
+            "coachingStats.pending": fieldValue.increment(1),
+          });
+          transaction.set(
+            studentCoachingSessionCollectionRef,
+            coachingSessionData
+          );
+        });
+        return studentAttendees;
+      })
+      .then((students) => {
+        let message = `Your teacher ${metadata.fullName} has scheduled a session.`;
+        students.forEach((student) => {
+          dispatch(
+            addNotification(
+              { ...student, type: "student" },
+              message,
+              coachingSessionId,
+              "pending"
+            )
+          );
+        });
       });
-      return studentAttendees;
-    }).then((students) => {
-      let message = `Your teacher ${metadata.fullName} has scheduled a session.`;
-      students.forEach((student) => {
-        dispatch(
-          addNotification(
-            { ...student, type: "student" },
-            message,
-            coachingSessionId,
-            "pending"
-          )
-        );
-      });
-    });
     dispatch(hideModal());
     dispatch(addCoachingScheduleSuccess());
     dispatch(showAlert("SUCCESS", "Coaching Schedule Added!"));
@@ -501,8 +518,10 @@ export const requestCoachingSchedule = (coachingDetails) => async (
     teacherAttendee,
   } = coachingDetails;
 
-  const {formattedStartingDate, formattedEndingDate} = 
-  convertCoachingScheduleDates(startDate,endDate,startTime,endTime);
+  const {
+    formattedStartingDate,
+    formattedEndingDate,
+  } = convertCoachingScheduleDates(startDate, endDate, startTime, endTime);
 
   const event = {
     summary: title,

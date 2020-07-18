@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Chip, createMuiTheme, ThemeProvider, Typography} from "@material-ui/core";
+import { Grid, Chip, Typography } from "@material-ui/core";
 import { hideModal, showModal, getCoachingLogs } from "../../actions";
-import _ from "lodash";
+
 import { connect } from "react-redux";
 import MaterialTable from "material-table";
 import moment from "moment";
@@ -24,16 +24,14 @@ const useStyles = makeStyles(() => ({
 }));
 
 const AdminCoachingLog = (props) => {
+  const { getCoachingLogs } = props;
   const classes = useStyles();
-  
+
   useEffect(() => {
-    props.getCoachingLogs();
-  }, []);
-
-
+    getCoachingLogs();
+  }, [getCoachingLogs]);
 
   return (
-
     <Grid
       className={classes.root}
       container
@@ -44,27 +42,31 @@ const AdminCoachingLog = (props) => {
         data={props.coachingLogs ? props.coachingLogs : []}
         title="Subjects"
         columns={[
-          { title: "Status", field: "status",   render: (rowData) =>
-   <Chip
-            className={classes.teacherChip}
-            label={rowData.status}
-          /> },
+          {
+            title: "Status",
+            field: "status",
+            render: (rowData) => (
+              <Chip className={classes.teacherChip} label={rowData.status} />
+            ),
+          },
           {
             title: "Assigned Teacher",
             field: "teacher",
             render: (rowData) =>
-              rowData.teachers === null && rowData.teachers.length === 0
-                ? ""
-                :<Chip
-                className={classes.teacherChip}
-                label={rowData.teacher.email}
-              />
+              rowData.teachers === null && rowData.teachers.length === 0 ? (
+                ""
+              ) : (
+                <Chip
+                  className={classes.teacherChip}
+                  label={rowData.teacher.email}
+                />
+              ),
           },
           {
             title: "Students",
             field: "studentAttendees",
             render: ({ studentAttendees }) =>
-            studentAttendees && studentAttendees.length === 0
+              studentAttendees && studentAttendees.length === 0
                 ? ""
                 : studentAttendees.map((student) => (
                     <Chip
@@ -76,26 +78,37 @@ const AdminCoachingLog = (props) => {
           {
             title: "Start Date",
             field: "startDate",
-            render: ({ startDate }) => <Typography>{moment(startDate).format('MMMM, DD, yyyy')}</Typography>
+            render: ({ startDate }) => (
+              <Typography>
+                {moment(startDate).format("MMMM, DD, yyyy")}
+              </Typography>
+            ),
           },
           {
             title: "End Date",
             field: "endDate",
-            render: ({ endDate }) => <Typography>{moment(endDate).format('MMMM, DD, yyyy')}</Typography>
+            render: ({ endDate }) => (
+              <Typography>
+                {moment(endDate).format("MMMM, DD, yyyy")}
+              </Typography>
+            ),
           },
           {
             title: "Start Time",
             field: "startDate",
-            render: ({ startDate }) => <Typography>{moment(startDate).format('HH:mm A')}</Typography>
+            render: ({ startDate }) => (
+              <Typography>{moment(startDate).format("HH:mm A")}</Typography>
+            ),
           },
           {
             title: "End Time",
             field: "endDate",
-            render: ({ endDate }) => <Typography>{moment(endDate).format('HH:mm A')}</Typography>
+            render: ({ endDate }) => (
+              <Typography>{moment(endDate).format("HH:mm A")}</Typography>
+            ),
           },
         ]}
         isLoading={!props.coachingLogs}
-       
       />
     </Grid>
   );
@@ -103,12 +116,12 @@ const AdminCoachingLog = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    coachingLogs:state.coachingLog.data,
+    coachingLogs: state.coachingLog.data,
   };
 };
 
 export default connect(mapStateToProps, {
   hideModal,
   showModal,
-  getCoachingLogs
+  getCoachingLogs,
 })(AdminCoachingLog);

@@ -22,28 +22,34 @@ const useStyles = makeStyles(() => ({
 
 const ManageTeachersPage = (props) => {
   const classes = useStyles();
+  const {
+    getTeachers,
+    hideModal,
+    showModal,
+    removeSubjectTeacher,
+    assignSubjectTeacher,
+  } = props;
 
   useEffect(() => {
-    props.getTeachers();
-  }, []);
+    getTeachers();
+  }, [getTeachers]);
   const onDialogClose = () => {
-    props.hideModal();
+    hideModal();
   };
   const onRemoveSubjectPressed = (rowData, subjectName) => {
-    props.showModal("CONFIRMATION_MODAL", {
+    showModal("CONFIRMATION_MODAL", {
       onDialogClose: onDialogClose,
       title: "Remove Subject?",
       content: `Are you sure you want to remove ${subjectName} from teacher?`,
       onNegativeClick: onDialogClose,
       onPositiveClick: () => {
-        props.removeSubjectTeacher(rowData, subjectName);
+        removeSubjectTeacher(rowData, subjectName);
       },
     });
   };
   const onSubmit = ({ email, metadata }, currentSubjects, values) => {
-    props.hideModal();
-
-    props.assignSubjectTeacher({
+    hideModal();
+    assignSubjectTeacher({
       ...values,
       subjects: [
         ...values.subjects,
@@ -57,8 +63,7 @@ const ManageTeachersPage = (props) => {
   };
 
   const onAssignSubjectsPressed = (_, rowData) => {
-    console.log(rowData);
-    props.showModal("ASSIGN_SUBJECT_FORM_MODAL", {
+    showModal("ASSIGN_SUBJECT_FORM_MODAL", {
       currentSubjects: rowData.handledSubjects,
       onDialogClose: onDialogClose,
       title: `Assign Subjects to ${rowData.metadata.fullName}`,

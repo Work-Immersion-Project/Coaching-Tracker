@@ -1,8 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Grid, Paper, CircularProgress, createMuiTheme, ThemeProvider, } from "@material-ui/core";
+import {
+  Grid,
+  Paper,
+  CircularProgress,
+  createMuiTheme,
+  ThemeProvider,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import CustomScheduler from "../custom/CustomScheduler";
+import CustomScheduler from "../custom/scheduler/CustomScheduler";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -23,8 +29,8 @@ const formTheme = createMuiTheme({
   overrides: {
     MuiPaper: {
       root: {
-        backgroundColor: "#222222"
-      }
+        backgroundColor: "#222222",
+      },
     },
 
     MuiTypography: {
@@ -35,37 +41,37 @@ const formTheme = createMuiTheme({
 
     DayScaleEmptyCell: {
       emptyCell: {
-        backgroundColor: "#222222"
-      }
+        backgroundColor: "#222222",
+      },
     },
-    
+
     MuiTableBody: {
       root: {
-        backgroundColor: "#222222"
-      }
+        backgroundColor: "#222222",
+      },
     },
     TickCell: {
       cell: {
         borderBottom: "1px solid rgba(34, 34, 34, 1)",
-      }
+      },
     },
 
     Cell: {
       dayOfWeek: {
-        color: "white"
+        color: "white",
       },
       dayOfMonth: {
-        color: "white"
+        color: "white",
       },
       highlightedText: {
-        color: "#84DCC6"
+        color: "#84DCC6",
       },
       otherMonth: {
-        color : "rgba(244, 244, 244, 0.38)",
+        color: "rgba(244, 244, 244, 0.38)",
       },
       today: {
         color: "#222222",
-        background: "#84DCC6"
+        background: "#84DCC6",
       },
     },
 
@@ -106,9 +112,9 @@ const formTheme = createMuiTheme({
         "&$focused $notchedOutline": {
           borderColor: "#84DCC6",
         },
-        '&:hover:not($disabled):not($focused):not($error) $notchedOutline':{
+        "&:hover:not($disabled):not($focused):not($error) $notchedOutline": {
           borderColor: "#84DCC6",
-        }
+        },
       },
       notchedOutline: {
         borderColor: "#84DCC6",
@@ -126,16 +132,16 @@ const formTheme = createMuiTheme({
 
     MuiMenuItem: {
       root: {
-        color: "#84DCC6"
-      }
+        color: "#84DCC6",
+      },
     },
-    
+
     MuiSelect: {
       icon: {
-        color: "#84DCC6"
-      }
+        color: "#84DCC6",
+      },
     },
-  }
+  },
 });
 
 const StudentSchedules = (props) => {
@@ -144,13 +150,13 @@ const StudentSchedules = (props) => {
     if (props.coachingSchedules) {
       return (
         <ThemeProvider theme={formTheme}>
-        <Paper className={classes.scheduler}>
-          <CustomScheduler
-            accessType="student"
-            className={classes.scheduler}
-            calendarEvents={props.coachingSchedules}
-          />
-        </Paper>
+          <Paper className={classes.scheduler}>
+            <CustomScheduler
+              accessType="student"
+              className={classes.scheduler}
+              calendarEvents={props.coachingSchedules}
+            />
+          </Paper>
         </ThemeProvider>
       );
     }

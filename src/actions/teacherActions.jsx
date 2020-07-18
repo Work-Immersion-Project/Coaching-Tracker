@@ -59,7 +59,6 @@ export const getTeachersBySubject = () => async (dispatch, getState) => {
         .then((snapshot) => snapshot.docs.map((document) => document.data()))
   );
 
-  console.log(teacherDocuments);
   const teachers = await Promise.all(teacherDocuments);
   const filteredTeachers = _.mapKeys(
     _.flatten(teachers),
@@ -93,7 +92,6 @@ export const addTeacher = ({
   id,
   createdAt,
 }) => async (dispatch) => {
- 
   dispatch(addTeacherRequest());
   try {
     const metadata = {
@@ -112,7 +110,7 @@ export const addTeacher = ({
       overdue: 0,
       ongoing: 0,
       requests: 0,
-      waiting_for_response:0,
+      waiting_for_response: 0,
     };
 
     await teachersCollection.doc(email).set({
@@ -125,12 +123,11 @@ export const addTeacher = ({
 
     dispatch(hideModal());
     dispatch(addTeacherSuccess());
-      dispatch(
-        showAlert("SUCCESS", `Teacher ${metadata.fullName} has been added!`)
-      );
+    dispatch(
+      showAlert("SUCCESS", `Teacher ${metadata.fullName} has been added!`)
+    );
   } catch (error) {
     dispatch(setError(error.message));
-    
   }
 };
 

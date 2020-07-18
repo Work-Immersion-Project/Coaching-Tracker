@@ -14,9 +14,11 @@ import alertsReducer from "./alertsReducer";
 import registrationReducer from "./registrationReducer";
 import notificationReducer from "./notificationReducer";
 import coachingLogReducer from "./coachingLogReducer";
+import appointmentReducer from "./appointmentReducer";
 export default combineReducers({
   auth: authReducer,
   form: formReducer,
+  appointment: appointmentReducer,
   registration: registrationReducer,
   notifications: notificationReducer,
   coachingLog: coachingLogReducer,

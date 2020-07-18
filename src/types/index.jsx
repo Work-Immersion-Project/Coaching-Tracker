@@ -12,4 +12,5 @@ export * from "./fieldsTypes";
 export * from "./alertTypes";
 export * from "./notificationTypes";
 export * from "./registrationTypes";
-export * from "./coachingLogTypes"  ;
+export * from "./coachingLogTypes";
+export * from "./appointmentTypes";

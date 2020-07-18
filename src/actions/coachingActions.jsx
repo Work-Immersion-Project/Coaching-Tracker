@@ -107,6 +107,7 @@ export const confirmCoachingSchedule = (coachingSessionId) => async (
           );
         });
       }
+      dispatch(getCoachingSchedules());
     })
     .catch((error) => {
       dispatch(setError(error.message));
@@ -233,7 +234,6 @@ const getStudentCoachingSchedules = (studentEmail) => async (dispatch) => {
       .collection("coachingSessions")
       .get()
       .then((snap) => snap.docs.map((doc) => doc.id));
-
     const coachingSessions = await Promise.all(
       coachingSessionIds.map((id) => coachingSessionCollection.doc(id).get())
     );

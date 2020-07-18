@@ -65,7 +65,6 @@ const validateDates = (values) => {
   ];
 
   requiredFields.forEach((field) => {
-    console.log(typeof values.studentAttendees);
     if (!values[field]) {
       errors[field] = "Required!";
     }
@@ -211,10 +210,6 @@ const StyledTimePicker = styled(TextField)({
   margin: "0.5em 0",
 });
 
-const StyledAddTitle = styled(TextField)({
-  margin: "0.5em 0",
-});
-
 const RequestEventForm = (props) => {
   const { handleSubmit, pristine, submitting } = props;
   const {
@@ -256,7 +251,6 @@ const RequestEventForm = (props) => {
         <Field
           label="Add Title"
           name="title"
-          inputComponent={StyledAddTitle}
           component={CustomMaterialTextField}
         />
 

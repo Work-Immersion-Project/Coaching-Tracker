@@ -212,10 +212,6 @@ const StyledTimePicker = styled(TextField)({
   margin: "0.5em 0",
 });
 
-const StyledAddTitle = styled(TextField)({
-  margin: "0.5em 0",
-});
-
 const AddEventForm = (props) => {
   const { handleSubmit, pristine, submitting } = props;
   const {
@@ -257,7 +253,6 @@ const AddEventForm = (props) => {
         <Field
           label="Add Title"
           name="title"
-          inputComponent={StyledAddTitle}
           component={CustomMaterialTextField}
         />
 

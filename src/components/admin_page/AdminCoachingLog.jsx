@@ -115,13 +115,13 @@ const formTheme = createMuiTheme({
     MuiIcon: {
       fontSizeSmall: {
         color: "#84DCC6",
-      }
+      },
     },
     MuiTablePagination: {
       root: {
-        color: "white"
-      }
-    }
+        color: "white",
+      },
+    },
   },
 });
 
@@ -211,9 +211,6 @@ const AdminCoachingLog = (props) => {
               ),
             },
           ]}
-          components={{
-            Header: (props) => <StyledTableHeader {...props} />,
-          }}
           isLoading={!props.coachingLogs}
           components={{
             Header: (props) => <StyledTableHeader {...props} />,

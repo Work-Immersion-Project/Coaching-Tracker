@@ -1,11 +1,10 @@
-import {
-  AppointmentTooltip,
-} from "@devexpress/dx-react-scheduler-material-ui";
+import { AppointmentTooltip } from "@devexpress/dx-react-scheduler-material-ui";
 import React from "react";
-import {Button, Grid, Typography} from "@material-ui/core";
+import { Button, Grid, Typography } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import DuoIcon from "@material-ui/icons/Duo";
-import {isDayBehind, isMeetingAvailable} from '../../../utils';
+import { isDayBehind, isMeetingAvailable } from "../../../utils";
+import _ from "lodash";
 
 export const AppointmentTooltipContent = withStyles({
   container: {
@@ -50,20 +49,22 @@ export const AppointmentTooltipContent = withStyles({
     confirmCoachingSchedule,
     loggedInUser,
     classes,
+    hideAppointmentTooltip,
     ...restProps
   }) => {
+    const dayBehind = isDayBehind(new Date(appointmentData.endDate));
+    const meetingAvailable = isMeetingAvailable(
+      new Date(appointmentData.startDate),
+      new Date(appointmentData.endDate)
+    );
 
-      const dayBehind = isDayBehind(new Date(appointmentData.endDate));
-      const meetingAvailable = isMeetingAvailable(
-          new Date(appointmentData.startDate),
-          new Date(appointmentData.endDate)
-      );
     const renderConfirmationButton = () => {
       if (loggedInUser.type === "teacher") {
         return (
           <Button
             className={classes.acceptMeetingButton}
             onClick={() => {
+              hideAppointmentTooltip();
               confirmCoachingSchedule(appointmentData.coachingSessionId);
             }}
             variant="contained"
@@ -72,13 +73,18 @@ export const AppointmentTooltipContent = withStyles({
           </Button>
         );
       } else if (loggedInUser.type === "student") {
+        // Get the all the confirmed Students
+        const studentsConfirmed = appointmentData.studentsConfirmed;
         let disabled = true;
 
-        if (appointmentData.studentsConfirmed) {
-          disabled =
-            !appointmentData.studentsConfirmed.filter(
-              (student) => student.email === loggedInUser.email
-            ).length === 0;
+        if (_.isEmpty(studentsConfirmed)) {
+          disabled = false;
+        } else if (
+          studentsConfirmed.filter(
+            (student) => student.email === loggedInUser.email
+          ).length === 0
+        ) {
+          disabled = false;
         }
 
         return (
@@ -86,6 +92,8 @@ export const AppointmentTooltipContent = withStyles({
             disabled={disabled}
             className={classes.acceptMeetingButton}
             onClick={() => {
+              hideAppointmentTooltip();
+
               confirmCoachingSchedule(appointmentData.coachingSessionId);
             }}
             variant="contained"
@@ -96,7 +104,7 @@ export const AppointmentTooltipContent = withStyles({
       }
     };
 
-    const renderContent = () => {
+    const renderUpdateButtons = () => {
       if (
         appointmentData.status === "denied" ||
         appointmentData.status === "overdue" ||
@@ -125,6 +133,7 @@ export const AppointmentTooltipContent = withStyles({
             <Button
               className={classes.acceptMeetingButton}
               onClick={() => {
+                hideAppointmentTooltip();
                 onUpdateStatusButtonPressed(
                   appointmentData.coachingSessionId,
                   "pending"
@@ -137,6 +146,7 @@ export const AppointmentTooltipContent = withStyles({
             <Button
               className={classes.denyMeetingButton}
               onClick={() => {
+                hideAppointmentTooltip();
                 onUpdateStatusButtonPressed(
                   appointmentData.coachingSessionId,
                   "denied"
@@ -162,6 +172,7 @@ export const AppointmentTooltipContent = withStyles({
               disabled={!meetingAvailable || dayBehind}
               className={classes.meetingButton}
               onClick={() => {
+                hideAppointmentTooltip();
                 window.open(appointmentData.meetingLink, "_blank");
               }}
               variant="contained"
@@ -188,6 +199,7 @@ export const AppointmentTooltipContent = withStyles({
             className={classes.meetingButton}
             onClick={() => {
               if (loggedInUser.type !== "student") {
+                hideAppointmentTooltip();
                 onUpdateStatusButtonPressed(
                   appointmentData.coachingSessionId,
                   "ongoing"
@@ -208,6 +220,7 @@ export const AppointmentTooltipContent = withStyles({
             <Button
               className={classes.denyMeetingButton}
               onClick={() => {
+                hideAppointmentTooltip();
                 onUpdateStatusButtonPressed(
                   appointmentData.coachingSessionId,
                   "cancelled"
@@ -233,7 +246,7 @@ export const AppointmentTooltipContent = withStyles({
           justify="center"
           alignItems="center"
         >
-          {renderContent()}
+          {renderUpdateButtons()}
         </Grid>
       </AppointmentTooltip.Content>
     );

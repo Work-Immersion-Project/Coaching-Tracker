@@ -17,7 +17,6 @@ export const registerUser = (values) => async (dispatch) => {
       await userCollections.doc(email).set({
         type,
       });
-
       if (type === "teacher") {
         dispatch(addTeacher(values));
       } else if (type === "student") {

@@ -31,11 +31,6 @@ export const confirmCoachingSchedule = (oldCoachingSessionId) => async (
   const oldCoachingSessionRef = coachingLogsCollection.doc(
     oldCoachingSessionId
   );
-  const newCoachingSessionId = uuidV4();
-  const updatedCoachingSessionRef = coachingLogsCollection.doc(
-    newCoachingSessionId
-  );
-
   await db
     .runTransaction(async (transaction) => {
       // Fetch all data first
@@ -52,7 +47,7 @@ export const confirmCoachingSchedule = (oldCoachingSessionId) => async (
       const teacherData = teacherDoc.data();
       const studentRefs = oldCoachingData.studentAttendees.map((student) => {
         const studentRef = studentCollection.doc(student.email);
-        console.log(student);
+
         return {
           studentSessionCollectionRef: studentRef
             .collection("coachingSessions")
@@ -68,10 +63,9 @@ export const confirmCoachingSchedule = (oldCoachingSessionId) => async (
           transaction.get(studentSessionCollectionRef)
         )
       );
-      console.log(studentDatas.length);
+
       for (let i = 0; i < studentDatas.length; i++) {
         const { studentRef, studentSessionCollectionRef } = studentRefs[i];
-
         const studentSessionData = studentSessionDatas[i].data();
         studentsConfirmed = studentSessionData.studentsConfirmed
           ? studentSessionData.studentsConfirmed
@@ -106,7 +100,7 @@ export const confirmCoachingSchedule = (oldCoachingSessionId) => async (
               status: "finished",
               studentsConfirmed,
             });
-            transaction.set(updatedCoachingSessionRef, {
+            transaction.set(oldCoachingSessionRef, {
               ...oldCoachingData,
               status: "finished",
               studentsConfirmed,
@@ -144,7 +138,7 @@ export const confirmCoachingSchedule = (oldCoachingSessionId) => async (
       }
     })
     .catch((error) => {
-      console.log(error);
+      dispatch(setError(error.message));
     });
 };
 
@@ -153,16 +147,11 @@ export const updateCoachingScheduleStatus = (
   status
 ) => async (dispatch, getState) => {
   const currentLoggedinUser = getState().auth.data.user;
-  const newCoachingSessionId = uuidV4();
   const oldCoachingSessionRef = coachingLogsCollection.doc(
     oldCoachingSessionId
   );
-  const updatedCoachingSessionRef = coachingLogsCollection.doc(
-    newCoachingSessionId
-  );
   dispatch(hideModal());
   dispatch(updateCoachingScheduleStatusRequest());
-
   await db
     .runTransaction(async (transaction) => {
       const oldCoachingDoc = await transaction.get(oldCoachingSessionRef);
@@ -172,6 +161,7 @@ export const updateCoachingScheduleStatus = (
         oldCoachingData.status === "waiting_for_response"
           ? "requests"
           : oldCoachingData.status;
+
       const teacherRef = teacherCollection.doc(oldCoachingData.teacher.email);
       const teacherCoachingSessionRef = teacherRef
         .collection("coachingSessions")
@@ -203,7 +193,6 @@ export const updateCoachingScheduleStatus = (
       }
       teacherData.coachingStats[sessionStatus] -= 1;
       teacherData.coachingStats[status] += 1;
-
       transaction.update(teacherRef, {
         coachingStats: { ...teacherData.coachingStats },
       });
@@ -211,12 +200,10 @@ export const updateCoachingScheduleStatus = (
         ...oldCoachingData,
         status,
       });
-
-      transaction.set(updatedCoachingSessionRef, {
+      transaction.set(oldCoachingSessionRef, {
         ...oldCoachingData,
         status,
       });
-
       return oldCoachingData.studentAttendees;
     })
     .then(async (students) => {
@@ -237,7 +224,6 @@ export const updateCoachingScheduleStatus = (
         default:
           break;
       }
-
       if (message !== "") {
         for (const student of students) {
           await dispatch(
@@ -487,7 +473,9 @@ export const addCoachingSchedule = (coachingDetails) => async (
     dispatch(hideModal());
     dispatch(addCoachingScheduleSuccess());
     dispatch(showAlert("SUCCESS", "Coaching Schedule Added!"));
-  } catch (error) {}
+  } catch (error) {
+    dispatch(setError(error.message));
+  }
 };
 export const addCoachingScheduleRequest = () => {
   return {
@@ -614,7 +602,7 @@ export const requestCoachingSchedule = (coachingDetails) => async (
     dispatch(requestCoachingScheduleSuccess());
     dispatch(showAlert("SUCCESS", "Coaching Schedule Requested!"));
   } catch (error) {
-    dispatch(setError(error));
+    dispatch(setError(error.message));
   }
 };
 

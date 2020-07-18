@@ -7,9 +7,15 @@ import {
   removeStudentSubject,
 } from "../../actions";
 import { connect } from "react-redux";
-import MaterialTable from "material-table";
-import { Grid, Typography, Chip } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import MaterialTable, { MTableHeader } from "material-table";
+import {
+  Grid,
+  Typography,
+  Chip,
+  createMuiTheme,
+  ThemeProvider,
+} from "@material-ui/core";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -19,6 +25,92 @@ const useStyles = makeStyles(() => ({
     backgroundColor: "#4B4E6D",
   },
 }));
+
+const StyledTableHeader = withStyles({})(
+  ({ children, classes, ...restProps }) => {
+    return <MTableHeader className={classes.test} {...restProps} />;
+  }
+);
+
+const formTheme = createMuiTheme({
+  overrides: {
+    MuiPaper: {
+      root: {
+        color: "#84DCC6",
+        backgroundColor: "#222222",
+      },
+    },
+    MuiInput: {
+      root: {
+        color: "#84DCC6",
+      },
+      underline: {
+        minWidth: "270px",
+        "&:before": {
+          borderBottom: "1px solid rgba(132, 220, 198, 1)",
+        },
+        "&:after": {
+          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+        },
+        "&:hover:not($disabled):not($focused):not($error):before": {
+          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+        },
+      },
+    },
+    MuiIconButton: {
+      root: {
+        color: "#84DCC6",
+        "&$disabled": {
+          color: "#222222",
+        },
+      },
+      colorInherit: {
+        color: "#84DCC6",
+      },
+    },
+
+    MuiInputBase: {
+      input: {
+        color: "white",
+      },
+    },
+    MuiSelect: {
+      icon: {
+        color: "#84DCC6",
+      },
+    },
+    MuiTypography: {
+      root: {
+        color: "white",
+      },
+      caption: {
+        color: "white",
+      },
+    },
+    MuiTableCell: {
+      body: {
+        color: "white !important",
+      },
+      head: {
+        color: "#84DCC6",
+      },
+    },
+    MuiTableSortLabel: {
+      root: {
+        color: "#84DCC6",
+        "&$active": {
+          color: "#84DCC6",
+          "&& $icon": {
+            color: "#84DCC6",
+          },
+        },
+        "&:hover": {
+          color: "#84DCC6",
+        },
+      },
+    },
+  },
+});
 
 const ManageStudentsPage = (props) => {
   const classes = useStyles();
@@ -76,54 +168,65 @@ const ManageStudentsPage = (props) => {
   };
 
   return (
-    <Grid
-      className={classes.root}
-      container
-      direction="column"
-      justify="center"
-    >
-      <MaterialTable
-        title="Students"
-        data={props.students ? props.students : []}
-        isLoading={!props.students}
-        columns={[
-          {
-            title: "Student Name",
-            field: "metadata",
-            render: ({ metadata }) => (
-              <Typography>{`${metadata.firstName} ${metadata.middleName} ${metadata.lastName}`}</Typography>
-            ),
-          },
-          {
-            title: "Email",
-            field: "email",
-          },
-          {
-            title: "Course",
-            field: "course",
-          },
-          {
-            title: "Enrolled Subjects",
-            field: "enrolledSubjects",
-            render: (rowData) =>
-              rowData.enrolledSubjects.map((subject) => (
-                <Chip
-                  key={subject}
-                  label={subject}
-                  onDelete={() => onRemoveSubjectPressed(rowData, subject)}
-                />
-              )),
-          },
-        ]}
-        actions={[
-          {
-            icon: "assignment",
-            tooltip: "Assign Subjects",
-            onClick: onAssignSubjectsPressed,
-          },
-        ]}
-      />
-    </Grid>
+    <ThemeProvider theme={formTheme}>
+      <Grid
+        className={classes.root}
+        container
+        direction="column"
+        justify="center"
+      >
+        <MaterialTable
+          title="Students"
+          data={props.students ? props.students : []}
+          isLoading={!props.students}
+          components={{
+            Header: (props) => <StyledTableHeader {...props} />,
+          }}
+          columns={[
+            {
+              title: "Student Name",
+              field: "metadata",
+              render: ({ metadata }) => (
+                <Typography>{`${metadata.firstName} ${metadata.middleName} ${metadata.lastName}`}</Typography>
+              ),
+            },
+            {
+              title: "Email",
+              field: "email",
+            },
+            {
+              title: "Course",
+              field: "course",
+            },
+            {
+              title: "Enrolled Subjects",
+              field: "enrolledSubjects",
+              render: (rowData) =>
+                rowData.enrolledSubjects.map((subject) => (
+                  <Chip
+                    key={subject}
+                    label={subject}
+                    onDelete={() => onRemoveSubjectPressed(rowData, subject)}
+                  />
+                )),
+            },
+          ]}
+          actions={[
+            {
+              icon: "assignment",
+              tooltip: "Assign Subjects",
+              onClick: onAssignSubjectsPressed,
+            },
+          ]}
+          options={{
+            headerStyle: {
+              backgroundColor: "#222222",
+              color: "#84DCC6",
+            },
+          }}
+        />
+      </Grid>
+    </ThemeProvider>
   );
 };
 

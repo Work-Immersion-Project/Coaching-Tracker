@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
     margin: "1em 0.25em",
   },
   title: {
-    color: "black !important",
+    color: "#84DCC6 !important",
   },
 }));
 
@@ -73,6 +73,11 @@ const formTheme = createMuiTheme({
           },
         },
       },
+    },
+    MuiSvgIcon :{
+      root: {
+        color: "#84DCC6",
+      }
     },
   },
 });

@@ -12,16 +12,13 @@ import {
   REMOVE_STUDENT_SUBJECT_SUCCESS,
 } from "../types";
 
-import { showAlert, showModal, hideModal } from "./";
+import { showAlert, showModal, hideModal , setError} from "./";
+
 import firebase from "firebase";
 import { db } from "../firebase";
 import _ from "lodash";
 const studentsCollection = db.collection("students");
 const subjectsCollection = db.collection("subjects");
-
-// export const getStudent = (studentEmail) => async (dispatch) => {
-//   const studentDocument = await studentsCollection.doc(studentEmail).get();
-// };
 
 export const getStudentRequest = () => {
   return {
@@ -52,30 +49,34 @@ export const getStudents = () => async (dispatch, getState) => {
 };
 export const getStudentsBySubject = () => async (dispatch, getState) => {
   dispatch(getStudentsRequest());
-  const studentDocuments = getState().auth.data.user.handledSubjects.map(
-    async (subject) =>
-      await subjectsCollection
-        .doc(subject)
-        .collection("enrolledStudents")
-        .get()
-        .then((snapshot) => snapshot.docs.map((document) => document.data()))
-  );
-
-  const students = await Promise.all(studentDocuments);
-  const filteredStudents = _.mapKeys(
-    _.flatten(students),
-    (value) => value.email
-  );
-
-  dispatch(
-    getStudentsSuccess(
-      Object.keys(filteredStudents).map((value) => {
-        return {
-          email: value,
-        };
-      })
-    )
-  );
+  try {
+    const studentDocuments = getState().auth.data.user.handledSubjects.map(
+      async (subject) =>
+        await subjectsCollection
+          .doc(subject)
+          .collection("enrolledStudents")
+          .get()
+          .then((snapshot) => snapshot.docs.map((document) => document.data()))
+    );
+  
+    const students = await Promise.all(studentDocuments);
+    const filteredStudents = _.mapKeys(
+      _.flatten(students),
+      (value) => value.email
+    );
+  
+    dispatch(
+      getStudentsSuccess(
+        Object.keys(filteredStudents).map((value) => {
+          return {
+            email: value,
+          };
+        })
+      )
+    );
+  } catch (error) {
+    dispatch(setError(error.message));
+  }
 };
 export const getStudentsRequest = () => {
   return { type: GET_STUDENTS_REQUEST };
@@ -98,8 +99,7 @@ export const addStudent = ({
   createdAt,
   course,
 }) => async (dispatch) => {
-  dispatch(hideModal());
-  dispatch(showModal("LOADING_MODAL"));
+
   dispatch(addStudentRequest());
   try {
     const metadata = {
@@ -128,14 +128,13 @@ export const addStudent = ({
       coachingStats,
       course,
     });
-
     dispatch(hideModal());
     dispatch(addStudentSuccess());
     dispatch(
       showAlert("SUCCESS", `Student ${metadata.fullName} has been added!`)
     );
   } catch (error) {
-    dispatch(showAlert("ERROR", error));
+    dispatch(setError(error.message));
   }
 };
 
@@ -200,7 +199,7 @@ export const removeStudentSubject = (
   dispatch(hideModal());
   dispatch(showModal("LOADING_MODAL"));
   dispatch(removeStudentSubjectRequest());
-  studentRef.update({
+  await studentRef.update({
     enrolledSubjects: fieldValue.arrayRemove(subjectName),
   });
 

@@ -10,7 +10,7 @@ import {
   REMOVE_SUBJECT_TEACHER_REQUEST,
   REMOVE_SUBJECT_TEACHER_SUCCESS,
 } from "../types";
-import { hideModal, showModal, showAlert } from ".";
+import { hideModal, showModal, showAlert, setError } from ".";
 import { db } from "../firebase";
 import _ from "lodash";
 import firebase from "firebase";
@@ -59,6 +59,7 @@ export const getTeachersBySubject = () => async (dispatch, getState) => {
         .then((snapshot) => snapshot.docs.map((document) => document.data()))
   );
 
+  console.log(teacherDocuments);
   const teachers = await Promise.all(teacherDocuments);
   const filteredTeachers = _.mapKeys(
     _.flatten(teachers),
@@ -92,8 +93,7 @@ export const addTeacher = ({
   id,
   createdAt,
 }) => async (dispatch) => {
-  dispatch(hideModal());
-  dispatch(showModal("LOADING_MODAL"));
+ 
   dispatch(addTeacherRequest());
   try {
     const metadata = {
@@ -104,6 +104,7 @@ export const addTeacher = ({
       createdAt,
       lastLoggedIn: null,
     };
+
     const coachingStats = {
       pending: 0,
       finished: 0,
@@ -113,6 +114,7 @@ export const addTeacher = ({
       requests: 0,
       waiting_for_response:0,
     };
+
     await teachersCollection.doc(email).set({
       metadata,
       email,
@@ -121,16 +123,14 @@ export const addTeacher = ({
       coachingStats,
     });
 
-    dispatch(
-      showAlert("SUCCESS", `Teacher ${metadata.fullName} has been added!`)
-    );
-
+    dispatch(hideModal());
     dispatch(addTeacherSuccess());
+      dispatch(
+        showAlert("SUCCESS", `Teacher ${metadata.fullName} has been added!`)
+      );
   } catch (error) {
-    return {
-      type: "ADD_TEACHER_ERROR",
-      error: error,
-    };
+    dispatch(setError(error.message));
+    
   }
 };
 

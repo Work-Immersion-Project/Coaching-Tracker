@@ -12,6 +12,9 @@ const useStyles = makeStyles(() => ({
     padding: "1em",
     background: "#4B4E6D",
   },
+  fontColor: {
+    color: "white"
+  },
 
   teacherChip: {
     margin: "0.25em",
@@ -80,6 +83,9 @@ const formTheme = createMuiTheme({
       },
     },
     MuiTableCell: {
+      body: {
+        color: "white",
+      },
       head: {
         color: "#84DCC6",
       },
@@ -98,12 +104,26 @@ const formTheme = createMuiTheme({
         },
       },
     },
+    MuiIcon: {
+      fontSizeSmall: {
+        color: "#84DCC6",
+        "&$disabled": {
+          color: "#222222",
+        },
+      }
+    },
+    MuiTablePagination: {
+      root: {
+        color: "white",
+      }
+    },
+
   },
 });
 
 const ManageSubjectsPage = (props) => {
   const classes = useStyles();
-  const { getSubjects, hideModal, addSubject } = props;
+  const { getSubjects, hideModal, addSubject, showModal } = props;
 
   useEffect(() => {
     getSubjects();

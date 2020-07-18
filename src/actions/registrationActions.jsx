@@ -1,19 +1,20 @@
 import { REGISTER_USER_REQUEST, REGISTER_USER_SUCCESS } from "../types";
 import { db } from "../firebase";
-import { hideModal, setError, addStudent, addTeacher } from "./";
+import { hideModal, showModal, setError, addStudent, addTeacher } from "./";
 
 const userCollections = db.collection("users");
 
 export const registerUser = (values) => async (dispatch) => {
   const { email, type } = values;
   dispatch(hideModal());
+  dispatch(showModal("LOADING_MODAL"));
   dispatch(registerUserRequest());
   try {
     // Check if document is existing
     const userDocument = await userCollections.doc(email).get();
     if (userDocument.exists) {
-      dispatch(setError("User Already Exists!"));
-    } else {
+      throw new Error("User Already Exists!!");
+    } 
       await userCollections.doc(email).set({
         type,
       });
@@ -22,7 +23,7 @@ export const registerUser = (values) => async (dispatch) => {
       } else if (type === "student") {
         dispatch(addStudent(values));
       }
-    }
+  
   } catch (error) {
     dispatch(setError(error));
   }

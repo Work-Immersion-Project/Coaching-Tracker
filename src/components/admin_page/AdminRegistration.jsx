@@ -114,7 +114,6 @@ const validate = (values) => {
 const AdminRegistration = (props) => {
   const classes = useStyles();
   const { handleSubmit, reset, pristine, submitting } = props;
-
   const handleRegisterUser = (values) => {
     reset();
     const createdAt = new Date();

@@ -109,6 +109,17 @@ const formTheme = createMuiTheme({
         },
       },
     },
+    MuiIcon: {
+      fontSizeSmall:{
+        color: "#84DCC6",
+      }
+    },
+    MuiTablePagination: {
+      root: {
+        color: "white"
+      }
+    }
+
   },
 });
 

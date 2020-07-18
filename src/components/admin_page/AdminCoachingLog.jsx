@@ -91,6 +91,9 @@ const formTheme = createMuiTheme({
       },
     },
     MuiTableCell: {
+      body: {
+        color: "white",
+      },
       head: {
         color: "#84DCC6",
       },
@@ -109,6 +112,16 @@ const formTheme = createMuiTheme({
         },
       },
     },
+    MuiIcon: {
+      fontSizeSmall: {
+        color: "#84DCC6",
+      }
+    },
+    MuiTablePagination: {
+      root: {
+        color: "white"
+      }
+    }
   },
 });
 
@@ -202,6 +215,15 @@ const AdminCoachingLog = (props) => {
             Header: (props) => <StyledTableHeader {...props} />,
           }}
           isLoading={!props.coachingLogs}
+          components={{
+            Header: (props) => <StyledTableHeader {...props} />,
+          }}
+          options={{
+            headerStyle: {
+              backgroundColor: "#222222",
+              color: "#84DCC6",
+            },
+          }}
         />
       </Grid>
     </ThemeProvider>

@@ -14,7 +14,7 @@ import {
 
 const useStyles = makeStyles(() => ({
   title: {
-    color: "#84DCC6",
+    color: "white",
   },
 }));
 

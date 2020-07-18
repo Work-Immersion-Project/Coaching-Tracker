@@ -34,7 +34,7 @@ const formTheme = createMuiTheme({
   overrides: {
     MuiPaper:{
       root: {
-        color: "#84DCC6",
+        color: "white",
         backgroundColor: "#222222"
       }
     },
@@ -69,7 +69,7 @@ const formTheme = createMuiTheme({
 
     MuiInputBase: {
       input: {
-        color: "#84DCC6",
+        color: "white",
       }
     },
     MuiSelect: {
@@ -79,13 +79,27 @@ const formTheme = createMuiTheme({
     },
     MuiTypography: {
       caption: {
-        color: "#84DCC6",
+        color: "white",
       }
     },
     MuiTableCell: {
       head: {
         color: "#84DCC6",
       }
+    },
+    MuiTableSortLabel: {
+      root: {
+        color: "#84DCC6",
+        "&$active": {
+          color: "#84DCC6",
+          "&& $icon": {
+            color: "#84DCC6"
+          },
+        },
+        "&:hover": {
+          color: "#84DCC6",
+        },
+      },
     },
   },
 });

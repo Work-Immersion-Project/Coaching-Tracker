@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { Grid, Typography, Chip } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import MaterialTable from "material-table";
+import { Grid, Typography, Chip, createMuiTheme, ThemeProvider, } from "@material-ui/core";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import MaterialTable, {MTableHeader} from "material-table";
 import { connect } from "react-redux";
 import {
   getTeachers,
@@ -19,6 +19,95 @@ const useStyles = makeStyles(() => ({
     background: "#4B4E6D",
   },
 }));
+
+const formTheme = createMuiTheme({
+  overrides: {
+    MuiPaper:{
+      root: {
+        color: "#84DCC6",
+        backgroundColor: "#222222"
+      }
+    },
+    MuiInput: {
+      root: {
+        color: "#84DCC6",
+      },
+      underline: {
+        minWidth: "270px",
+        "&:before": {
+          borderBottom: "1px solid rgba(132, 220, 198, 1)",
+        },
+        "&:after": {
+          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+        },
+        "&:hover:not($disabled):not($focused):not($error):before": {
+          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+        },
+      },
+    },
+    MuiIconButton: {
+      root: {
+        color: "#84DCC6",
+        "&$disabled": {
+          color: "#222222",
+        },
+      },
+      colorInherit: {
+        color: "#84DCC6",
+      },
+    },
+
+    MuiInputBase: {
+      input: {
+        color: "white",
+      }
+    },
+    MuiSelect: {
+      icon: {
+        color: "#84DCC6",
+      }
+    },
+    MuiTypography: {
+      root: {
+        color: "white",
+      },
+      caption: {
+        color: "white",
+      }
+    },
+    MuiTableCell: {
+      body: {
+        color: "white !important",
+      },
+      head: {
+        color: "#84DCC6",
+      }
+    },
+    MuiTableSortLabel: {
+      root: {
+        color: "#84DCC6",
+        "&$active": {
+          color: "#84DCC6",
+          "&& $icon": {
+            color: "#84DCC6"
+          },
+        },
+        "&:hover": {
+          color: "#84DCC6",
+        },
+      },
+    },
+  },
+});
+
+const StyledTableHeader = withStyles({
+})(({    children,
+  classes,
+  ...restProps}) => {
+    return <MTableHeader className={classes.test} {...restProps}/>;
+})
+
+
 
 const ManageTeachersPage = (props) => {
   const classes = useStyles();
@@ -69,6 +158,7 @@ const ManageTeachersPage = (props) => {
   };
 
   return (
+    <ThemeProvider theme={formTheme}>
     <Grid
       className={classes.root}
       container
@@ -79,6 +169,9 @@ const ManageTeachersPage = (props) => {
         title="Teachers"
         data={props.teachers ? props.teachers : []}
         isLoading={!props.teachers}
+        components={{
+          Header: (props) => <StyledTableHeader {...props}/>
+        }}
         columns={[
           {
             title: "Teacher Name",
@@ -107,8 +200,15 @@ const ManageTeachersPage = (props) => {
             onClick: onAssignSubjectsPressed,
           },
         ]}
+        options={{
+          headerStyle: {
+            backgroundColor: "#222222",
+            color: "#84DCC6",
+          }
+        }}
       />
     </Grid>
+    </ThemeProvider>
   );
 };
 

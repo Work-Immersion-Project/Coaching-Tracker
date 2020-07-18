@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Grid, Chip, createMuiTheme, ThemeProvider, Typography} from "@material-ui/core";
 import { hideModal, showModal, getCoachingLogs } from "../../actions";
 import _ from "lodash";
 import { connect } from "react-redux";
-import MaterialTable from "material-table";
 import moment from "moment";
+import MaterialTable, {MTableHeader} from "material-table";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -23,6 +23,90 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const StyledTableHeader = withStyles({
+})(({    children,
+  classes,
+  ...restProps}) => {
+    return <MTableHeader className={classes.test} {...restProps}/>;
+})
+
+const formTheme = createMuiTheme({
+  overrides: {
+    MuiPaper:{
+      root: {
+        color: "#84DCC6",
+        backgroundColor: "#222222"
+      }
+    },
+    MuiInput: {
+      root: {
+        color: "#84DCC6",
+      },
+      underline: {
+        minWidth: "270px",
+        "&:before": {
+          borderBottom: "1px solid rgba(132, 220, 198, 1)",
+        },
+        "&:after": {
+          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+        },
+        "&:hover:not($disabled):not($focused):not($error):before": {
+          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+        },
+      },
+    },
+    MuiIconButton: {
+      root: {
+        color: "#84DCC6",
+        "&$disabled": {
+          color: "#222222",
+        },
+      },
+      colorInherit: {
+        color: "#84DCC6",
+      },
+    },
+
+    MuiInputBase: {
+      input: {
+        color: "white",
+      }
+    },
+    MuiSelect: {
+      icon: {
+        color: "#84DCC6",
+      }
+    },
+    MuiTypography: {
+      root: {
+        color: "white",
+      },
+      caption: {
+        color: "white",
+      }
+    },
+    MuiTableCell: {
+      head: {
+        color: "#84DCC6",
+      }
+    },
+    MuiTableSortLabel: {
+      root: {
+        color: "#84DCC6",
+        "&$active": {
+          color: "#84DCC6",
+          "&& $icon": {
+            color: "#84DCC6"
+          },
+        },
+        "&:hover": {
+          color: "#84DCC6",
+        },
+      },
+    },
+  },
+});
+
 const AdminCoachingLog = (props) => {
   const classes = useStyles();
   
@@ -33,7 +117,7 @@ const AdminCoachingLog = (props) => {
 
 
   return (
-
+    <ThemeProvider theme={formTheme}>
     <Grid
       className={classes.root}
       container
@@ -95,9 +179,19 @@ const AdminCoachingLog = (props) => {
           },
         ]}
         isLoading={!props.coachingLogs}
+        components={{
+          Header: (props) => <StyledTableHeader {...props}/>
+        }}
+        options={{
+          headerStyle: {
+            backgroundColor: "#222222",
+            color: "#84DCC6",
+          }
+        }}
        
       />
     </Grid>
+    </ThemeProvider>
   );
 };
 

@@ -15,6 +15,8 @@ import {
   Chip,
   TextField,
   makeStyles,
+  createMuiTheme, 
+  ThemeProvider,
 } from "@material-ui/core";
 
 const useStyles = makeStyles(() => ({
@@ -24,7 +26,57 @@ const useStyles = makeStyles(() => ({
   chipsWrapper: {
     margin: "1em 0.25em",
   },
+  title: {
+    color: "black !important",
+  },
 }));
+
+const formTheme = createMuiTheme({
+  overrides: {
+    MuiPaper: {
+      root: {
+        color: "white",
+        backgroundColor: "#222222",
+      }
+    },
+    
+    MuiInputLabel: {
+      root: {
+        color: "#84DCC6",
+      },
+    },
+
+    MuiInput: {
+      root: {
+        color: "white",
+      },
+      underline: {
+        minWidth: "270px",
+        "&:before": {
+          borderBottom: "1px solid rgba(132, 220, 198, 1)",
+        },
+        "&:after": {
+          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+        },
+        "&:hover:not($disabled):not($focused):not($error):before": {
+          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+        },
+      },
+    },
+    MuiButton: {
+      root: {
+        backgroundColor: "#84DCC6",
+        "&:hover": {
+          backgroundColor: "#52aa95",
+          "@media (hover: none)": {
+            backgroundColor: "#84DCC6",
+          },
+        },
+      },
+    },
+
+  }
+});
 
 const subjectsFieldSelector = formValueSelector("AssignSubjectsFormDialog");
 
@@ -50,8 +102,9 @@ const AssignSubjectsFormDialog = (props) => {
 
 
   return (
+    <ThemeProvider theme={formTheme}>
     <Dialog open={open} onClose={onDialogClose}>
-      <DialogTitle>{title}</DialogTitle>
+      <DialogTitle className = {classes.title}>{title}</DialogTitle>
       <form onSubmit={handleSubmit(onPositiveClick)}>
         <DialogContent>
           <Grid container direction="column" justify="center" spacing={1}>
@@ -85,6 +138,7 @@ const AssignSubjectsFormDialog = (props) => {
         </DialogActions>
       </form>
     </Dialog>
+    </ThemeProvider>
   );
 };
 

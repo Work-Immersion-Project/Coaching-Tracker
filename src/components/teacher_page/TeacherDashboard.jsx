@@ -14,8 +14,12 @@ const useStyles = makeStyles(() => ({
     width: "50%",
   },
   colorCard: {
-    backgroundColor: "#C4C4C4",
-    paddingbottom: "10em",
+    height: "10em", 
+    width: "20em",
+    backgroundColor: "#84DCC6",  
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center"
   },
 }));
 
@@ -42,7 +46,7 @@ const TeacherDashboard = (props) => {
               <Typography align="center" variant="h3">
                 {props.studentsCoachedCount}
               </Typography>
-              <Typography variant="h5"> Students Coached </Typography>
+              <Typography align="center" variant="h5"> Students Coached </Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -52,7 +56,7 @@ const TeacherDashboard = (props) => {
               <Typography align="center" variant="h3">
                 01
               </Typography>
-              <Typography variant="h5"> Cancelled Sessions </Typography>
+              <Typography align="center" variant="h5"> Cancelled Sessions </Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -71,7 +75,7 @@ const TeacherDashboard = (props) => {
               <Typography align="center" variant="h3">
                 {props.pendingSessionsCount}
               </Typography>
-              <Typography variant="h5"> Pending Sessions </Typography>
+              <Typography align="center" variant="h5"> Pending Sessions </Typography>
             </CardContent>
           </Card>
         </Grid>

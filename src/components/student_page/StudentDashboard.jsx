@@ -10,8 +10,12 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#4B4E6D",
   },
   colorCard: {
-    backgroundColor: "#C4C4C4",
-    paddingbottom: "10em",
+    height: "10em", 
+    width: "20em",
+    backgroundColor: "#84DCC6",  
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center"
   },
 }));
 
@@ -31,7 +35,7 @@ const StudentDashboard = (props) => {
             <Typography align="center" variant="h3">
               Jose Marjosep
             </Typography>
-            <Typography variant="h5" align="center">
+            <Typography align="center" variant="h5" align="center">
               {" "}
               Student Name{" "}
             </Typography>
@@ -44,7 +48,7 @@ const StudentDashboard = (props) => {
             <Typography align="center" variant="h3">
               5
             </Typography>
-            <Typography variant="h5"> Sessions Attended </Typography>
+            <Typography align="center" variant="h5"> Sessions Attended </Typography>
           </CardContent>
         </Card>
       </Grid>
@@ -54,7 +58,7 @@ const StudentDashboard = (props) => {
             <Typography align="center" variant="h3">
               01
             </Typography>
-            <Typography variant="h5"> Pending Sessions </Typography>
+            <Typography align="center" variant="h5"> Pending Sessions </Typography>
           </CardContent>
         </Card>
       </Grid>

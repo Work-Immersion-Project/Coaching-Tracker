@@ -30,14 +30,18 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       display: "none",
     },
-    color: "#52aa95",
+    color: "#84DCC6",
   },
   notificationButton: {
     marginRight: theme.spacing(2),
-    color: "#52aa95",
+    color: "#84DCC6",
   },
   appBar: {
     background: "#333333",
+  },
+  notificationPaper: {
+    background: "#333333",
+    color: "#84DCC6"
   },
   title: {
     flexGrow: 1,
@@ -160,7 +164,8 @@ const CustomAppbar = (props) => {
           >
             <FixedSizeList
               height={300}
-              width={300}
+              width={500}
+              className = {classes.notificationPaper}
               itemSize={20}
               itemCount={props.unseenNotif.length}
             >

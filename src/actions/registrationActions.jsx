@@ -14,18 +14,17 @@ export const registerUser = (values) => async (dispatch) => {
     const userDocument = await userCollections.doc(email).get();
     if (userDocument.exists) {
       throw new Error("User Already Exists!!");
-    } 
-      await userCollections.doc(email).set({
-        type,
-      });
-      if (type === "teacher") {
-        dispatch(addTeacher(values));
-      } else if (type === "student") {
-        dispatch(addStudent(values));
-      }
-  
+    }
+    await userCollections.doc(email).set({
+      type,
+    });
+    if (type === "teacher") {
+      dispatch(addTeacher(values));
+    } else if (type === "student") {
+      dispatch(addStudent(values));
+    }
   } catch (error) {
-    dispatch(setError(error));
+    dispatch(setError(error.message));
   }
 };
 

@@ -86,9 +86,9 @@ export const getTeachersSuccess = (results) => {
 
 export const addTeacher = ({
   email,
-  firstName,
-  middleName,
-  lastName,
+  firstName = "",
+  middleName = "",
+  lastName = "",
   id,
   createdAt,
 }) => async (dispatch) => {

@@ -1,17 +1,26 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Snackbar } from "@material-ui/core";
-import { hideAlert, hideError } from "../actions";
+import { hideAlert, hideError, hideModal } from "../actions";
 import MuiAlert from "@material-ui/lab/Alert";
 
 const Alert = (props) => <MuiAlert elevation={6} variant="filled" {...props} />;
-const AlertRoot = ({ isOpen, message, type, error, hideAlert, hideError }) => {
+const AlertRoot = ({
+  isOpen,
+  message,
+  type,
+  error,
+  hideAlert,
+  hideError,
+  hideModal,
+}) => {
   const onClose = () => {
     hideAlert();
     hideError();
   };
 
   if (error) {
+    hideModal();
     return (
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
@@ -69,4 +78,5 @@ const mapStateToProps = ({ alerts, errors }) => {
 export default connect(mapStateToProps, {
   hideAlert,
   hideError,
+  hideModal,
 })(AlertRoot);

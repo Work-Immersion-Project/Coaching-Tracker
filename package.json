@@ -2,7 +2,7 @@
   "name": "immersion",
   "version": "0.1.0",
   "private": true,
-  "homepage": "Coaching-Tracker",
+  "homepage": "http://work-immersion-project.github.io/Coaching-Tracker",
   "dependencies": {
     "@devexpress/dx-react-chart": "^2.7.0",
     "@devexpress/dx-react-chart-material-ui": "^2.7.0",

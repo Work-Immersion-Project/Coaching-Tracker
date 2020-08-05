@@ -40,10 +40,16 @@ const App = (props) => {
     <LocalizationProvider dateAdapter={MomentUtils}>
       <Router history={history}>
         <Switch>
-          <Route path="/login" component={LoginPage} exact />
-          <PrivateRoute path="/teacher" component={TeacherPage} />
-          <PrivateRoute path="/admin" component={AdminPage} />
-          <PrivateRoute path="/student" component={StudentPage} />
+          <Route path="/Coaching-Tracker/login" component={LoginPage} exact />
+          <PrivateRoute
+            path="/Coaching-Tracker/teacher"
+            component={TeacherPage}
+          />
+          <PrivateRoute path="/Coaching-Tracker/admin" component={AdminPage} />
+          <PrivateRoute
+            path="/Coaching-Tracker/student"
+            component={StudentPage}
+          />
           <Route component={LoginPage} />
         </Switch>
       </Router>

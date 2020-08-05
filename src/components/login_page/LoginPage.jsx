@@ -21,14 +21,16 @@ const LoginPage = (props) => {
 
   useEffect(() => {
     const location = history.location;
-    const { from } = location.state || { from: { pathName: "/" } };
+    const { from } = location.state || {
+      from: { pathName: "/Coaching-Tracker" },
+    };
 
     if (props.authData) {
       const { isSignedIn, user } = props.authData;
       if (isSignedIn) {
         if (!_.isEmpty(user) && user) {
-          if (from.pathName === "/") {
-            history.replace(`${from.pathName}${user.type}`);
+          if (from.pathName === "/Coaching-Tracker") {
+            history.replace(`${from.pathName}/${user.type}`);
           } else {
             history.replace(from);
           }

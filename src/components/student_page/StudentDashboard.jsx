@@ -35,7 +35,7 @@ const StudentDashboard = (props) => {
             <Typography align="center" variant="h3">
               Jose Marjosep
             </Typography>
-            <Typography align="center" variant="h5" align="center">
+            <Typography align="center" variant="h5">
               Student Name
             </Typography>
           </CardContent>

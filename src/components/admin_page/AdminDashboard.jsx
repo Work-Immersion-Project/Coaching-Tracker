@@ -1,6 +1,7 @@
 import React from "react";
 import { Grid, Card, CardContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -13,16 +14,22 @@ const useStyles = makeStyles((theme) => ({
     width: "50%",
   },
   colorCard: {
-    height: "10em", 
+    height: "10em",
     width: "20em",
-    backgroundColor: "#84DCC6",  
+    backgroundColor: "#84DCC6",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center"
+    justifyContent: "center",
   },
 }));
 
 const AdminDashboard = (props) => {
+  const {
+    user: {
+      metadata: { fName, lName, mName },
+    },
+  } = props;
+
   const classes = useStyles();
   return (
     <Grid
@@ -42,20 +49,24 @@ const AdminDashboard = (props) => {
         <Grid>
           <Card className={classes.colorCard}>
             <CardContent>
-              <Typography align = "center" variant="h3" >
+              <Typography align="center" variant="h3">
                 02
               </Typography>
-              <Typography align = "center" variant="h5"> Students Coached </Typography>
+              <Typography align="center" variant="h5">
+                Students Coached
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid>
           <Card className={classes.colorCard}>
             <CardContent>
-              <Typography align = "center"  variant="h3">
+              <Typography align="center" variant="h3">
                 01
               </Typography>
-              <Typography align = "center"  variant="h5"> Cancelled Sessions </Typography>
+              <Typography align="center" variant="h5">
+                Cancelled Sessions
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -71,21 +82,23 @@ const AdminDashboard = (props) => {
         <Grid>
           <Card className={classes.colorCard}>
             <CardContent>
-              <Typography align = "center" variant="h3">
+              <Typography align="center" variant="h3">
                 01
               </Typography>
-              <Typography align = "center" variant="h5"> Pending Sessions </Typography>
+              <Typography align="center" variant="h5">
+                Pending Sessions
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid>
           <Card className={classes.colorCard}>
             <CardContent>
-              <Typography align = "center" variant="h4">
-                Juan Dela Cruz
+              <Typography align="center" variant="h4">
+                {`${fName} ${mName} ${lName}`}
               </Typography>
-              <Typography align = "center" variant="h5">
-                Teacher Name
+              <Typography align="center" variant="h5">
+                Admin Name
               </Typography>
             </CardContent>
           </Card>
@@ -94,4 +107,11 @@ const AdminDashboard = (props) => {
     </Grid>
   );
 };
-export default AdminDashboard;
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.auth.data.user,
+  };
+};
+
+export default connect(mapStateToProps)(AdminDashboard);

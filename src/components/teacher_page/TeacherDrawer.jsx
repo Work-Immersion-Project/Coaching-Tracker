@@ -6,7 +6,6 @@ import {
   ListItemIcon,
   ListItemText,
   Hidden,
-
 } from "@material-ui/core";
 // Icons
 import HomeIcon from "@material-ui/icons/Home";
@@ -82,7 +81,10 @@ const TeacherDrawer = (props) => {
         <ListItem
           button
           component={Link}
-          to={{ pathname: `/teacher${path}`, state: { text: text } }}
+          to={{
+            pathname: `/Coaching-Tracker/teacher${path}`,
+            state: { text: text },
+          }}
           key={text}
         >
           <ListItemIcon className={classes.iconColor}>{icon}</ListItemIcon>

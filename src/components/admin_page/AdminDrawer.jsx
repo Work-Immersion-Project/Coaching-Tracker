@@ -83,7 +83,10 @@ const AdminDrawer = (props) => {
         <ListItem
           button
           component={Link}
-          to={{ pathname: `/admin${path}`, state: { text: text } }}
+          to={{
+            pathname: `/Coaching-Tracker/admin${path}`,
+            state: { text: text },
+          }}
           key={text}
         >
           <ListItemIcon className={classes.iconColor}>{icon}</ListItemIcon>

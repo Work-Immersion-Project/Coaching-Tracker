@@ -79,7 +79,10 @@ const StudentDrawer = (props) => {
         <ListItem
           button
           component={Link}
-          to={{ pathname: `/student${path}`, state: { text: text } }}
+          to={{
+            pathname: `/Coaching-Tracker/student${path}`,
+            state: { text: text },
+          }}
           key={text}
         >
           <ListItemIcon className={classes.iconColor}>{icon}</ListItemIcon>

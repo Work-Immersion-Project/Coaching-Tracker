@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
   notificationPaper: {
     background: "#333333",
-    color: "#84DCC6"
+    color: "#84DCC6",
   },
   title: {
     flexGrow: 1,
@@ -76,29 +76,26 @@ const CustomAppbar = (props) => {
         mm: "%d mins",
       },
     });
-    const formattedPath = props.location.pathname
-      .replace("/admin/", "/")
-      .replace("/teacher/", "/")
-      .replace("/student/", "/")
-      .replace("/", "");
 
-    const splittedPath = formattedPath.split("/");
+    const splittedPath = props.location.pathname.split("/");
+    const formattedPath = splittedPath[splittedPath.length - 1];
+
     let appbarTitle = "";
 
     if (
       formattedPath !== "" &&
       formattedPath !== "teacher" &&
-      formattedPath !== "student" &&
-      formattedPath !== "admin"
+      formattedPath !== "admin" &&
+      formattedPath !== "student"
     ) {
-      if (splittedPath.length > 1) {
+      if (formattedPath.includes("-")) {
         appbarTitle = _.reduce(formattedPath.split("-"), (current, next) => {
           return (
             _.startCase(_.toLower(current)) + " " + _.startCase(_.toLower(next))
           );
         });
       } else {
-        appbarTitle = _.startCase(_.toLower(splittedPath[0]));
+        appbarTitle = _.startCase(_.toLower(formattedPath));
       }
     } else {
       appbarTitle = "Dashboard";
@@ -165,7 +162,7 @@ const CustomAppbar = (props) => {
             <FixedSizeList
               height={300}
               width={500}
-              className = {classes.notificationPaper}
+              className={classes.notificationPaper}
               itemSize={20}
               itemCount={props.unseenNotif.length}
             >

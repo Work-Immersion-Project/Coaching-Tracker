@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Button,
   Grid,
@@ -10,17 +10,8 @@ import {
   FormHelperText,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import CustomSelectField from "../custom/CustomSelectField";
-import { connect } from "react-redux";
-import { Field, reduxForm } from "redux-form";
 import _ from "lodash";
-import {
-  showModal,
-  hideModal,
-  addStudent,
-  addTeacher,
-  registerUser,
-} from "../../actions";
+
 import { useForm, Controller } from "react-hook-form";
 
 const useStyles = makeStyles(() => ({
@@ -91,105 +82,79 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const validate = (values) => {
-  const errors = {};
-  const requiredFields = [
-    "firstName",
-    "lastName",
-    "email",
-    "id",
-    "type",
-    "subjects",
-  ];
-  requiredFields.forEach((field) => {
-    if (!values[field] && _.isEmpty(values[field])) {
-      errors[field] = "Required";
-    }
-  });
-
-  if (
-    values.email &&
-    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
-  ) {
-    errors.email = "Invalid email address";
-  }
-
-  if (values.email && !values.email.includes("@ciit.edu.ph")) {
-    errors.email = "Invalid email address";
-  }
-  return errors;
-};
-
-const AdminRegistration = (props) => {
+const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
   const classes = useStyles();
-  const { reset, pristine, submitting } = props;
-  const { register, handleSubmit, control, errors } = useForm();
-  const [userType, setUserType] = useState("");
+  const { register, handleSubmit, control, errors, reset, watch } = useForm();
+  const userType = watch("type");
   const handleRegisterUser = (values) => {
     reset();
     const createdAt = new Date();
-    props.registerUser({ ...values, createdAt });
+    hideModal();
+    registerUserRequest({ ...values, createdAt });
   };
 
   const onSubmit = (values) => {
-    console.log(values);
-    // props.showModal("CONFIRMATION_MODAL", {
-    //   onDialogClose: onDialogClose,
-    //   title: "Register User",
-    //   content:
-    //     "Make sure that you have entered the correct information before proceeding.",
-    //   onNegativeClick: onDialogClose,
-    //   onPositiveClick: () => handleRegisterUser(values),
-    // });
+    showModal("CONFIRMATION_MODAL", {
+      onDialogClose: onDialogClose,
+      title: "Register User",
+      content:
+        "Make sure that you have entered the correct information before proceeding.",
+      onNegativeClick: onDialogClose,
+      onPositiveClick: () => handleRegisterUser(values),
+    });
   };
 
   const onDialogClose = () => {
-    props.hideModal();
+    hideModal();
   };
 
   const renderStudentForms = () => {
     return (
       <Grid item sm>
-        <InputLabel className={classes.inputLabel}>Course</InputLabel>
-        <Field
-          name="course"
-          id="course"
-          required
-          native
-          disableUnderline
-          component={CustomSelectField}
-          className={classes.selectField}
-        >
-          <option value={""} />
-          <option className={classes.selectValue} value={"bma"}>
-            Bachelor of Multiedia Arts
-          </option>
-          <option className={classes.selectValue} value={"bfa"}>
-            Bachelor of Fine Arts
-          </option>
-          <option className={classes.selectValue} value={"bscs"}>
-            Bachelor of Science in Computer Science
-          </option>
-          <option className={classes.selectValue} value={"bsemc"}>
-            Bachelor of Science in Entertainment and Multimedia Computing
-          </option>
-        </Field>
+        <FormControl fullWidth error={errors.course !== undefined}>
+          <InputLabel>Course</InputLabel>
+          <Controller
+            as={Select}
+            name="course"
+            control={control}
+            defaultValue=""
+            fullWidth
+            rules={{ required: true }}
+          >
+            <MenuItem value={""}></MenuItem>
+            <MenuItem value={"BMA"}>Bachelor of Multimedia Arts</MenuItem>
+            <MenuItem value={"BFA"}>Bachelor of Fine Arts</MenuItem>
+            <MenuItem value={"BSCS"}>
+              Bachelor of Science in Computer Science
+            </MenuItem>
+            <MenuItem value={"BSEMC"}>
+              Bachelor of Science in Entertainment and Multimedia Computing
+            </MenuItem>
+          </Controller>
+          <FormHelperText>
+            {_.isUndefined(errors.course) ? "" : "Required"}
+          </FormHelperText>
+        </FormControl>
       </Grid>
     );
   };
 
   const renderForms = () => {
-    if (
-      props.formValues &&
-      props.formValues.type &&
-      props.formValues.type !== ""
-    ) {
-      const { type } = props.formValues;
-      if (type === "student") {
-        return renderStudentForms();
-      }
-    }
+    if (userType === "student") return renderStudentForms();
     return null;
+  };
+
+  const validateEmail = () => {
+    if (errors.email) {
+      if (errors.email.type === "required") {
+        console.log("email");
+        return "Required";
+      } else if (errors.email.type === "pattern") {
+        return "Invalid Email";
+      }
+    } else {
+      return "";
+    }
   };
 
   return (
@@ -244,8 +209,9 @@ const AdminRegistration = (props) => {
               fullWidth
               inputRef={register({
                 required: true,
+                pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
               })}
-              helperText={_.isUndefined(errors.email) ? "" : "Required"}
+              helperText={validateEmail()}
             />
           </Grid>
           <Grid item sm>
@@ -294,22 +260,4 @@ const AdminRegistration = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    formValues: state.form.AdminRegistration?.values,
-    error: state.errors.errorMessage,
-  };
-};
-
-const adminRegistrationWithReduxForm = reduxForm({
-  form: "AdminRegistration",
-  validate,
-})(AdminRegistration);
-
-export default connect(mapStateToProps, {
-  showModal,
-  hideModal,
-  addStudent,
-  addTeacher,
-  registerUser,
-})(adminRegistrationWithReduxForm);
+export default AdminRegistration;

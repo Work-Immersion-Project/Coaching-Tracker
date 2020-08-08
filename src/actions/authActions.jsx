@@ -6,9 +6,8 @@ import {
   AUTH_CHECK_USER_REQUEST,
   AUTH_CHECK_USER_SUCCESS,
 } from "../types";
-import _ from "lodash";
 
-// // Authentication Actions.
+// Authentication Actions.
 
 export const checkAuthRequest = () => {
   return { type: AUTH_CHECK_USER_REQUEST };

@@ -4,7 +4,6 @@ import {
   GET_STUDENTS_REQUEST,
   GET_STUDENTS_SUCCESS,
   GET_STUDENT_SUCCESS,
-  GET_STUDENT_ERROR,
   GET_STUDENT_REQUEST,
   ASSIGN_STUDENT_SUBJECT_REQUEST,
   ASSIGN_STUDENT_SUBJECT_SUCCESS,
@@ -12,7 +11,7 @@ import {
   REMOVE_STUDENT_SUBJECT_SUCCESS,
 } from "../types";
 
-import { showAlert, showModal, hideModal , setError} from "./";
+import { showAlert, showModal, hideModal, setError } from "./";
 
 import firebase from "firebase";
 import { db } from "../firebase";
@@ -33,14 +32,6 @@ export const getStudentSuccess = (results) => {
   };
 };
 
-export const getStudentError = (error) => {
-  return {
-    type: GET_STUDENT_ERROR,
-    data: null,
-    error: error,
-  };
-};
-
 export const getStudents = () => async (dispatch, getState) => {
   dispatch(getStudentsRequest());
   studentsCollection.onSnapshot((snapshot) => {
@@ -58,13 +49,13 @@ export const getStudentsBySubject = () => async (dispatch, getState) => {
           .get()
           .then((snapshot) => snapshot.docs.map((document) => document.data()))
     );
-  
+
     const students = await Promise.all(studentDocuments);
     const filteredStudents = _.mapKeys(
       _.flatten(students),
       (value) => value.email
     );
-  
+
     dispatch(
       getStudentsSuccess(
         Object.keys(filteredStudents).map((value) => {
@@ -86,57 +77,52 @@ export const getStudentsSuccess = (results) => {
   return { type: GET_STUDENTS_SUCCESS, data: results, error: null };
 };
 
-export const getStudentsError = (error) => {
-  return { type: GET_STUDENT_ERROR, data: null, error: error };
-};
+// export const addStudent = ({
+//   id,
+//   firstName,
+//   middleName,
+//   lastName,
+//   email,
+//   createdAt,
+//   course,
+// }) => async (dispatch) => {
+//   dispatch(addStudentRequest());
+//   try {
+//     const metadata = {
+//       fullName: `${firstName} ${middleName} ${lastName}`,
+//       firstName,
+//       middleName,
+//       lastName,
+//       createdAt,
+//       lastLoggedIn: null,
+//     };
+//     const coachingStats = {
+//       pending: 0,
+//       finished: 0,
+//       cancelled: 0,
+//       overdue: 0,
+//       ongoing: 0,
+//       requests: 0,
+//       waiting_for_response: 0,
+//     };
 
-export const addStudent = ({
-  id,
-  firstName = "",
-  middleName = "",
-  lastName = "",
-  email,
-  createdAt,
-  course,
-}) => async (dispatch) => {
-
-  dispatch(addStudentRequest());
-  try {
-    const metadata = {
-      fullName: `${firstName} ${middleName} ${lastName}`,
-      firstName,
-      middleName,
-      lastName,
-      createdAt,
-      lastLoggedIn: null,
-    };
-    const coachingStats = {
-      pending: 0,
-      finished: 0,
-      cancelled: 0,
-      overdue: 0,
-      ongoing: 0,
-      requests: 0,
-      waiting_for_response: 0,
-    };
-
-    await studentsCollection.doc(email).set({
-      metadata,
-      email,
-      id,
-      enrolledSubjects: [],
-      coachingStats,
-      course,
-    });
-    dispatch(hideModal());
-    dispatch(addStudentSuccess());
-    dispatch(
-      showAlert("SUCCESS", `Student ${metadata.fullName} has been added!`)
-    );
-  } catch (error) {
-    dispatch(setError(error.message));
-  }
-};
+//     await studentsCollection.doc(email).set({
+//       metadata,
+//       email,
+//       id,
+//       enrolledSubjects: [],
+//       coachingStats,
+//       course,
+//     });
+//     dispatch(hideModal());
+//     dispatch(addStudentSuccess());
+//     dispatch(
+//       showAlert("SUCCESS", `Student ${metadata.fullName} has been added!`)
+//     );
+//   } catch (error) {
+//     dispatch(setError(error.message));
+//   }
+// };
 
 export const assignStudentSubjects = (values) => async (dispatch) => {
   const fieldValue = firebase.firestore.FieldValue;
@@ -235,8 +221,8 @@ export const removeStudentSubjectSuccess = () => {
   };
 };
 
-export const addStudentRequest = () => {
-  return { type: ADD_STUDENT_REQUEST };
+export const addStudentRequest = (formValues) => {
+  return { type: ADD_STUDENT_REQUEST, payload: formValues };
 };
 export const addStudentSuccess = () => {
   return { type: ADD_STUDENT_SUCCESS };

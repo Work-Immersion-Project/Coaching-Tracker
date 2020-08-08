@@ -4,7 +4,7 @@ import {
   AUTH_SIGN_OUT_REQUEST,
 } from "../types";
 import _ from "lodash";
-import app, { db, collections } from "../firebase";
+import app, { collections } from "../firebase";
 import firebase from "firebase";
 import {
   checkAuthSuccess,
@@ -13,7 +13,7 @@ import {
   signOutSuccess,
   setError,
 } from "../actions";
-import { takeEvery, select, call, put } from "redux-saga/effects";
+import { takeEvery, select, put } from "redux-saga/effects";
 import { getGapiAuthClient } from "../selectors";
 
 /** Check the user if authenticated or not */

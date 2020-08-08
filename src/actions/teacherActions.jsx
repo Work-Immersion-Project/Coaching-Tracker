@@ -10,7 +10,7 @@ import {
   REMOVE_SUBJECT_TEACHER_REQUEST,
   REMOVE_SUBJECT_TEACHER_SUCCESS,
 } from "../types";
-import { hideModal, showModal, showAlert, setError } from ".";
+import { hideModal, showModal, showAlert } from ".";
 import { db } from "../firebase";
 import _ from "lodash";
 import firebase from "firebase";
@@ -84,56 +84,10 @@ export const getTeachersSuccess = (results) => {
   };
 };
 
-export const addTeacher = ({
-  email,
-  firstName = "",
-  middleName = "",
-  lastName = "",
-  id,
-  createdAt,
-}) => async (dispatch) => {
-  dispatch(addTeacherRequest());
-  try {
-    const metadata = {
-      fullName: `${firstName} ${middleName} ${lastName}`,
-      firstName,
-      middleName,
-      lastName,
-      createdAt,
-      lastLoggedIn: null,
-    };
-
-    const coachingStats = {
-      pending: 0,
-      finished: 0,
-      cancelled: 0,
-      overdue: 0,
-      ongoing: 0,
-      requests: 0,
-      waiting_for_response: 0,
-    };
-
-    await teachersCollection.doc(email).set({
-      metadata,
-      email,
-      id,
-      handledSubjects: [],
-      coachingStats,
-    });
-
-    dispatch(hideModal());
-    dispatch(addTeacherSuccess());
-    dispatch(
-      showAlert("SUCCESS", `Teacher ${metadata.fullName} has been added!`)
-    );
-  } catch (error) {
-    dispatch(setError(error.message));
-  }
-};
-
-export const addTeacherRequest = () => {
+export const addTeacherRequest = (formValues) => {
   return {
     type: ADD_TEACHER_REQUEST,
+    payload: formValues,
   };
 };
 export const addTeacherSuccess = () => {

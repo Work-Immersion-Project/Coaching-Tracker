@@ -1,4 +1,4 @@
-import { GAPI_INIT_REQUEST, GAPI_INIT_SUCCESS } from "../types";
+import { GAPI_INIT_REQUEST } from "../types";
 import { gapiInitSuccess } from "../actions";
 import { takeEvery, put } from "redux-saga/effects";
 

@@ -5,10 +5,10 @@ import ManageSubjectsPage from "./ManageSubjectsPage";
 import ManageTeachersPage from "./ManageTeachersPage";
 import ManageStudentsPage from "./ManageStudentsPage";
 import AdminCoachingLog from "./AdminCoachingLog";
-import AdminRegistration from "./AdminRegistration";
 import AdminDashboard from "./AdminDashboard";
 import CustomAppbar from "../custom/CustomAppbar";
 import AdminDrawer from "./AdminDrawer";
+import AdminRegistrationContainer from "./AdminRegistrationContainer";
 
 const useStyles = makeStyles({
   container: {
@@ -37,7 +37,7 @@ const AdminPage = () => {
           <AdminDashboard />
         </Route>
         <Route path={`${path}/registration`} exact>
-          <AdminRegistration />
+          <AdminRegistrationContainer />
         </Route>
         <Route path={`${path}/manage-subjects`} exact>
           <ManageSubjectsPage />

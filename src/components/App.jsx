@@ -1,7 +1,6 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import { Route, Switch, Router } from "react-router-dom";
-import { checkAuth, gapiInitRequest, checkAuthRequest } from "../actions";
-import { connect } from "react-redux";
+
 import MomentUtils from "@material-ui/pickers/adapter/moment";
 import { LocalizationProvider } from "@material-ui/pickers";
 import LoginPage from "./login_page/LoginPage";
@@ -12,10 +11,8 @@ import history from "../history";
 import PrivateRoute from "./PrivateRoute";
 import ModalRoot from "./ModalRoot";
 import AlertRoot from "./AlertRoot";
-import { useDispatch, useSelector } from "react-redux";
 
 import "./App.css";
-import { GAPI_INIT_REQUEST } from "../types";
 
 const App = ({
   gapiAuthClient,

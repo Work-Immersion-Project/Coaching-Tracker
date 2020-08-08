@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import App from "./App";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuthRequest, gapiInitRequest } from "../actions";

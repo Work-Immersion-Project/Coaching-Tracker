@@ -8,7 +8,6 @@ import {
 
 const INITIAL_STATE = {
   data: null,
-  error: null,
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -16,7 +15,7 @@ export default (state = INITIAL_STATE, action) => {
     case GET_STUDENT_REQUEST:
       return { ...state };
     case GET_STUDENTS_SUCCESS:
-      return { ...state, data: action.data };
+      return { ...state, data: action.payload };
     case GET_STUDENTS_REQUEST:
       return { ...state };
     case ASSIGN_STUDENT_SUBJECT_SUCCESS:

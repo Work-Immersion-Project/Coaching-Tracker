@@ -1,12 +1,10 @@
 import React, { useEffect } from "react";
 import {
-  getStudents,
   showModal,
   hideModal,
   assignStudentSubjects,
   removeStudentSubject,
 } from "../../actions";
-import { connect } from "react-redux";
 import MaterialTable, { MTableHeader } from "material-table";
 import {
   Grid,
@@ -110,31 +108,35 @@ const formTheme = createMuiTheme({
       },
     },
     MuiIcon: {
-      fontSizeSmall:{
+      fontSizeSmall: {
         color: "#84DCC6",
-      }
+      },
     },
     MuiTablePagination: {
       root: {
-        color: "white"
-      }
-    }
-
+        color: "white",
+      },
+    },
   },
 });
 
-const ManageStudentsPage = (props) => {
+const ManageStudentsPage = ({
+  getStudentsRequest,
+  hideModal,
+  showModal,
+  students,
+}) => {
   const classes = useStyles();
-  const {
-    getStudents,
-    hideModal,
-    showModal,
-    assignStudentSubjects,
-    removeStudentSubject,
-  } = props;
+  // const {
+  //   getStudents,
+  //   hideModal,
+  //   showModal,
+  //   assignStudentSubjects,
+  //   removeStudentSubject,
+  // } = props;
   useEffect(() => {
-    getStudents();
-  }, [getStudents]);
+    getStudentsRequest();
+  }, [getStudentsRequest]);
 
   const onDialogClose = () => {
     hideModal();
@@ -188,8 +190,8 @@ const ManageStudentsPage = (props) => {
       >
         <MaterialTable
           title="Students"
-          data={props.students ? props.students : []}
-          isLoading={!props.students}
+          data={students ? students : []}
+          isLoading={!students}
           components={{
             Header: (props) => <StyledTableHeader {...props} />,
           }}
@@ -241,16 +243,4 @@ const ManageStudentsPage = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    students: state.students.data,
-  };
-};
-
-export default connect(mapStateToProps, {
-  getStudents,
-  hideModal,
-  showModal,
-  assignStudentSubjects,
-  removeStudentSubject,
-})(ManageStudentsPage);
+export default ManageStudentsPage;

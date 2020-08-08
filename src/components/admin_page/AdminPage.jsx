@@ -3,12 +3,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch } from "react-router-dom";
 import ManageSubjectsPage from "./ManageSubjectsPage";
 import ManageTeachersPage from "./ManageTeachersPage";
-import ManageStudentsPage from "./ManageStudentsPage";
 import AdminCoachingLog from "./AdminCoachingLog";
 import AdminDashboard from "./AdminDashboard";
 import CustomAppbar from "../custom/CustomAppbar";
 import AdminDrawer from "./AdminDrawer";
 import AdminRegistrationContainer from "./AdminRegistrationContainer";
+import ManageStudentsPageContainer from "./ManageStudentsPageContainer";
 
 const useStyles = makeStyles({
   container: {
@@ -49,7 +49,7 @@ const AdminPage = () => {
           <ManageTeachersPage />
         </Route>
         <Route path={`${path}/manage-students`} exact>
-          <ManageStudentsPage />
+          <ManageStudentsPageContainer />
         </Route>
       </div>
     </div>

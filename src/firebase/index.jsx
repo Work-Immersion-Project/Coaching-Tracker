@@ -23,6 +23,8 @@ export const collections = {
   teacher: teacherCollection,
   admin: adminCollection,
   user: userCollection,
+  subjects: subjectCollection,
+  coachingSessions: coachingSessionCollection,
 };
 
 export default app;

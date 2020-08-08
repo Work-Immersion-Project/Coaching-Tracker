@@ -1,31 +1,21 @@
-import { ADD_STUDENT_REQUEST } from "../types";
-import { takeEvery, put } from "redux-saga/effects";
+import { ADD_STUDENT_REQUEST, GET_STUDENTS_REQUEST } from "../types";
+import { takeEvery, put, take, select } from "redux-saga/effects";
+import { eventChannel } from "redux-saga";
 import { collections } from "../firebase";
-import { hideModal, addStudentSuccess, showAlert, setError } from "../actions";
+import {
+  hideModal,
+  addStudentSuccess,
+  showAlert,
+  setError,
+  getStudentsSuccess,
+} from "../actions";
+import { getCurrentUser } from "../selectors";
+import _ from "lodash";
 
 function* addStudentSaga({
-  payload: { id, firstName, middleName, lastName, email, createdAt, course },
+  payload: { email, id, metadata, coachingStats, course },
 }) {
   try {
-    const metadata = {
-      fullname: `${firstName} ${middleName} ${lastName}`,
-      firstName,
-      middleName,
-      lastName,
-      createdAt,
-      lastLoggedIn: null,
-    };
-
-    const coachingStats = {
-      pending: 0,
-      finished: 0,
-      cancelled: 0,
-      overdue: 0,
-      ongoing: 0,
-      requests: 0,
-      waiting_for_response: 0,
-    };
-
     yield collections["student"].doc(email).set({
       metadata,
       email,
@@ -44,6 +34,66 @@ function* addStudentSaga({
     yield put(setError(error.message));
   }
 }
+
+function* getStudents() {
+  const studentsRef = collections.student;
+  const channel = eventChannel((subs) =>
+    studentsRef.onSnapshot((snapshot) =>
+      subs(snapshot.docs.map((doc) => doc.data()))
+    )
+  );
+
+  try {
+    while (true) {
+      const students = yield take(channel);
+      yield put(getStudentsSuccess(students));
+    }
+  } catch (error) {
+    yield put(setError(error.message));
+  }
+}
+
+function* getStudentsBySubject(subjectName) {
+  try {
+    const currUser = select(getCurrentUser);
+    const studentDocuments = currUser.handledSubjects.map(
+      async (subject) =>
+        await collections.subject
+          .doc(subject)
+          .collection("enrolledStudents")
+          .get()
+          .then((snapshot) => snapshot.docs.map((document) => document.data()))
+    );
+    const students = yield Promise.all(studentDocuments);
+    const filteredStudents = _.mapKeys(
+      _.flatten(students),
+      (value) => value.email
+    );
+
+    yield put(
+      getStudentsSuccess(
+        Object.keys(filteredStudents).map((value) => {
+          return {
+            email: value,
+          };
+        })
+      )
+    );
+  } catch (error) {
+    yield put(setError(error.message));
+  }
+}
+
+function* getStudentsSaga({ payload }) {
+  console.log("geting");
+  if (payload.subjectName) {
+    yield getStudentsBySubject(payload.subjectName);
+  } else {
+    yield getStudents();
+  }
+}
+
 export function* watchStudent() {
   yield takeEvery(ADD_STUDENT_REQUEST, addStudentSaga);
+  yield takeEvery(GET_STUDENTS_REQUEST, getStudentsSaga);
 }

@@ -11,11 +11,11 @@ import {
   REMOVE_STUDENT_SUBJECT_SUCCESS,
 } from "../types";
 
-import { showAlert, showModal, hideModal, setError } from "./";
+import { showAlert, showModal, hideModal } from "./";
 
 import firebase from "firebase";
 import { db } from "../firebase";
-import _ from "lodash";
+
 const studentsCollection = db.collection("students");
 const subjectsCollection = db.collection("subjects");
 
@@ -32,97 +32,51 @@ export const getStudentSuccess = (results) => {
   };
 };
 
-export const getStudents = () => async (dispatch, getState) => {
-  dispatch(getStudentsRequest());
-  studentsCollection.onSnapshot((snapshot) => {
-    dispatch(getStudentsSuccess(snapshot.docs.map((doc) => doc.data())));
-  });
-};
-export const getStudentsBySubject = () => async (dispatch, getState) => {
-  dispatch(getStudentsRequest());
-  try {
-    const studentDocuments = getState().auth.data.user.handledSubjects.map(
-      async (subject) =>
-        await subjectsCollection
-          .doc(subject)
-          .collection("enrolledStudents")
-          .get()
-          .then((snapshot) => snapshot.docs.map((document) => document.data()))
-    );
-
-    const students = await Promise.all(studentDocuments);
-    const filteredStudents = _.mapKeys(
-      _.flatten(students),
-      (value) => value.email
-    );
-
-    dispatch(
-      getStudentsSuccess(
-        Object.keys(filteredStudents).map((value) => {
-          return {
-            email: value,
-          };
-        })
-      )
-    );
-  } catch (error) {
-    dispatch(setError(error.message));
-  }
-};
-export const getStudentsRequest = () => {
-  return { type: GET_STUDENTS_REQUEST };
-};
-
-export const getStudentsSuccess = (results) => {
-  return { type: GET_STUDENTS_SUCCESS, data: results, error: null };
-};
-
-// export const addStudent = ({
-//   id,
-//   firstName,
-//   middleName,
-//   lastName,
-//   email,
-//   createdAt,
-//   course,
-// }) => async (dispatch) => {
-//   dispatch(addStudentRequest());
+// export const getStudents = () => async (dispatch, getState) => {
+//   dispatch(getStudentsRequest());
+//   studentsCollection.onSnapshot((snapshot) => {
+//     dispatch(getStudentsSuccess(snapshot.docs.map((doc) => doc.data())));
+//   });
+// };
+// export const getStudentsBySubject = () => async (dispatch, getState) => {
+//   dispatch(getStudentsRequest());
 //   try {
-//     const metadata = {
-//       fullName: `${firstName} ${middleName} ${lastName}`,
-//       firstName,
-//       middleName,
-//       lastName,
-//       createdAt,
-//       lastLoggedIn: null,
-//     };
-//     const coachingStats = {
-//       pending: 0,
-//       finished: 0,
-//       cancelled: 0,
-//       overdue: 0,
-//       ongoing: 0,
-//       requests: 0,
-//       waiting_for_response: 0,
-//     };
+//     const studentDocuments = getState().auth.data.user.handledSubjects.map(
+//       async (subject) =>
+//         await subjectsCollection
+//           .doc(subject)
+//           .collection("enrolledStudents")
+//           .get()
+//           .then((snapshot) => snapshot.docs.map((document) => document.data()))
+//     );
 
-//     await studentsCollection.doc(email).set({
-//       metadata,
-//       email,
-//       id,
-//       enrolledSubjects: [],
-//       coachingStats,
-//       course,
-//     });
-//     dispatch(hideModal());
-//     dispatch(addStudentSuccess());
+//     const students = await Promise.all(studentDocuments);
+//     const filteredStudents = _.mapKeys(
+//       _.flatten(students),
+//       (value) => value.email
+//     );
+
 //     dispatch(
-//       showAlert("SUCCESS", `Student ${metadata.fullName} has been added!`)
+//       getStudentsSuccess(
+//         Object.keys(filteredStudents).map((value) => {
+//           return {
+//             email: value,
+//           };
+//         })
+//       )
 //     );
 //   } catch (error) {
 //     dispatch(setError(error.message));
 //   }
 // };
+
+export const getStudentsRequest = (subjectName = null) => {
+  return { type: GET_STUDENTS_REQUEST, payload: { subjectName } };
+};
+
+export const getStudentsSuccess = (students) => {
+  return { type: GET_STUDENTS_SUCCESS, payload: students };
+};
 
 export const assignStudentSubjects = (values) => async (dispatch) => {
   const fieldValue = firebase.firestore.FieldValue;

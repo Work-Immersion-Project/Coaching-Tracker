@@ -147,7 +147,6 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
   const validateEmail = () => {
     if (errors.email) {
       if (errors.email.type === "required") {
-        console.log("email");
         return "Required";
       } else if (errors.email.type === "pattern") {
         return "Invalid Email";
@@ -209,7 +208,7 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
               fullWidth
               inputRef={register({
                 required: true,
-                pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@ciit.edu.ph$/,
               })}
               helperText={validateEmail()}
             />

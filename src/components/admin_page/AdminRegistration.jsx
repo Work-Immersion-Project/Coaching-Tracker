@@ -1,7 +1,15 @@
-import React from "react";
-import { Button, Grid, InputLabel } from "@material-ui/core";
+import React, { useState } from "react";
+import {
+  Button,
+  Grid,
+  InputLabel,
+  TextField,
+  MenuItem,
+  Select,
+  FormControl,
+  FormHelperText,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import CustomTextField from "../custom/CustomTextField";
 import CustomSelectField from "../custom/CustomSelectField";
 import { connect } from "react-redux";
 import { Field, reduxForm } from "redux-form";
@@ -13,6 +21,7 @@ import {
   addTeacher,
   registerUser,
 } from "../../actions";
+import { useForm, Controller } from "react-hook-form";
 
 const useStyles = makeStyles(() => ({
   buttonStyle: {
@@ -113,7 +122,9 @@ const validate = (values) => {
 
 const AdminRegistration = (props) => {
   const classes = useStyles();
-  const { handleSubmit, reset, pristine, submitting } = props;
+  const { reset, pristine, submitting } = props;
+  const { register, handleSubmit, control, errors } = useForm();
+  const [userType, setUserType] = useState("");
   const handleRegisterUser = (values) => {
     reset();
     const createdAt = new Date();
@@ -121,14 +132,15 @@ const AdminRegistration = (props) => {
   };
 
   const onSubmit = (values) => {
-    props.showModal("CONFIRMATION_MODAL", {
-      onDialogClose: onDialogClose,
-      title: "Register User",
-      content:
-        "Make sure that you have entered the correct information before proceeding.",
-      onNegativeClick: onDialogClose,
-      onPositiveClick: () => handleRegisterUser(values),
-    });
+    console.log(values);
+    // props.showModal("CONFIRMATION_MODAL", {
+    //   onDialogClose: onDialogClose,
+    //   title: "Register User",
+    //   content:
+    //     "Make sure that you have entered the correct information before proceeding.",
+    //   onNegativeClick: onDialogClose,
+    //   onPositiveClick: () => handleRegisterUser(values),
+    // });
   };
 
   const onDialogClose = () => {
@@ -193,81 +205,86 @@ const AdminRegistration = (props) => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <Grid item sm>
-            <InputLabel className={classes.inputLabel}>First Name</InputLabel>
-            <Field
-              className={classes.textField}
+            <TextField
               name="firstName"
-              id="firstName"
-              required
-              component={CustomTextField}
+              error={errors.firstName !== undefined}
+              label="First Name"
+              fullWidth
+              inputRef={register({
+                required: true,
+              })}
+              helperText={_.isUndefined(errors.firstName) ? "" : "Required"}
             />
           </Grid>
           <Grid item sm>
-            <InputLabel className={classes.inputLabel}>Middle Name</InputLabel>
-            <Field
-              className={classes.textField}
+            <TextField
               name="middleName"
-              id="middleName"
-              component={CustomTextField}
+              label="Middle Name"
+              fullWidth
+              inputRef={register}
             />
           </Grid>
           <Grid item sm>
-            <InputLabel className={classes.inputLabel}>Last Name</InputLabel>
-            <Field
-              className={classes.textField}
+            <TextField
+              error={errors.lastName !== undefined}
               name="lastName"
-              id="lastName"
-              required
-              component={CustomTextField}
+              label="Last Name"
+              fullWidth
+              inputRef={register({
+                required: true,
+              })}
+              helperText={_.isUndefined(errors.lastName) ? "" : "Required"}
             />
           </Grid>
           <Grid item sm>
-            <InputLabel className={classes.inputLabel}>Email</InputLabel>
-            <Field
-              className={classes.textField}
+            <TextField
+              error={errors.email !== undefined}
               name="email"
-              id="email"
-              required
-              component={CustomTextField}
+              label="Email"
+              fullWidth
+              inputRef={register({
+                required: true,
+              })}
+              helperText={_.isUndefined(errors.email) ? "" : "Required"}
             />
           </Grid>
           <Grid item sm>
-            <InputLabel className={classes.inputLabel}>ID</InputLabel>
-            <Field
-              className={classes.textField}
+            <TextField
+              error={errors.id !== undefined}
               name="id"
-              id="id"
-              required
-              component={CustomTextField}
+              label="ID"
+              fullWidth
+              inputRef={register({
+                required: true,
+              })}
+              helperText={_.isUndefined(errors.id) ? "" : "Required"}
             />
           </Grid>
           <Grid item sm>
-            <InputLabel className={classes.inputLabel}>Type</InputLabel>
-            <Field
-              name="type"
-              id="type"
-              required
-              native
-              disableUnderline
-              component={CustomSelectField}
-              className={classes.selectField}
-            >
-              <option value={""} />
-              <option className={classes.selectValue} value={"teacher"}>
-                Teacher
-              </option>
-              <option className={classes.selectValue} value={"student"}>
-                Student
-              </option>
-            </Field>
+            <FormControl fullWidth error={errors.type !== undefined}>
+              <InputLabel>Type</InputLabel>
+              <Controller
+                as={Select}
+                name="type"
+                control={control}
+                defaultValue=""
+                fullWidth
+                rules={{ required: true }}
+              >
+                <MenuItem value={""}></MenuItem>
+                <MenuItem value={"student"}>Student</MenuItem>
+                <MenuItem value={"teacher"}>Teacher</MenuItem>
+              </Controller>
+              <FormHelperText>
+                {_.isUndefined(errors.type) ? "" : "Required"}
+              </FormHelperText>
+            </FormControl>
           </Grid>
-
           {renderForms()}
           <Button
             type="submit"
             className={classes.submitButton}
             variant="contained"
-            disabled={pristine || submitting}
           >
             Submit
           </Button>

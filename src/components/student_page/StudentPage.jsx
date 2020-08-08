@@ -45,7 +45,6 @@ const StudentPage = () => {
         <Route path={`${path}/schedules`} exact>
           <StudentSchedules />
         </Route>
-
         <Route path={`${path}/notifications`} exact>
           <NotificationPage />
         </Route>

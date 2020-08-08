@@ -61,9 +61,11 @@ const CustomAppbar = (props) => {
       props.openDrawer();
     }
   };
+
   const onNotifOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const onNotifClose = () => {
     setAnchorEl(null);
   };

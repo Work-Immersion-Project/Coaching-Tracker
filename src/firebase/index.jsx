@@ -18,5 +18,11 @@ export const teacherCollection = db.collection("teachers");
 export const subjectCollection = db.collection("subjects");
 export const adminCollection = db.collection("admins");
 export const coachingSessionCollection = db.collection("coachingSessions");
+export const collections = {
+  student: studentCollection,
+  teacher: teacherCollection,
+  admin: adminCollection,
+  user: userCollection,
+};
 
 export default app;

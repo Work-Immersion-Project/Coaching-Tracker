@@ -1,6 +1,5 @@
 export * from "./authActions";
 export * from "./drawerActions";
-export * from "./gapiActions";
 export * from "./modalActions";
 export * from "./teacherActions";
 export * from "./studentActions";
@@ -14,3 +13,4 @@ export * from "./registrationActions";
 export * from "./notificationActions";
 export * from "./coachingLogActions";
 export * from "./appointmentActions";
+export * from "./gapiActions";

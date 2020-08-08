@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Route, Switch, Router } from "react-router-dom";
-import { initializeGapiAuth, checkAuth, getNotifications } from "../actions";
+import { checkAuth, gapiInitRequest, checkAuthRequest } from "../actions";
 import { connect } from "react-redux";
 import MomentUtils from "@material-ui/pickers/adapter/moment";
 import { LocalizationProvider } from "@material-ui/pickers";
@@ -12,31 +12,28 @@ import history from "../history";
 import PrivateRoute from "./PrivateRoute";
 import ModalRoot from "./ModalRoot";
 import AlertRoot from "./AlertRoot";
+import { useDispatch, useSelector } from "react-redux";
+
 import "./App.css";
+import { GAPI_INIT_REQUEST } from "../types";
 
-const App = (props) => {
-  const {
-    gapiAuth,
-    authData,
-    checkAuth,
-    initializeGapiAuth,
-    getNotifications,
-  } = props;
-
-  if (gapiAuth && !authData) {
-    checkAuth();
-  }
-
+const App = ({
+  gapiAuthClient,
+  authData,
+  checkAuthRequest,
+  gapiInitRequest,
+}) => {
   useEffect(() => {
-    if (authData) {
-      getNotifications();
+    if (gapiAuthClient) {
+      checkAuthRequest();
     }
-  }, [authData, getNotifications]);
-  useEffect(() => {
-    initializeGapiAuth();
-  }, [initializeGapiAuth]);
+  }, [checkAuthRequest, gapiAuthClient]);
 
-  return !props.gapiAuth ? null : (
+  useEffect(() => {
+    gapiInitRequest();
+  }, [gapiInitRequest]);
+
+  return !gapiAuthClient ? null : (
     <LocalizationProvider dateAdapter={MomentUtils}>
       <Router history={history}>
         <Switch>
@@ -59,15 +56,4 @@ const App = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    authData: state.auth.data,
-    gapiAuth: state.gapi.gapiAuth,
-  };
-};
-
-export default connect(mapStateToProps, {
-  initializeGapiAuth,
-  checkAuth,
-  getNotifications,
-})(App);
+export default App;

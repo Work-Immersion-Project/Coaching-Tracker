@@ -1,2 +1,3 @@
 //Google Api Client Action Types
-export const INITIALIZE_GAPI = "INITIALIZE_GAPI";
+export const GAPI_INIT_REQUEST = "GAPI_INIT_REQUEST";
+export const GAPI_INIT_SUCCESS = "GAPI_INIT_SUCCESS";

@@ -6,7 +6,7 @@ import {
   showModal,
   addSubjectRequest,
   getSubjectsRequest,
-} from "../../actions";
+} from "../../../actions";
 import { connect } from "react-redux";
 import MaterialTable, { MTableHeader } from "material-table";
 

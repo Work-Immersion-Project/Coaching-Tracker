@@ -6,7 +6,7 @@ import {
   showModal,
   assignStudentsSubjectsRequest,
   removeStudentSubjectRequest,
-} from "../../actions";
+} from "../../../actions";
 import ManageStudentsPage from "./ManageStudentsPage";
 
 const ManageStudentsPageContainer = () => {

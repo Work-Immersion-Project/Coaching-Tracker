@@ -1,14 +1,14 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch } from "react-router-dom";
-import ManageSubjectsPage from "./ManageSubjectsPage";
-import ManageTeachersPage from "./ManageTeachersPage";
+import ManageSubjectsPage from "./ManageSubjectsPage/ManageSubjectsPage";
 import AdminCoachingLog from "./AdminCoachingLog";
 import AdminDashboard from "./AdminDashboard";
 import CustomAppbar from "../custom/CustomAppbar";
 import AdminDrawer from "./AdminDrawer";
-import AdminRegistrationContainer from "./AdminRegistrationContainer";
-import ManageStudentsPageContainer from "./ManageStudentsPageContainer";
+import AdminRegistrationContainer from "./AdminRegistration/AdminRegistrationContainer";
+import ManageStudentsPageContainer from "./ManageStudentsPage/ManageStudentsPageContainer";
+import ManageTeachersPageContainer from "./ManageTeachersPage/ManageTeachersPageContainer";
 
 const useStyles = makeStyles({
   container: {
@@ -46,7 +46,7 @@ const AdminPage = () => {
           <AdminCoachingLog />
         </Route>
         <Route path={`${path}/manage-teachers`} exact>
-          <ManageTeachersPage />
+          <ManageTeachersPageContainer />
         </Route>
         <Route path={`${path}/manage-students`} exact>
           <ManageStudentsPageContainer />

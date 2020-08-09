@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import MaterialTable, { MTableHeader } from "material-table";
 import {
   Grid,
   Typography,
@@ -8,21 +7,24 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import MaterialTable, { MTableHeader } from "material-table";
+import { connect } from "react-redux";
+import {
+  getTeachers,
+  showModal,
+  hideModal,
+  assignSubjectTeacher,
+  removeSubjectTeacher,
+} from "../../../actions";
 
 const useStyles = makeStyles(() => ({
   root: {
     height: "100%",
     width: "100%",
     padding: "1em",
-    backgroundColor: "#4B4E6D",
+    background: "#4B4E6D",
   },
 }));
-
-const StyledTableHeader = withStyles({})(
-  ({ children, classes, ...restProps }) => {
-    return <MTableHeader className={classes.test} {...restProps} />;
-  }
-);
 
 const formTheme = createMuiTheme({
   overrides: {
@@ -114,27 +116,53 @@ const formTheme = createMuiTheme({
   },
 });
 
-const ManageStudentsPage = ({
-  getStudentsRequest,
+const StyledTableHeader = withStyles({})(
+  ({ children, classes, ...restProps }) => {
+    return <MTableHeader className={classes.test} {...restProps} />;
+  }
+);
+
+const ManageTeachersPage = ({
+  teachers,
+  getTeachersRequest,
   hideModal,
   showModal,
-  students,
-  assignStudentSubjectsRequest,
-  removeStudentSubjectRequest,
+  assignSubjectToTeacherRequest,
+  removeSubjectFromTeacherRequest,
 }) => {
   const classes = useStyles();
-  useEffect(() => {
-    getStudentsRequest();
-  }, [getStudentsRequest]);
+  // const {
+  //   getTeachers,
+  //   hideModal,
+  //   showModal,
+  //   removeSubjectTeacher,
+  //   assignSubjectTeacher,
+  // } = props;
 
+  useEffect(() => {
+    getTeachersRequest(false);
+  }, [getTeachersRequest]);
   const onDialogClose = () => {
     hideModal();
   };
 
+  const onRemoveSubjectPressed = (rowData, subjectName) => {
+    showModal("CONFIRMATION_MODAL", {
+      onDialogClose: onDialogClose,
+      title: "Remove Subject?",
+      content: `Are you sure you want to remove ${subjectName} from teacher?`,
+      onNegativeClick: onDialogClose,
+      onPositiveClick: () => {
+        removeSubjectFromTeacherRequest({
+          teacherDetails: rowData,
+          subjectName,
+        });
+      },
+    });
+  };
   const onSubmit = ({ email, metadata }, currentSubjects, values) => {
     hideModal();
-
-    assignStudentSubjectsRequest({
+    assignSubjectToTeacherRequest({
       ...values,
       subjects: [
         ...values.subjects,
@@ -147,29 +175,14 @@ const ManageStudentsPage = ({
     });
   };
 
-  const onRemoveSubjectPressed = (rowData, subjectName) => {
-    showModal("CONFIRMATION_MODAL", {
-      onDialogClose: onDialogClose,
-      title: "Remove Subject?",
-      content: `Are you sure you want to remove ${subjectName} from student?`,
-      onNegativeClick: onDialogClose,
-      onPositiveClick: () => {
-        removeStudentSubjectRequest({
-          studentDetails: rowData,
-          subjectName,
-        });
-      },
-    });
-  };
-
-  const onAssignSubjectsPressed = (event, rowData) => {
+  const onAssignSubjectsPressed = (_, rowData) => {
     showModal("ASSIGN_SUBJECT_FORM_MODAL", {
-      currentSubjects: rowData.enrolledSubjects,
+      currentSubjects: rowData.handledSubjects,
       onDialogClose: onDialogClose,
       title: `Assign Subjects to ${rowData.metadata.fullName}`,
       onNegativeClick: onDialogClose,
       onPositiveClick: (values) =>
-        onSubmit(rowData, rowData.enrolledSubjects, values),
+        onSubmit(rowData, rowData.handledSubjects, values),
     });
   };
 
@@ -182,33 +195,25 @@ const ManageStudentsPage = ({
         justify="center"
       >
         <MaterialTable
-          title="Students"
-          data={students ? students : []}
-          isLoading={!students}
+          title="Teachers"
+          data={teachers ? teachers : []}
+          isLoading={!teachers}
           components={{
             Header: (props) => <StyledTableHeader {...props} />,
           }}
           columns={[
             {
-              title: "Student Name",
+              title: "Teacher Name",
               field: "metadata",
               render: ({ metadata }) => (
-                <Typography>{`${metadata.firstName} ${metadata.middleName} ${metadata.lastName}`}</Typography>
+                <Typography>{`${metadata.fullName}`}</Typography>
               ),
             },
             {
-              title: "Email",
-              field: "email",
-            },
-            {
-              title: "Course",
-              field: "course",
-            },
-            {
-              title: "Enrolled Subjects",
-              field: "enrolledSubjects",
+              title: "Handled Subjects",
+              field: "handledSubjects",
               render: (rowData) =>
-                rowData.enrolledSubjects.map((subject) => (
+                rowData.handledSubjects.map((subject) => (
                   <Chip
                     key={subject}
                     label={subject}
@@ -236,4 +241,4 @@ const ManageStudentsPage = ({
   );
 };
 
-export default ManageStudentsPage;
+export default ManageTeachersPage;

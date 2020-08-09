@@ -1,81 +1,17 @@
 import {
-  GET_TEACHER_REQUEST,
-  GET_TEACHER_SUCCESS,
   GET_TEACHERS_SUCCESS,
   GET_TEACHERS_REQUEST,
   ADD_TEACHER_REQUEST,
   ADD_TEACHER_SUCCESS,
-  ASSIGN_SUBJECT_TEACHER_REQUEST,
-  ASSIGN_SUBJECT_TEACHER_SUCCESS,
-  REMOVE_SUBJECT_TEACHER_REQUEST,
-  REMOVE_SUBJECT_TEACHER_SUCCESS,
+  ASSIGN_SUBJECT_TO_TEACHER_REQUEST,
+  ASSIGN_SUBJECT_TO_TEACHER_SUCCESS,
+  REMOVE_SUBJECT_FROM_TEACHER_REQUEST,
+  REMOVE_SUBJECT_FROM_TEACHER_SUCCESS,
 } from "../types";
-import { hideModal, showModal, showAlert } from ".";
-import { db } from "../firebase";
 import _ from "lodash";
-import firebase from "firebase";
 
-const subjectsCollection = db.collection("subjects");
-const teachersCollection = db.collection("teachers");
-
-export const getTeacher = (teacherEmail) => async (dispatch) => {
-  dispatch(getTeacherRequest());
-  try {
-    const teacherDocument = await teachersCollection.doc(teacherEmail).get();
-    dispatch(getTeacherSuccess(teacherDocument.data()));
-  } catch (error) {}
-};
-
-export const getTeacherRequest = () => {
-  return {
-    type: GET_TEACHER_REQUEST,
-  };
-};
-
-export const getTeacherSuccess = (results) => {
-  return {
-    type: GET_TEACHER_SUCCESS,
-    data: results,
-  };
-};
-
-export const getTeachers = () => async (dispatch) => {
-  dispatch(getTeachersRequest());
-  teachersCollection.onSnapshot((snapshot) => {
-    dispatch(
-      getTeachersSuccess(snapshot.docs.map((document) => document.data()))
-    );
-  });
-};
-
-export const getTeachersBySubject = () => async (dispatch, getState) => {
-  dispatch(getTeacherRequest());
-  const teacherDocuments = getState().auth.data.user.enrolledSubjects.map(
-    async (subject) =>
-      await subjectsCollection
-        .doc(subject)
-        .collection("teachers")
-        .get()
-        .then((snapshot) => snapshot.docs.map((document) => document.data()))
-  );
-
-  const teachers = await Promise.all(teacherDocuments);
-  const filteredTeachers = _.mapKeys(
-    _.flatten(teachers),
-    (value) => value.email
-  );
-
-  dispatch(
-    getTeachersSuccess(
-      _.map(filteredTeachers, (value, _) => {
-        return value;
-      })
-    )
-  );
-};
-
-export const getTeachersRequest = () => {
-  return { type: GET_TEACHERS_REQUEST };
+export const getTeachersRequest = (filterBySubj) => {
+  return { type: GET_TEACHERS_REQUEST, payload: { filterBySubj } };
 };
 export const getTeachersSuccess = (results) => {
   return {
@@ -96,98 +32,27 @@ export const addTeacherSuccess = () => {
   };
 };
 
-export const assignSubjectTeacher = (values) => async (dispatch) => {
-  const teacherRef = teachersCollection.doc(values.email);
-  const fieldValue = firebase.firestore.FieldValue;
-  dispatch(hideModal());
-  dispatch(showModal("LOADING_MODAL"));
-  dispatch(assignSubjectTeacherRequest());
-
-  await db.runTransaction(async (transaction) => {
-    transaction.update(teacherRef, {
-      handledSubjects: values.subjects.map(({ subjectName }) => subjectName),
-    });
-
-    values.subjects.forEach((subject) => {
-      const subjectRef = subjectsCollection.doc(subject.subjectName);
-      const teacherCollectionRef = subjectRef
-        .collection("teachers")
-        .doc(values.email);
-
-      transaction.update(subjectRef, {
-        totalTeachers: fieldValue.increment(1),
-      });
-
-      transaction.set(teacherCollectionRef, {
-        email: values.email,
-        fullName: values.metadata.fullName,
-      });
-    });
-  });
-
-  dispatch(assignSubjectTeacherSuccess());
-  dispatch(hideModal());
-  dispatch(
-    showAlert(
-      "SUCCESS",
-      `You have successfully assigned subject/s:  ${values.subjects.map(
-        (subject) => subject.subjectName
-      )} `
-    )
-  );
-};
-
-const assignSubjectTeacherRequest = () => {
+export const assignSubjectToTeacherRequest = (subjectDetails) => {
   return {
-    type: ASSIGN_SUBJECT_TEACHER_REQUEST,
+    type: ASSIGN_SUBJECT_TO_TEACHER_REQUEST,
+    payload: subjectDetails,
   };
 };
 
-const assignSubjectTeacherSuccess = () => {
+export const assignSubjectToTeacherSuccess = () => {
   return {
-    type: ASSIGN_SUBJECT_TEACHER_SUCCESS,
+    type: ASSIGN_SUBJECT_TO_TEACHER_SUCCESS,
   };
 };
 
-export const removeSubjectTeacher = (
-  { email, metadata },
-  subjectName
-) => async (dispatch) => {
-  const fieldValue = firebase.firestore.FieldValue;
-  const teacherRef = teachersCollection.doc(email);
-  const subjectRef = subjectsCollection.doc(subjectName);
-  dispatch(hideModal());
-  dispatch(showModal("LOADING_MODAL"));
-  dispatch(removeSubjectTeacherRequest());
-  teacherRef.update({
-    handledSubjects: fieldValue.arrayRemove(subjectName),
-  });
-
-  await db.runTransaction(async (transaction) => {
-    const teachersRef = subjectRef.collection("teachers").doc(email);
-    transaction.delete(teachersRef);
-    transaction.update(subjectRef, {
-      totalTeachers: fieldValue.increment(-1),
-    });
-  });
-
-  dispatch(hideModal());
-  dispatch(removeSubjectTeacherSuccess());
-  dispatch(
-    showAlert(
-      "SUCCESS",
-      `Subject ${subjectName} has been unassigned from ${metadata.fullName}.`
-    )
-  );
-};
-
-const removeSubjectTeacherRequest = () => {
+export const removeSubjectFromTeacherRequest = (subjectDetails) => {
   return {
-    type: REMOVE_SUBJECT_TEACHER_REQUEST,
+    type: REMOVE_SUBJECT_FROM_TEACHER_REQUEST,
+    payload: subjectDetails,
   };
 };
-const removeSubjectTeacherSuccess = () => {
+export const removeSubjectFromTeacherSuccess = () => {
   return {
-    type: REMOVE_SUBJECT_TEACHER_SUCCESS,
+    type: REMOVE_SUBJECT_FROM_TEACHER_SUCCESS,
   };
 };

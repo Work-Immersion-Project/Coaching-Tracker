@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { registerUserRequest, showModal, hideModal } from "../../actions";
+import { registerUserRequest, showModal, hideModal } from "../../../actions";
 import AdminRegistration from "./AdminRegistration";
 
 const AdminRegistrationContainer = () => {

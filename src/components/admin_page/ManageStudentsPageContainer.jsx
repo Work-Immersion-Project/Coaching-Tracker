@@ -1,6 +1,12 @@
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getStudentsRequest, hideModal, showModal } from "../../actions";
+import {
+  getStudentsRequest,
+  hideModal,
+  showModal,
+  assignStudentsSubjectsRequest,
+  removeStudentSubjectRequest,
+} from "../../actions";
 import ManageStudentsPage from "./ManageStudentsPage";
 
 const ManageStudentsPageContainer = () => {
@@ -18,6 +24,15 @@ const ManageStudentsPageContainer = () => {
     showModal: useCallback((type, props) => dispatch(showModal(type, props)), [
       dispatch,
     ]),
+    assignStudentSubjectsRequest: useCallback(
+      (studentDetails) =>
+        dispatch(assignStudentsSubjectsRequest(studentDetails)),
+      [dispatch]
+    ),
+    removeStudentSubjectRequest: useCallback(
+      (studentDetails) => dispatch(removeStudentSubjectRequest(studentDetails)),
+      [dispatch]
+    ),
   };
   return <ManageStudentsPage {...dispatchToProps} {...stateToProps} />;
 };

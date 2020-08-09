@@ -1,10 +1,4 @@
 import React, { useEffect } from "react";
-import {
-  showModal,
-  hideModal,
-  assignStudentSubjects,
-  removeStudentSubject,
-} from "../../actions";
 import MaterialTable, { MTableHeader } from "material-table";
 import {
   Grid,
@@ -125,15 +119,10 @@ const ManageStudentsPage = ({
   hideModal,
   showModal,
   students,
+  assignStudentSubjectsRequest,
+  removeStudentSubjectRequest,
 }) => {
   const classes = useStyles();
-  // const {
-  //   getStudents,
-  //   hideModal,
-  //   showModal,
-  //   assignStudentSubjects,
-  //   removeStudentSubject,
-  // } = props;
   useEffect(() => {
     getStudentsRequest();
   }, [getStudentsRequest]);
@@ -144,7 +133,8 @@ const ManageStudentsPage = ({
 
   const onSubmit = ({ email, metadata }, currentSubjects, values) => {
     hideModal();
-    assignStudentSubjects({
+
+    assignStudentSubjectsRequest({
       ...values,
       subjects: [
         ...values.subjects,
@@ -164,7 +154,10 @@ const ManageStudentsPage = ({
       content: `Are you sure you want to remove ${subjectName} from student?`,
       onNegativeClick: onDialogClose,
       onPositiveClick: () => {
-        removeStudentSubject(rowData, subjectName);
+        removeStudentSubjectRequest({
+          studentDetails: rowData,
+          subjectName,
+        });
       },
     });
   };

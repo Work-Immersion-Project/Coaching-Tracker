@@ -4,34 +4,11 @@ import {
   GET_SUBJECTS_REQUEST,
   GET_SUBJECTS_SUCCESS,
 } from "../types";
-import { db } from "../firebase";
-import { setError } from "./errorActions";
 
-const subjectsCollection = db.collection("subjects");
-
-export const addSubject = (values) => async (dispatch, getState) => {
-  dispatch(addSubjectRequest());
-  try {
-    const isSubjectExisting =
-      getState().subjects.data.filter(
-        (subject) => subject.subjectName === values.subjectName
-      ).length !== 0;
-    if (isSubjectExisting) {
-      throw new Error("Subject Already Exists");
-    }
-
-    subjectsCollection
-      .doc(values.subjectName)
-      .set({ ...values, totalStudentsEnrolled: 0, totalTeachers: 0 });
-    dispatch(addSubjectSuccess());
-  } catch (error) {
-    dispatch(setError(error.message));
-  }
-};
-
-export const addSubjectRequest = () => {
+export const addSubjectRequest = (subjectDetails) => {
   return {
     type: ADD_SUBJECT_REQUEST,
+    payload: subjectDetails,
   };
 };
 
@@ -40,34 +17,6 @@ export const addSubjectSuccess = () => {
     type: ADD_SUBJECT_SUCCESS,
   };
 };
-export const getSubjects = () => async (dispatch) => {
-  dispatch(getSubjectsRequest());
-
-  subjectsCollection.onSnapshot(async (snapshot) => {
-    const subjectsDocument = snapshot.docs.map(async (doc) => {
-      const subjectName = doc.data().subjectName;
-
-      const enrolledStudents = await subjectsCollection
-        .doc(subjectName)
-        .collection("enrolledStudents")
-        .get()
-        .then((documents) => documents.docs.map((doc) => doc.data()));
-      const teachers = await subjectsCollection
-        .doc(subjectName)
-        .collection("teachers")
-        .get()
-        .then((documents) => documents.docs.map((doc) => doc.data()));
-      return {
-        subjectName,
-        enrolledStudents,
-        teachers,
-      };
-    });
-    const documents = await Promise.all(subjectsDocument);
-    dispatch(getSubjectsSuccess(documents));
-  });
-};
-
 export const getSubjectsRequest = () => {
   return {
     type: GET_SUBJECTS_REQUEST,

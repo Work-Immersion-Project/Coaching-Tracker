@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { reduxForm, FieldArray, formValueSelector } from "redux-form";
 import { connect } from "react-redux";
-import { getSubjectFields } from "../../actions";
+import { getSubjectFieldsRequest } from "../../actions";
 import CustomAutoComplete from "../custom/CustomAutocomplete";
 import {
   Dialog,
@@ -74,10 +74,10 @@ const formTheme = createMuiTheme({
         },
       },
     },
-    MuiSvgIcon :{
+    MuiSvgIcon: {
       root: {
         color: "#84DCC6",
-      }
+      },
     },
   },
 });
@@ -96,13 +96,13 @@ const AssignSubjectsFormDialog = (props) => {
     handleSubmit,
     pristined,
     subjectFields,
-    getSubjectFields,
+    getSubjectFieldsRequest,
     currentSubjects,
   } = props;
 
   useEffect(() => {
-    getSubjectFields();
-  }, [getSubjectFields]);
+    getSubjectFieldsRequest();
+  }, [getSubjectFieldsRequest]);
 
   return (
     <ThemeProvider theme={formTheme}>
@@ -157,5 +157,5 @@ const AssignSubjectsFormDialogWithReduxForm = reduxForm({
 })(AssignSubjectsFormDialog);
 
 export default connect(mapStateToProps, {
-  getSubjectFields,
+  getSubjectFieldsRequest,
 })(AssignSubjectsFormDialogWithReduxForm);

@@ -1,7 +1,12 @@
 import React, { useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Grid, Chip, createMuiTheme, ThemeProvider } from "@material-ui/core";
-import { hideModal, showModal, addSubject, getSubjects } from "../../actions";
+import {
+  hideModal,
+  showModal,
+  addSubjectRequest,
+  getSubjectsRequest,
+} from "../../actions";
 import { connect } from "react-redux";
 import MaterialTable, { MTableHeader } from "material-table";
 
@@ -13,7 +18,7 @@ const useStyles = makeStyles(() => ({
     background: "#4B4E6D",
   },
   fontColor: {
-    color: "white"
+    color: "white",
   },
 
   teacherChip: {
@@ -107,27 +112,23 @@ const formTheme = createMuiTheme({
     MuiIcon: {
       fontSizeSmall: {
         color: "#84DCC6",
-        "&$disabled": {
-          color: "#222222",
-        },
-      }
+      },
     },
     MuiTablePagination: {
       root: {
         color: "white",
-      }
+      },
     },
-
   },
 });
 
 const ManageSubjectsPage = (props) => {
   const classes = useStyles();
-  const { getSubjects, hideModal, addSubject, showModal } = props;
+  const { getSubjectsRequest, hideModal, addSubjectRequest, showModal } = props;
 
   useEffect(() => {
-    getSubjects();
-  }, [getSubjects]);
+    getSubjectsRequest();
+  }, [getSubjectsRequest]);
 
   const onDialogClose = () => {
     hideModal();
@@ -135,7 +136,7 @@ const ManageSubjectsPage = (props) => {
 
   const handleOnSubmit = (values) => {
     hideModal();
-    addSubject(values);
+    addSubjectRequest(values);
   };
 
   const onAddSubjectPressed = () => {
@@ -170,6 +171,7 @@ const ManageSubjectsPage = (props) => {
                       <Chip
                         className={classes.teacherChip}
                         label={teacher.email}
+                        key={teacher.email}
                       />
                     )),
             },
@@ -183,6 +185,7 @@ const ManageSubjectsPage = (props) => {
                       <Chip
                         className={classes.studentChip}
                         label={student.email}
+                        key={student.email}
                       />
                     )),
             },
@@ -220,6 +223,6 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   hideModal,
   showModal,
-  addSubject,
-  getSubjects,
+  addSubjectRequest,
+  getSubjectsRequest,
 })(ManageSubjectsPage);

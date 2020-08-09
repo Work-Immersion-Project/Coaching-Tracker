@@ -1,15 +1,23 @@
-import { ADD_STUDENT_REQUEST, GET_STUDENTS_REQUEST } from "../types";
+import {
+  ADD_STUDENT_REQUEST,
+  GET_STUDENTS_REQUEST,
+  ASSIGN_STUDENT_SUBJECT_REQUEST,
+  REMOVE_STUDENT_SUBJECT_REQUEST,
+} from "../types";
 import { takeEvery, put, take, select } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
-import { collections } from "../firebase";
+import { collections, db } from "../firebase";
 import {
   hideModal,
   addStudentSuccess,
   showAlert,
   setError,
   getStudentsSuccess,
+  showModal,
+  removeStudentSubjectSuccess,
 } from "../actions";
 import { getCurrentUser } from "../selectors";
+import firebase from "firebase";
 import _ from "lodash";
 
 function* addStudentSaga({
@@ -53,7 +61,7 @@ function* getStudents() {
   }
 }
 
-function* getStudentsBySubject(subjectName) {
+function* getStudentsBySubject() {
   try {
     const currUser = select(getCurrentUser);
     const studentDocuments = currUser.handledSubjects.map(
@@ -85,15 +93,91 @@ function* getStudentsBySubject(subjectName) {
 }
 
 function* getStudentsSaga({ payload }) {
-  console.log("geting");
   if (payload.subjectName) {
-    yield getStudentsBySubject(payload.subjectName);
+    yield getStudentsBySubject();
   } else {
     yield getStudents();
   }
 }
 
+function* assignStudentSubjSaga({ payload: { email, subjects, metadata } }) {
+  const fieldValue = firebase.firestore.FieldValue;
+  const studentRef = collections.student.doc(email);
+  yield put(hideModal());
+  yield put(showModal("LOADING_MODAL"));
+
+  yield db.runTransaction(async (transaction) => {
+    transaction.update(studentRef, {
+      enrolledSubjects: subjects.map(({ subjectName }) => subjectName),
+    });
+
+    subjects.forEach((subj) => {
+      const subjRef = collections.subjects.doc(subj.subjectName);
+      const enrolledStudentsRef = subjRef
+        .collection("enrolledStudents")
+        .doc(email);
+
+      transaction.update(subjRef, {
+        totalStudentsEnrolled: fieldValue.increment(1),
+      });
+
+      transaction.set(enrolledStudentsRef, {
+        email: email,
+        fullName: metadata.fullName,
+      });
+    });
+  });
+
+  yield put(hideModal());
+  yield put(
+    showAlert(
+      "SUCCESS",
+      `Student has been enrolled to Subjects: ${subjects.map(
+        (subj) => subj.subjectName
+      )}`
+    )
+  );
+}
+
+function* removeStudentSubjSaga({
+  payload: {
+    studentDetails: { email, metadata },
+    subjectName,
+  },
+}) {
+  const fieldValue = firebase.firestore.FieldValue;
+  const studentRef = collections.student.doc(email);
+  const subjRef = collections.subjects.doc(subjectName);
+  yield put(hideModal());
+  yield put(showModal("LOADING_MODAL"));
+
+  yield studentRef.update({
+    enrolledSubjects: fieldValue.arrayRemove(subjectName),
+  });
+
+  yield db.runTransaction(async (transaction) => {
+    const enrolledStudentRef = subjRef
+      .collection("enrolledStudents")
+      .doc(email);
+    transaction.delete(enrolledStudentRef);
+    transaction.update(subjRef, {
+      totalStudentsEnrolled: fieldValue.increment(-1),
+    });
+  });
+
+  yield put(hideModal());
+  yield put(removeStudentSubjectSuccess());
+  yield put(
+    showAlert(
+      "SUCCESS",
+      `Subject ${subjectName} has been removed from ${metadata.fullName}`
+    )
+  );
+}
+
 export function* watchStudent() {
   yield takeEvery(ADD_STUDENT_REQUEST, addStudentSaga);
   yield takeEvery(GET_STUDENTS_REQUEST, getStudentsSaga);
+  yield takeEvery(ASSIGN_STUDENT_SUBJECT_REQUEST, assignStudentSubjSaga);
+  yield takeEvery(REMOVE_STUDENT_SUBJECT_REQUEST, removeStudentSubjSaga);
 }

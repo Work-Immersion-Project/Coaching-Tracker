@@ -63,27 +63,27 @@ function* getStudents() {
 
 function* getStudentsBySubject() {
   try {
-    const currUser = select(getCurrentUser);
+    const currUser = yield select(getCurrentUser);
+
     const studentDocuments = currUser.handledSubjects.map(
       async (subject) =>
-        await collections.subject
+        await collections.subjects
           .doc(subject)
           .collection("enrolledStudents")
           .get()
           .then((snapshot) => snapshot.docs.map((document) => document.data()))
     );
     const students = yield Promise.all(studentDocuments);
+
     const filteredStudents = _.mapKeys(
       _.flatten(students),
       (value) => value.email
     );
-
+    console.log(filteredStudents);
     yield put(
       getStudentsSuccess(
         Object.keys(filteredStudents).map((value) => {
-          return {
-            email: value,
-          };
+          return filteredStudents[value];
         })
       )
     );
@@ -92,8 +92,8 @@ function* getStudentsBySubject() {
   }
 }
 
-function* getStudentsSaga({ payload }) {
-  if (payload.subjectName) {
+function* getStudentsSaga({ payload: { filterBySubject } }) {
+  if (filterBySubject) {
     yield getStudentsBySubject();
   } else {
     yield getStudents();

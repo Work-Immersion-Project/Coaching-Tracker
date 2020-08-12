@@ -60,8 +60,7 @@ const StudentDashboard = (props) => {
               01
             </Typography>
             <Typography align="center" variant="h5">
-              {" "}
-              Pending Sessions{" "}
+              Pending Sessions
             </Typography>
           </CardContent>
         </Card>

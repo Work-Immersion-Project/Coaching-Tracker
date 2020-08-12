@@ -4,7 +4,6 @@ export * from "./modalActions";
 export * from "./teacherActions";
 export * from "./studentActions";
 export * from "./coachingActions";
-export * from "./coursesActions";
 export * from "./subjectsActions";
 export * from "./errorActions";
 export * from "./fieldsActions";

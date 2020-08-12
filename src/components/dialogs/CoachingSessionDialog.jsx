@@ -18,7 +18,7 @@ import {
   updateNotification,
   showModal,
   hideModal,
-  updateCoachingScheduleStatus,
+  updateCoachingScheduleStatusRequest,
   confirmCoachingSchedule,
 } from "../../actions";
 import { connect } from "react-redux";
@@ -457,6 +457,6 @@ export default connect(mapStateToProps, {
   updateNotification,
   showModal,
   hideModal,
-  updateCoachingScheduleStatus,
+  updateCoachingScheduleStatusRequest,
   confirmCoachingSchedule,
 })(CoachingSessionDialog);

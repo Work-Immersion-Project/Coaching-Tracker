@@ -2,8 +2,8 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Drawer, Grid, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
-import AddEventForm from "./AddEventForm";
-import { closeAddEventDrawer, clearCoachingAttendees } from "../../../actions";
+import { closeAddEventDrawer } from "../../../actions";
+import AddEventFormContainer from "./AddEventForm/AddEventFormContainer";
 
 const drawerWidth = 300;
 
@@ -28,37 +28,28 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     padding: "1em",
     color: "#84DCC6",
-    align: "center"
+    align: "center",
   },
   timePicker: {
     margin: "1em",
   },
-  title:{
+  title: {
     marginLeft: "85px",
   },
 }));
 
-const AddEventDrawer = ({
-  addEventDrawerData,
-  closeAddEventDrawer,
-}) => {
+const AddEventDrawer = ({ addEventDrawerData, closeAddEventDrawer }) => {
   const { isOpen, selectedDate } = addEventDrawerData;
   const classes = useStyles();
 
   const renderContent = () => {
     if (selectedDate) {
-      const initialValues = {
-        startDate: selectedDate.startDate,
-        endDate: selectedDate.endDate,
-        startTime: selectedDate.startDate,
-        endTime: selectedDate.endDate,
-      };
       return (
         <Grid container className={classes.content}>
-          <Typography variant="h6" className = {classes.title}>
+          <Typography variant="h6" className={classes.title}>
             ADD EVENT
           </Typography>
-          <AddEventForm initialValues={initialValues} />
+          <AddEventFormContainer selectedDate={selectedDate} />
         </Grid>
       );
     }
@@ -76,7 +67,6 @@ const AddEventDrawer = ({
         }}
         onClose={() => {
           closeAddEventDrawer();
-          
         }}
         ModalProps={{
           keepMounted: true,
@@ -97,5 +87,4 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   closeAddEventDrawer,
-  clearCoachingAttendees,
 })(AddEventDrawer);

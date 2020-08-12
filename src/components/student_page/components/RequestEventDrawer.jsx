@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Drawer, Grid, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
 import RequestEventForm from "./RequestEventForm";
-import { closeAddEventDrawer, clearCoachingAttendees } from "../../../actions";
+import { closeAddEventDrawer } from "../../../actions";
 
 const drawerWidth = 300;
 
@@ -34,10 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const RequestEventDrawer = ({
-  addEventDrawerData,
-  closeAddEventDrawer,
-}) => {
+const RequestEventDrawer = ({ addEventDrawerData, closeAddEventDrawer }) => {
   const { isOpen, selectedDate } = addEventDrawerData;
   const classes = useStyles();
 
@@ -72,7 +69,7 @@ const RequestEventDrawer = ({
         }}
         onClose={() => {
           closeAddEventDrawer();
-          }}
+        }}
         ModalProps={{
           keepMounted: true,
         }}
@@ -92,5 +89,4 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   closeAddEventDrawer,
-  clearCoachingAttendees,
 })(RequestEventDrawer);

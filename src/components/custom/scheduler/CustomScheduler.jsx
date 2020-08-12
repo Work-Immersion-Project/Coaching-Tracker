@@ -14,17 +14,6 @@ import {
   AppointmentTooltip,
   Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import { connect } from "react-redux";
-import {
-  openAddEventDrawer,
-  showModal,
-  hideModal,
-  updateCoachingScheduleStatus,
-  confirmCoachingSchedule,
-  updateAppointmentTooltip,
-  showAppointmentTooltip,
-  hideAppointmentTooltip,
-} from "../../../actions";
 import { AppointmentTooltipContent } from "./AppointmentTooltipContent";
 import { AppointmentTooltipHeader } from "./AppointmentTooltipHeader";
 import MonthTableCell from "./MonthTableCell";
@@ -35,21 +24,21 @@ import Appointment from "./Appointment";
 import _ from "lodash";
 
 const CustomScheduler = ({
-  coachingSchedules,
+  coachingSessions,
   openAddEventDrawer,
   accessType,
   showModal,
   hideModal,
-  updateCoachingScheduleStatus,
+  updateCoachingScheduleRequest,
   loggedInUser,
   confirmCoachingSchedule,
-  appointment,
-  showAppointmentTooltip,
-  hideAppointmentTooltip,
-  updateAppointmentTooltip,
+  updateVisibility,
+  updateAppointmentMeta,
+
+  tooltip,
 }) => {
   const studentInstances = _.flatten(
-    coachingSchedules.map((schedule) =>
+    coachingSessions.map((schedule) =>
       schedule.studentAttendees.map((student) => {
         return {
           text: loggedInUser.email !== student.email ? student.fullName : "You",
@@ -115,7 +104,10 @@ const CustomScheduler = ({
     let title = "";
     let content = "";
     if (status === "ongoing") {
-      updateCoachingScheduleStatus(eventId, status);
+      updateCoachingScheduleRequest({
+        coachingSessionID: eventId,
+        status,
+      });
     } else {
       if (status === "pending") {
         title = "Accept Schedule Request?";
@@ -132,7 +124,11 @@ const CustomScheduler = ({
         title,
         content,
         onNegativeClick: onDialogClose,
-        onPositiveClick: () => updateCoachingScheduleStatus(eventId, status),
+        onPositiveClick: () =>
+          updateCoachingScheduleRequest({
+            coachingSessionID: eventId,
+            status,
+          }),
       });
     }
   };
@@ -165,31 +161,27 @@ const CustomScheduler = ({
       onUpdateStatusButtonPressed,
       loggedInUser,
       confirmCoachingSchedule,
-      hideAppointmentTooltip,
+      updateVisibility,
     };
   });
   const customAppointment = (props) => {
     return (
       <Appointment
         {...props}
-        updateAppointmentTooltip={updateAppointmentTooltip}
+        updateAppointmentTooltip={updateAppointmentMeta}
         toggleVisibility={toggleVisibility}
       />
     );
   };
 
   const toggleVisibility = () => {
-    if (appointment.visible) {
-      hideAppointmentTooltip();
-    } else {
-      showAppointmentTooltip();
-    }
+    updateVisibility(!tooltip.visible);
   };
 
   return (
     <Scheduler
       height="auto"
-      data={coachingSchedules}
+      data={coachingSessions}
       onCellClick={openAddEventDrawer}
     >
       <Toolbar />
@@ -219,10 +211,10 @@ const CustomScheduler = ({
       />
       <Resources data={resources} mainResourceName="status" />
       <AppointmentTooltip
-        visible={appointment.visible}
+        visible={tooltip.visible}
         onVisibilityChange={toggleVisibility}
-        onAppointmentMetaChange={updateAppointmentTooltip}
-        appointmentMeta={appointment.appointmentMeta}
+        onAppointmentMetaChange={updateAppointmentMeta}
+        appointmentMeta={tooltip.appointmentMeta}
         contentComponent={appointmentContent}
         headerComponent={appointmentHeader}
       />
@@ -230,20 +222,4 @@ const CustomScheduler = ({
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    coachingSchedules: state.coaching.coachingSchedules,
-    loggedInUser: state.auth.data.user,
-    appointment: state.appointment,
-  };
-};
-export default connect(mapStateToProps, {
-  openAddEventDrawer,
-  updateCoachingScheduleStatus,
-  showModal,
-  hideModal,
-  confirmCoachingSchedule,
-  updateAppointmentTooltip,
-  showAppointmentTooltip,
-  hideAppointmentTooltip,
-})(CustomScheduler);
+export default CustomScheduler;

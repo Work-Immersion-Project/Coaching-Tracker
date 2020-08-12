@@ -24,8 +24,8 @@ export const getStudentSuccess = (results) => {
   };
 };
 
-export const getStudentsRequest = (subjectName = null) => {
-  return { type: GET_STUDENTS_REQUEST, payload: { subjectName } };
+export const getStudentsRequest = (filterBySubject) => {
+  return { type: GET_STUDENTS_REQUEST, payload: { filterBySubject } };
 };
 
 export const getStudentsSuccess = (students) => {

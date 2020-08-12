@@ -1,28 +1,19 @@
 import React, { useEffect } from "react";
-import { Field, reduxForm, FieldArray } from "redux-form";
-import { connect } from "react-redux";
+
 import { makeStyles, styled } from "@material-ui/core/styles";
-import {
-  getStudents,
-  addCoachingAttendee,
-  addCoachingSchedule,
-  showModal,
-  hideModal,
-  closeAddEventDrawer,
-  getStudentsBySubject,
-} from "../../../actions";
+
 import {
   TextField,
   createMuiTheme,
   ThemeProvider,
   Button,
   Divider,
+  CircularProgress,
 } from "@material-ui/core";
-import AddEventStudentList from "./AddEventStudentList";
-import CustomDatePicker from "../../custom/CustomDatePicker";
-import CustomTimePicker from "../../custom/CustomTimePicker";
-import CustomMaterialTextField from "../../custom/CustomMaterialTextField";
-import CustomAutoComplete from "../../custom/CustomAutocomplete";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { DatePicker, TimePicker } from "@material-ui/pickers";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { clearSubmitErrors } from "redux-form";
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -30,7 +21,7 @@ const useStyles = makeStyles(() => ({
     margin: "1em 0",
   },
   addStudentsField: {
-    margin: "1em 0",
+    margin: "0.5em 0",
   },
   addedStudentsList: {
     width: "100%",
@@ -212,96 +203,160 @@ const StyledTimePicker = styled(TextField)({
   margin: "0.5em 0",
 });
 
-const AddEventForm = (props) => {
-  const { handleSubmit, pristine, submitting } = props;
-  const {
-    getStudents,
-    hideModal,
-    addCoachingSchedule,
-    closeAddEventDrawer,
-    showModal,
-  } = props;
+const AddEventForm = ({
+  hideModal,
+  closeAddEventDrawer,
+  students,
+  showModal,
+  selectedDate,
+  getStudentsRequest,
+  addCoachingSessionRequest,
+}) => {
+  const { handleSubmit, register, control, errors } = useForm();
+
   const classes = useStyles();
 
   useEffect(() => {
-    getStudents();
-  }, [getStudents]);
+    getStudentsRequest(true);
+  }, [getStudentsRequest]);
 
   const onDialogClose = () => {
     hideModal();
   };
 
-  const addCoachingEvent = (values) => {
-    addCoachingSchedule(values);
+  const addCoachingEvent = (coachingDetails) => {
+    addCoachingSessionRequest(coachingDetails);
     closeAddEventDrawer();
   };
 
-  const handleOnSubmit = (values) => {
+  const handleOnSubmit = (coachingDetails) => {
     showModal("CONFIRMATION_MODAL", {
       onDialogClose: onDialogClose,
       title: "Schedule Coaching?",
       content:
         "Make sure that you have entered the correct information before proceeding.",
       onNegativeClick: onDialogClose,
-      onPositiveClick: () => addCoachingEvent(values),
+      onPositiveClick: () => addCoachingEvent(coachingDetails),
     });
   };
 
   return (
     <ThemeProvider theme={formTheme}>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-        <Field
-          label="Add Title"
+        <TextField
           name="title"
-          component={CustomMaterialTextField}
+          label="Add Title"
+          inputRef={register({ required: true })}
+          error={errors.title !== undefined}
+          helperText={errors.title !== undefined ? "Required" : ""}
         />
-
         <Divider className={classes.divider} />
-        <Field
+        <Controller
+          as={DatePicker}
           label="Start Date"
+          control={control}
+          renderInput={(props) => (
+            <StyledDatePicker {...props} name="startDate" />
+          )}
           name="startDate"
-          dateFormat="MM/dd/yyyy"
-          inputComponent={StyledDatePicker}
-          component={CustomDatePicker}
+          inputRef={register({
+            required: true,
+          })}
+          allowKeyboardControl={false}
+          disablePast
+          defaultValue={selectedDate.startDate}
         />
-        <Field
-          inputComponent={StyledTimePicker}
+        <Controller
+          as={TimePicker}
           label="Start Time"
+          control={control}
+          renderInput={(props) => (
+            <StyledTimePicker {...props} name="startTime" />
+          )}
           name="startTime"
-          component={CustomTimePicker}
+          inputRef={register({
+            required: true,
+          })}
+          allowKeyboardControl={false}
+          defaultValue={selectedDate.startDate}
         />
         <Divider className={classes.divider2} />
-        <Field
-          inputComponent={StyledDatePicker}
+        <Controller
+          as={DatePicker}
           label="End Date"
+          control={control}
+          renderInput={(props) => (
+            <StyledDatePicker {...props} name="endDate" />
+          )}
           name="endDate"
-          dateFormat="MM/dd/yyyy"
-          component={CustomDatePicker}
+          inputRef={register({
+            required: true,
+          })}
+          allowKeyboardControl={false}
+          disablePast
+          defaultValue={selectedDate.endDate}
         />
-        <Field
-          inputComponent={StyledTimePicker}
+        <Controller
+          as={TimePicker}
           label="End Time"
+          control={control}
+          renderInput={(props) => (
+            <StyledTimePicker {...props} name="endTime" />
+          )}
           name="endTime"
-          component={CustomTimePicker}
+          inputRef={register({
+            required: true,
+          })}
+          allowKeyboardControl={false}
+          defaultValue={selectedDate.endDate}
         />
         <Divider className={classes.divider2} />
-        <FieldArray
+        <Controller
           name="studentAttendees"
-          multiple={true}
-          getOptionLabel={(option) => option.email}
-          component={CustomAutoComplete}
-          inputComponent={TextField}
-          options={props.students ? props.students : []}
+          defaultValue={[]}
+          control={control}
+          rules={{
+            validate: (studentAttendees = []) => studentAttendees.length !== 0,
+          }}
+          render={(props) => {
+            return (
+              <Autocomplete
+                options={students !== null ? students : []}
+                loading={students === null}
+                getOptionLabel={(option) => option.email}
+                multiple
+                filterSelectedOptions
+                size={"small"}
+                onChange={(_, data) => {
+                  props.onChange(data);
+                }}
+                renderInput={(props) => (
+                  <TextField
+                    {...props}
+                    className={classes.addStudentsField}
+                    error={errors.studentAttendees !== undefined}
+                    label="Add Students"
+                    helperText={
+                      errors.studentAttendees !== undefined ? "Required" : ""
+                    }
+                    InputProps={{
+                      ...props.InputProps,
+                      endAdornment: (
+                        <>
+                          {students != null ? null : (
+                            <CircularProgress size={20} />
+                          )}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+              />
+            );
+          }}
         />
 
-        <AddEventStudentList className={classes.addedStudentsList} />
-        <Button
-          type="submit"
-          className={classes.button}
-          disabled={
-            pristine || (submitting && props.addedStudents.length === 0)
-          }
-        >
+        <Button type="submit" className={classes.button}>
           Create Coaching Schedule
         </Button>
       </form>
@@ -309,25 +364,4 @@ const AddEventForm = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    students: state.students.data,
-    addedStudents: state.coaching.selectedStudentAttendees,
-  };
-};
-
-const AddEventFormWithReduxForm = reduxForm({
-  form: "AddEventDrawerForm",
-  validate: validateDates,
-  enableReinitialize: true,
-})(AddEventForm);
-
-export default connect(mapStateToProps, {
-  getStudents,
-  addCoachingAttendee,
-  addCoachingSchedule,
-  showModal,
-  hideModal,
-  closeAddEventDrawer,
-  getStudentsBySubject,
-})(AddEventFormWithReduxForm);
+export default AddEventForm;

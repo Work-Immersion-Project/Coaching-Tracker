@@ -8,7 +8,6 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";
-import { removeCoachingAttendee } from "../../../actions";
 
 const AddEventStudentList = (props) => {
   const renderStudentList = () => {
@@ -35,6 +34,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {
-  removeCoachingAttendee,
-})(AddEventStudentList);
+export default connect(mapStateToProps, {})(AddEventStudentList);

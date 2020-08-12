@@ -3,7 +3,7 @@ import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import {
-  getTeachersBySubject,
+  getTeachersRequest,
   showModal,
   hideModal,
   closeAddEventDrawer,
@@ -323,5 +323,5 @@ export default connect(mapStateToProps, {
   hideModal,
   closeAddEventDrawer,
   requestCoachingSchedule,
-  getTeachersBySubject,
+  getTeachersRequest,
 })(RequestEventFormWithReduxForm);

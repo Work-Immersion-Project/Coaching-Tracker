@@ -15,6 +15,7 @@ export const hideAppointmentTooltip = () => {
   };
 };
 export const updateAppointmentTooltip = (appointmentMeta) => {
+  console.log("UPDATE APOINTMENT!");
   return {
     type: UPDATE_APPOINTMENT,
     data: appointmentMeta,

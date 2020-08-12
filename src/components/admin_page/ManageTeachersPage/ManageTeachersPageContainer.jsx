@@ -24,7 +24,8 @@ const ManageTeachersPageContainer = () => {
     ),
     assignSubjectToTeacherRequest: useCallback(
       (subjectDetails) =>
-        dispatch(assignSubjectToTeacherRequest(subjectDetails))[dispatch]
+        dispatch(assignSubjectToTeacherRequest(subjectDetails)),
+      [dispatch]
     ),
     removeSubjectFromTeacherRequest: useCallback(
       (subjectDetails) =>

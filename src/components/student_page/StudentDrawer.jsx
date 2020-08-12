@@ -14,7 +14,12 @@ import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { signOut, showModal, hideModal, closeDrawer } from "../../actions";
+import {
+  signOutRequest,
+  showModal,
+  hideModal,
+  closeDrawer,
+} from "../../actions";
 
 const drawerWidth = 240;
 
@@ -149,7 +154,7 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   closeDrawer,
-  signOut,
+  signOutRequest,
   showModal,
   hideModal,
 })(StudentDrawer);

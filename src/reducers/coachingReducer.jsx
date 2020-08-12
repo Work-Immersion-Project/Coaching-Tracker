@@ -3,6 +3,8 @@ import {
   GET_COACHING_SCHEDULES_SUCCESS,
   GET_COACHING_SCHEDULE_REQUEST,
   GET_COACHING_SCHEDULE_SUCCESS,
+  ADD_COACHING_SCHEDULE_REQUEST,
+  ADD_COACHING_SCHEDULE_SUCCESS,
 } from "../types";
 
 const INITIAL_STATE = {
@@ -13,6 +15,13 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case ADD_COACHING_SCHEDULE_REQUEST:
+      return { ...state };
+    case ADD_COACHING_SCHEDULE_SUCCESS:
+      return {
+        ...state,
+        coachingSchedules: [...state.coachingSchedules, action.payload],
+      };
     case GET_COACHING_SCHEDULES_REQUEST:
       return {
         ...state,

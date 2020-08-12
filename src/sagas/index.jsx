@@ -6,6 +6,8 @@ import { watchStudent } from "./studentSaga";
 import { watchTeacher } from "./teacherSaga";
 import { watchField } from "./fieldSaga";
 import { watchSubjects } from "./subjectsSaga";
+import { watchCoachingSession } from "./coachingSessionSaga";
+
 function* rootSaga() {
   yield fork(watchGapi);
   yield fork(watchAuth);
@@ -14,6 +16,7 @@ function* rootSaga() {
   yield fork(watchStudent);
   yield fork(watchField);
   yield fork(watchSubjects);
+  yield fork(watchCoachingSession);
 }
 
 export default rootSaga;

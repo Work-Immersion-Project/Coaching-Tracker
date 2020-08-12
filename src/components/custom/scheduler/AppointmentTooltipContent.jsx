@@ -49,7 +49,7 @@ export const AppointmentTooltipContent = withStyles({
     confirmCoachingSchedule,
     loggedInUser,
     classes,
-    hideAppointmentTooltip,
+    updateVisibility,
     ...restProps
   }) => {
     const dayBehind = isDayBehind(new Date(appointmentData.endDate));
@@ -64,7 +64,7 @@ export const AppointmentTooltipContent = withStyles({
           <Button
             className={classes.acceptMeetingButton}
             onClick={() => {
-              hideAppointmentTooltip();
+              updateVisibility(false);
               confirmCoachingSchedule(appointmentData.coachingSessionId);
             }}
             variant="contained"
@@ -92,7 +92,7 @@ export const AppointmentTooltipContent = withStyles({
             disabled={disabled}
             className={classes.acceptMeetingButton}
             onClick={() => {
-              hideAppointmentTooltip();
+              updateVisibility(false);
 
               confirmCoachingSchedule(appointmentData.coachingSessionId);
             }}
@@ -133,7 +133,7 @@ export const AppointmentTooltipContent = withStyles({
             <Button
               className={classes.acceptMeetingButton}
               onClick={() => {
-                hideAppointmentTooltip();
+                updateVisibility(false);
                 onUpdateStatusButtonPressed(
                   appointmentData.coachingSessionId,
                   "pending"
@@ -146,7 +146,7 @@ export const AppointmentTooltipContent = withStyles({
             <Button
               className={classes.denyMeetingButton}
               onClick={() => {
-                hideAppointmentTooltip();
+                updateVisibility(false);
                 onUpdateStatusButtonPressed(
                   appointmentData.coachingSessionId,
                   "denied"
@@ -172,7 +172,7 @@ export const AppointmentTooltipContent = withStyles({
               disabled={!meetingAvailable || dayBehind}
               className={classes.meetingButton}
               onClick={() => {
-                hideAppointmentTooltip();
+                updateVisibility(false);
                 window.open(appointmentData.meetingLink, "_blank");
               }}
               variant="contained"
@@ -199,7 +199,7 @@ export const AppointmentTooltipContent = withStyles({
             className={classes.meetingButton}
             onClick={() => {
               if (loggedInUser.type !== "student") {
-                hideAppointmentTooltip();
+                updateVisibility(false);
                 onUpdateStatusButtonPressed(
                   appointmentData.coachingSessionId,
                   "ongoing"
@@ -220,7 +220,7 @@ export const AppointmentTooltipContent = withStyles({
             <Button
               className={classes.denyMeetingButton}
               onClick={() => {
-                hideAppointmentTooltip();
+                updateVisibility(false);
                 onUpdateStatusButtonPressed(
                   appointmentData.coachingSessionId,
                   "cancelled"

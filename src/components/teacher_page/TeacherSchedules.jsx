@@ -1,5 +1,5 @@
 import React from "react";
-import { getCoachingSchedules } from "../../actions";
+import { getCoachingScheduleRequest } from "../../actions";
 import { connect } from "react-redux";
 import {
   Grid,
@@ -9,7 +9,7 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import CustomScheduler from "../custom/scheduler/CustomScheduler";
+import CustomSchedulerContainer from "../custom/scheduler/CustomSchedulerContainer";
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -152,7 +152,7 @@ const TeacherSchedules = (props) => {
       return (
         <ThemeProvider theme={formTheme}>
           <Paper className={classes.scheduler}>
-            <CustomScheduler
+            <CustomSchedulerContainer
               accessType="teacher"
               className={classes.scheduler}
               calendarEvents={props.calendarEvents}
@@ -183,5 +183,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  getCoachingSchedules,
+  getCoachingScheduleRequest,
 })(TeacherSchedules);

@@ -107,186 +107,125 @@ export const confirmCoachingSchedule = (coachingSessionId) => async (
           );
         });
       }
-      dispatch(getCoachingSchedules());
     })
     .catch((error) => {
       dispatch(setError(error.message));
     });
 };
 
-export const updateCoachingScheduleStatus = (
-  coachingSessionId,
-  status
-) => async (dispatch, getState) => {
-  const currentLoggedinUser = getState().auth.data.user;
-  const coachingSessionRef = coachingSessionCollection.doc(coachingSessionId);
+// export const updateCoachingScheduleStatus = (
+//   coachingSessionId,
+//   status
+// ) => async (dispatch, getState) => {
+//   const currentLoggedinUser = getState().auth.data.user;
+//   const coachingSessionRef = coachingSessionCollection.doc(coachingSessionId);
 
-  dispatch(hideModal());
-  dispatch(updateCoachingScheduleStatusRequest());
-  await db
-    .runTransaction(async (transaction) => {
-      const coachingSessionData = await transaction
-        .get(coachingSessionRef)
-        .then((doc) => doc.data());
+//   dispatch(hideModal());
+//   dispatch(updateCoachingScheduleStatusRequest());
+//   await db
+//     .runTransaction(async (transaction) => {
+//       const coachingSessionData = await transaction
+//         .get(coachingSessionRef)
+//         .then((doc) => doc.data());
 
-      const sessionStatus =
-        coachingSessionData.status === "waiting_for_response"
-          ? "requests"
-          : coachingSessionData.status;
+//       const sessionStatus =
+//         coachingSessionData.status === "waiting_for_response"
+//           ? "requests"
+//           : coachingSessionData.status;
 
-      const teacherRef = teacherCollection.doc(
-        coachingSessionData.teacher.email
-      );
+//       const teacherRef = teacherCollection.doc(
+//         coachingSessionData.teacher.email
+//       );
 
-      const teacherData = await transaction
-        .get(teacherRef)
-        .then((doc) => doc.data());
+//       const teacherData = await transaction
+//         .get(teacherRef)
+//         .then((doc) => doc.data());
 
-      const studentRefs = coachingSessionData.studentAttendees.map((student) =>
-        studentCollection.doc(student.email)
-      );
-      const studentDatas = await Promise.all(
-        studentRefs.map((studentRef) => transaction.get(studentRef))
-      ).then((docs) => docs.map((doc) => doc.data()));
+//       const studentRefs = coachingSessionData.studentAttendees.map((student) =>
+//         studentCollection.doc(student.email)
+//       );
+//       const studentDatas = await Promise.all(
+//         studentRefs.map((studentRef) => transaction.get(studentRef))
+//       ).then((docs) => docs.map((doc) => doc.data()));
 
-      studentDatas.forEach(({ coachingStats }, index) => {
-        coachingStats[sessionStatus] -= 1;
-        coachingStats[status] += 1;
-        transaction.update(studentRefs[index], {
-          coachingStats,
-        });
-      });
+//       studentDatas.forEach(({ coachingStats }, index) => {
+//         coachingStats[sessionStatus] -= 1;
+//         coachingStats[status] += 1;
+//         transaction.update(studentRefs[index], {
+//           coachingStats,
+//         });
+//       });
 
-      teacherData.coachingStats[sessionStatus] -= 1;
-      teacherData.coachingStats[status] += 1;
-      transaction.update(teacherRef, {
-        coachingStats: { ...teacherData.coachingStats },
-      });
+//       teacherData.coachingStats[sessionStatus] -= 1;
+//       teacherData.coachingStats[status] += 1;
+//       transaction.update(teacherRef, {
+//         coachingStats: { ...teacherData.coachingStats },
+//       });
 
-      transaction.set(coachingSessionRef, {
-        ...coachingSessionData,
-        status,
-      });
-      return coachingSessionData.studentAttendees;
-    })
-    .then(async (students) => {
-      let message = "";
-      switch (status) {
-        case "cancelled":
-          message = `Your teacher ${currentLoggedinUser.metadata.fullName} has cancelled the coaching session.`;
-          break;
-        case "denied":
-          message = `Your teacher ${currentLoggedinUser.metadata.fullName} has cancelled the coaching session.`;
-          break;
-        case "pending":
-          message = `Your teacher ${currentLoggedinUser.metadata.fullName} has accepted your coaching request.`;
-          break;
-        case "ongoing":
-          message = `Your teacher ${currentLoggedinUser.metadata.fullName} has started the coaching session`;
-          break;
-        default:
-          break;
-      }
-      if (message !== "") {
-        for (const student of students) {
-          await dispatch(
-            addNotification(
-              { ...student, type: "student" },
-              message,
-              coachingSessionId,
-              status
-            )
-          );
-        }
-      }
-    })
-    .catch((error) => {
-      dispatch(setError(error.message));
-    });
+//       transaction.set(coachingSessionRef, {
+//         ...coachingSessionData,
+//         status,
+//       });
+//       return coachingSessionData.studentAttendees;
+//     })
+//     .then(async (students) => {
+//       let message = "";
+//       switch (status) {
+//         case "cancelled":
+//           message = `Your teacher ${currentLoggedinUser.metadata.fullName} has cancelled the coaching session.`;
+//           break;
+//         case "denied":
+//           message = `Your teacher ${currentLoggedinUser.metadata.fullName} has cancelled the coaching session.`;
+//           break;
+//         case "pending":
+//           message = `Your teacher ${currentLoggedinUser.metadata.fullName} has accepted your coaching request.`;
+//           break;
+//         case "ongoing":
+//           message = `Your teacher ${currentLoggedinUser.metadata.fullName} has started the coaching session`;
+//           break;
+//         default:
+//           break;
+//       }
+//       if (message !== "") {
+//         for (const student of students) {
+//           await dispatch(
+//             addNotification(
+//               { ...student, type: "student" },
+//               message,
+//               coachingSessionId,
+//               status
+//             )
+//           );
+//         }
+//       }
+//     })
+//     .catch((error) => {
+//       dispatch(setError(error.message));
+//     });
 
-  dispatch(showAlert("SUCCESS", "Schedule Updated Successfully!"));
-  dispatch(updateCoachingScheduleStatusSuccess());
-};
+//   dispatch(showAlert("SUCCESS", "Schedule Updated Successfully!"));
+//   dispatch(updateCoachingScheduleStatusSuccess());
+// };
 
-export const updateCoachingScheduleStatusRequest = () => {
-  return { type: UPDATE_COACHING_SCHEDULE_STATUS_REQUEST };
+export const updateCoachingScheduleStatusRequest = (sessionDetails) => {
+  return {
+    type: UPDATE_COACHING_SCHEDULE_STATUS_REQUEST,
+    payload: sessionDetails,
+  };
 };
 
 export const updateCoachingScheduleStatusSuccess = () => {
   return { type: UPDATE_COACHING_SCHEDULE_STATUS_SUCCESS };
 };
 
-export const getCoachingSchedules = () => async (dispatch, getState) => {
-  const { email, type } = getState().auth.data.user;
-  dispatch(getCoachingSchedulesRequest());
-  if (type === "student") {
-    dispatch(getStudentCoachingSchedules(email));
-  } else if (type === "teacher") {
-    dispatch(getTeacherCoachingSchedule(email));
-  }
-};
-
-const getStudentCoachingSchedules = (studentEmail) => async (dispatch) => {
-  const studentRef = studentCollection.doc(studentEmail);
-
-  studentRef.onSnapshot(async () => {
-    const coachingSessionIds = await studentRef
-      .collection("coachingSessions")
-      .get()
-      .then((snap) => snap.docs.map((doc) => doc.id));
-    const coachingSessions = await Promise.all(
-      coachingSessionIds.map((id) => coachingSessionCollection.doc(id).get())
-    );
-    const filteredSessions = coachingSessions
-      .filter((document) => document.exists)
-      .map((session) => {
-        const sessionData = session.data();
-        return {
-          ...sessionData,
-          students: sessionData.studentAttendees.map(
-            (student) => student.email
-          ),
-        };
-      });
-
-    dispatch(getCoachingSchedulesSuccess(filteredSessions));
-  });
-};
-
-const getTeacherCoachingSchedule = (teacherEmail) => async (dispatch) => {
-  const teacherRef = teacherCollection.doc(teacherEmail);
-
-  teacherRef.onSnapshot(async () => {
-    const coachingSessionIds = await teacherRef
-      .collection("coachingSessions")
-      .get()
-      .then((snap) => snap.docs.map((doc) => doc.id));
-
-    const coachingSessions = await Promise.all(
-      coachingSessionIds.map((id) => coachingSessionCollection.doc(id).get())
-    );
-    const filteredSessions = coachingSessions
-      .filter((document) => document.exists)
-      .map((session) => {
-        const sessionData = session.data();
-        return {
-          ...sessionData,
-          students: sessionData.studentAttendees.map(
-            (student) => student.email
-          ),
-        };
-      });
-    dispatch(getCoachingSchedulesSuccess(filteredSessions));
-  });
-};
-
-const getCoachingSchedulesRequest = () => {
+export const getCoachingSchedulesRequest = (isStudent) => {
   return {
     type: GET_COACHING_SCHEDULES_REQUEST,
+    payload: { isStudent },
   };
 };
 
-const getCoachingSchedulesSuccess = (result) => {
+export const getCoachingSchedulesSuccess = (result) => {
   return {
     type: GET_COACHING_SCHEDULES_SUCCESS,
     data: result,
@@ -326,141 +265,17 @@ export const getCoachingScheduleSuccess = (result) => {
   };
 };
 
-export const addCoachingSchedule = (coachingDetails) => async (
-  dispatch,
-  getState
-) => {
-  const coachingSessionId = uuidV4();
-  const { gapiCalendar } = getState().gapi;
-  const { email, metadata } = getState().auth.data.user;
-  const {
-    startDate,
-    startTime,
-    endDate,
-    endTime,
-    title,
-    studentAttendees,
-  } = coachingDetails;
-  const convertedStudentAttendees = studentAttendees.map((student) => {
-    return {
-      email: student.email,
-      fullName: student.metadata.fullName,
-    };
-  });
-
-  const {
-    formattedStartingDate,
-    formattedEndingDate,
-  } = convertCoachingScheduleDates(startDate, endDate, startTime, endTime);
-
-  const event = {
-    summary: title,
-    description: title,
-    start: {
-      dateTime: formattedStartingDate,
-    },
-    end: {
-      dateTime: formattedEndingDate,
-    },
-    sendNotifications: true,
-    attendees: convertedStudentAttendees,
-    conferenceDataVersion: 1,
-    reminders: {
-      useDefault: "useDefault",
-    },
-    conferenceData: {
-      createRequest: { requestId: coachingSessionId },
-    },
-  };
-
-  dispatch(hideModal());
-  dispatch(addCoachingScheduleRequest());
-  dispatch(showModal("LOADING_MODAL"));
-  try {
-    const results = await gapiCalendar.events
-      .insert({
-        calendarId: "primary",
-        resource: event,
-      })
-      .then((event) => {
-        return event.result;
-      });
-    const googleMeetsLink = results.conferenceData.entryPoints[0].uri;
-    const eventId = results.id;
-    const coachingSessionRef = coachingSessionCollection.doc(coachingSessionId);
-    const teacherRef = teacherCollection.doc(email);
-    const coachingSessionData = {
-      coachingSessionId,
-      teacher: {
-        email,
-        fullName: metadata.fullName,
-      },
-      title: title,
-      description: title,
-      startDate: formattedStartingDate,
-      endDate: formattedEndingDate,
-      eventId: eventId,
-      meetingLink: googleMeetsLink,
-      studentAttendees: convertedStudentAttendees,
-      createdAt: new Date(),
-      status: "pending",
-    };
-    const fieldValue = firebase.firestore.FieldValue;
-
-    await db
-      .runTransaction(async (transaction) => {
-        const teacherCoachingSessionRef = teacherRef
-          .collection("coachingSessions")
-          .doc(coachingSessionId);
-        transaction.update(teacherRef, {
-          "coachingStats.pending": fieldValue.increment(1),
-        });
-        transaction.set(coachingSessionRef, coachingSessionData);
-        transaction.set(teacherCoachingSessionRef, { coachingSessionId });
-        //Iterate for each student
-        studentAttendees.forEach((student) => {
-          const studentRef = studentCollection.doc(student.email);
-          const studentCoachingSessionCollectionRef = studentRef
-            .collection("coachingSessions")
-            .doc(coachingSessionId);
-          transaction.update(studentRef, {
-            "coachingStats.pending": fieldValue.increment(1),
-          });
-          transaction.set(studentCoachingSessionCollectionRef, {
-            coachingSessionId,
-          });
-        });
-        return studentAttendees;
-      })
-      .then((students) => {
-        let message = `Your teacher ${metadata.fullName} has scheduled a session.`;
-        students.forEach((student) => {
-          dispatch(
-            addNotification(
-              { ...student, type: "student" },
-              message,
-              coachingSessionId,
-              "pending"
-            )
-          );
-        });
-      });
-    dispatch(hideModal());
-    dispatch(addCoachingScheduleSuccess());
-    dispatch(showAlert("SUCCESS", "Coaching Schedule Added!"));
-  } catch (error) {
-    dispatch(setError(error.message));
-  }
-};
-export const addCoachingScheduleRequest = () => {
+export const addCoachingScheduleRequest = (coachingDetails) => {
   return {
     type: ADD_COACHING_SCHEDULE_REQUEST,
+    payload: coachingDetails,
   };
 };
 
-export const addCoachingScheduleSuccess = () => {
+export const addCoachingScheduleSuccess = (newCoachingSession) => {
   return {
     type: ADD_COACHING_SCHEDULE_SUCCESS,
+    payload: newCoachingSession,
   };
 };
 

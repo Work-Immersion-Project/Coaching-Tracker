@@ -7,7 +7,7 @@ import TeacherDrawer from "./TeacherDrawer";
 import TeacherSchedules from "./TeacherSchedules";
 import NotificationPage from "../NotificationPage";
 import AddEventDrawer from "./components/AddEventDrawer";
-import { getCoachingSchedules } from "../../actions";
+import { getCoachingScheduleRequest } from "../../actions";
 import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles({
@@ -25,14 +25,13 @@ const useStyles = makeStyles({
   },
 });
 
-const TeacherPage = () => {
+const TeacherPage = ({ getCoachingSchedulesRequest }) => {
   let { path } = useRouteMatch();
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getCoachingSchedules());
-  }, [dispatch]);
+    getCoachingSchedulesRequest(false);
+  }, [getCoachingSchedulesRequest]);
 
   return (
     <div className={classes.container}>

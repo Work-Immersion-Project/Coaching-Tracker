@@ -5,8 +5,8 @@ import MomentUtils from "@material-ui/pickers/adapter/moment";
 import { LocalizationProvider } from "@material-ui/pickers";
 import LoginPage from "./login_page/LoginPage";
 import AdminPage from "./admin_page/AdminPage";
-import TeacherPage from "./teacher_page/TeacherPage";
-import StudentPage from "./student_page/StudentPage";
+import TeacherPageContainer from "./teacher_page/TeacherPageContainer";
+import StudentPageContainer from "./student_page/StudentPageContainer";
 import history from "../history";
 import PrivateRoute from "./PrivateRoute";
 import ModalRoot from "./ModalRoot";
@@ -37,12 +37,12 @@ const App = ({
           <Route path="/Coaching-Tracker/login" component={LoginPage} exact />
           <PrivateRoute
             path="/Coaching-Tracker/teacher"
-            component={TeacherPage}
+            component={TeacherPageContainer}
           />
           <PrivateRoute path="/Coaching-Tracker/admin" component={AdminPage} />
           <PrivateRoute
             path="/Coaching-Tracker/student"
-            component={StudentPage}
+            component={StudentPageContainer}
           />
           <Route component={LoginPage} />
         </Switch>

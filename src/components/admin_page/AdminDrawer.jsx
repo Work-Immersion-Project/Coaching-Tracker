@@ -7,7 +7,12 @@ import {
   ListItemText,
   Hidden,
 } from "@material-ui/core";
-import { signOut, showModal, hideModal, closeDrawer } from "../../actions";
+import {
+  signOutRequest,
+  showModal,
+  hideModal,
+  closeDrawer,
+} from "../../actions";
 import { connect } from "react-redux";
 // Icons
 import HomeIcon from "@material-ui/icons/Home";
@@ -170,7 +175,7 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   closeDrawer,
-  signOut,
+  signOutRequest,
   showModal,
   hideModal,
 })(AdminDrawer);

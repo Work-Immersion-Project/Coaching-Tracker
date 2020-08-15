@@ -19,18 +19,15 @@ import {
 import { getCurrentUser } from "../selectors";
 import firebase from "firebase";
 import _ from "lodash";
+import axios from "../api";
 
-function* addStudentSaga({
-  payload: { email, id, metadata, coachingStats, course },
-}) {
+function* addStudentSaga({ payload: { email, metadata, course, id } }) {
   try {
-    yield collections["student"].doc(email).set({
+    yield axios.post("/register/student", {
       metadata,
       email,
-      id,
-      enrolledSubjects: [],
-      coachingStats,
       course,
+      studentID: id,
     });
     yield put(hideModal());
     yield put(addStudentSuccess());
@@ -44,17 +41,18 @@ function* addStudentSaga({
 }
 
 function* getStudents() {
-  const studentsRef = collections.student;
-  const channel = eventChannel((subs) =>
-    studentsRef.onSnapshot((snapshot) =>
-      subs(snapshot.docs.map((doc) => doc.data()))
-    )
-  );
+  const ws = new WebSocket("ws://localhost:8000/students");
 
+  const channel = eventChannel((sub) => {
+    return (ws.onmessage = (m) => {
+      sub(m.data);
+    });
+  });
   try {
     while (true) {
-      const students = yield take(channel);
-      yield put(getStudentsSuccess(students));
+      const response = yield take(channel);
+      const students = JSON.parse(response);
+      yield put(getStudentsSuccess(students.data));
     }
   } catch (error) {
     yield put(setError(error.message));
@@ -65,28 +63,28 @@ function* getStudentsBySubject() {
   try {
     const currUser = yield select(getCurrentUser);
 
-    const studentDocuments = currUser.handledSubjects.map(
-      async (subject) =>
-        await collections.subjects
-          .doc(subject)
-          .collection("enrolledStudents")
-          .get()
-          .then((snapshot) => snapshot.docs.map((document) => document.data()))
-    );
-    const students = yield Promise.all(studentDocuments);
+    // const studentDocuments = currUser.handledSubjects.map(
+    //   async (subject) =>
+    //     await collections.subjects
+    //       .doc(subject)
+    //       .collection("enrolledStudents")
+    //       .get()
+    //       .then((snapshot) => snapshot.docs.map((document) => document.data()))
+    // );
+    // const students = yield Promise.all(studentDocuments);
 
-    const filteredStudents = _.mapKeys(
-      _.flatten(students),
-      (value) => value.email
-    );
-    console.log(filteredStudents);
-    yield put(
-      getStudentsSuccess(
-        Object.keys(filteredStudents).map((value) => {
-          return filteredStudents[value];
-        })
-      )
-    );
+    // const filteredStudents = _.mapKeys(
+    //   _.flatten(students),
+    //   (value) => value.email
+    // );
+    // console.log(filteredStudents);
+    // yield put(
+    //   getStudentsSuccess(
+    //     Object.keys(filteredStudents).map((value) => {
+    //       return filteredStudents[value];
+    //     })
+    //   )
+    // );
   } catch (error) {
     yield put(setError(error.message));
   }
@@ -100,33 +98,42 @@ function* getStudentsSaga({ payload: { filterBySubject } }) {
   }
 }
 
-function* assignStudentSubjSaga({ payload: { email, subjects, metadata } }) {
-  const fieldValue = firebase.firestore.FieldValue;
-  const studentRef = collections.student.doc(email);
+function* assignStudentSubjSaga({ payload: { ID, subjects } }) {
+  // const fieldValue = firebase.firestore.FieldValue;
+  // const studentRef = collections.student.doc(email);
   yield put(hideModal());
   yield put(showModal("LOADING_MODAL"));
+  yield axios.post(
+    "/subjects/student",
+    subjects.map((subj) => {
+      return {
+        subjectID: subj.ID,
+        studentID: ID,
+      };
+    })
+  );
 
-  yield db.runTransaction(async (transaction) => {
-    transaction.update(studentRef, {
-      enrolledSubjects: subjects.map(({ subjectName }) => subjectName),
-    });
+  // yield db.runTransaction(async (transaction) => {
+  //   transaction.update(studentRef, {
+  //     enrolledSubjects: subjects.map(({ subjectName }) => subjectName),
+  //   });
 
-    subjects.forEach((subj) => {
-      const subjRef = collections.subjects.doc(subj.subjectName);
-      const enrolledStudentsRef = subjRef
-        .collection("enrolledStudents")
-        .doc(email);
+  //   subjects.forEach((subj) => {
+  //     const subjRef = collections.subjects.doc(subj.subjectName);
+  //     const enrolledStudentsRef = subjRef
+  //       .collection("enrolledStudents")
+  //       .doc(email);
 
-      transaction.update(subjRef, {
-        totalStudentsEnrolled: fieldValue.increment(1),
-      });
+  //     transaction.update(subjRef, {
+  //       totalStudentsEnrolled: fieldValue.increment(1),
+  //     });
 
-      transaction.set(enrolledStudentsRef, {
-        email: email,
-        fullName: metadata.fullName,
-      });
-    });
-  });
+  //     transaction.set(enrolledStudentsRef, {
+  //       email: email,
+  //       fullName: metadata.fullName,
+  //     });
+  //   });
+  // });
 
   yield put(hideModal());
   yield put(

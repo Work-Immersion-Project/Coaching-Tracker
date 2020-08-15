@@ -15,6 +15,7 @@ import {
 } from "../actions";
 import { takeEvery, select, put } from "redux-saga/effects";
 import { getGapiAuthClient } from "../selectors";
+import axios from "../api";
 
 /** Check the user if authenticated or not */
 
@@ -25,32 +26,35 @@ function* checkAuthSaga() {
   // If there is a user logged in
   if (currentUser) {
     const { access_token } = gapiAuth.currentUser.get().getAuthResponse();
-    const userData = yield collections["user"]
-      .doc(currentUser.email)
-      .get()
-      .then((doc) => doc.data());
+    const response = yield axios.get(`/auth/sign-in/${currentUser.email}`);
+    const userData = response.data.data;
     if (_.isEmpty(userData)) {
       yield put(setError("User Not Found!"));
       return;
     }
-    // Fetch the corresponding data
-    const userDocRef = yield collections[userData.type].doc(currentUser.email);
-    const currentDate = new Date();
 
-    yield userDocRef.update({
-      "metadata.lastLoggedIn": currentDate,
-    });
-
-    const userDoc = yield userDocRef.get().then((doc) => doc.data());
-    yield put(checkAuthSuccess());
-
-    yield put(
-      signInSuccess({
-        isSignedIn: true,
-        user: { ...userDoc, type: userData.type },
-        userToken: access_token,
-      })
-    );
+    if (userData.type === "admin") {
+      yield put(checkAuthSuccess());
+      yield put(
+        signInSuccess({
+          isSignedIn: true,
+          user: { ...userData },
+          userToken: access_token,
+        })
+      );
+    } else {
+      const userInfo = yield axios
+        .get(`/${userData.type}s/${currentUser.email}`)
+        .then((r) => r.data);
+      yield put(checkAuthSuccess());
+      yield put(
+        signInSuccess({
+          isSignedIn: true,
+          user: { ...userInfo, type: userData.type },
+          userToken: access_token,
+        })
+      );
+    }
   } else {
     yield put(signInRequest());
   }

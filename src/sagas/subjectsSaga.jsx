@@ -4,6 +4,7 @@ import { addSubjectSuccess, setError, getSubjectsSuccess } from "../actions";
 import { GET_SUBJECTS_REQUEST, ADD_SUBJECT_REQUEST } from "../types";
 import { collections } from "../firebase";
 import { getSubjectsFromState } from "../selectors";
+import axios from "../api";
 
 function* addSubject({ payload: { subjectName } }) {
   try {
@@ -15,11 +16,10 @@ function* addSubject({ payload: { subjectName } }) {
       throw new Error("Subject Already Exists");
     }
 
-    collections.subjects.doc(subjectName).set({
+    axios.post("/subjects", {
       subjectName,
-      totalStudentsEnrolled: 0,
-      totalTeachers: 0,
     });
+
     yield put(addSubjectSuccess());
   } catch (error) {
     yield put(setError(error.message));
@@ -27,36 +27,14 @@ function* addSubject({ payload: { subjectName } }) {
 }
 
 function* getSubjects() {
-  const subjRef = collections.subjects;
-  const channel = eventChannel((subs) => {
-    return subjRef.onSnapshot(async (snapshot) => {
-      const subjDocs = snapshot.docs.map(async (doc) => {
-        const subjectName = doc.data().subjectName;
-        const enrolledStudents = await subjRef
-          .doc(subjectName)
-          .collection("enrolledStudents")
-          .get()
-          .then((snap) => snap.docs.map((doc) => doc.data()));
-        const teachers = await subjRef
-          .doc(subjectName)
-          .collection("teachers")
-          .get()
-          .then((snap) => snap.docs.map((doc) => doc.data()));
-        return {
-          subjectName,
-          enrolledStudents,
-          teachers,
-        };
-      });
-      const docs = await Promise.all(subjDocs);
-      subs(docs);
-    });
-  });
+  const ws = new WebSocket("ws://localhost:8000/subjects");
+  const event = eventChannel((sub) => (ws.onmessage = (m) => sub(m.data)));
 
   try {
     while (true) {
-      const results = yield take(channel);
-      yield put(getSubjectsSuccess(results));
+      const response = yield take(event);
+      const subjects = JSON.parse(response);
+      yield put(getSubjectsSuccess(subjects.data));
     }
   } catch (error) {
     yield put(setError(error.message));

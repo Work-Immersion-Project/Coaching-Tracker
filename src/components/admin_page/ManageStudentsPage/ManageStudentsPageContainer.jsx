@@ -24,7 +24,7 @@ const ManageStudentsPageContainer = () => {
     showModal: useCallback((type, props) => dispatch(showModal(type, props)), [
       dispatch,
     ]),
-    assignStudentSubjectsRequest: useCallback(
+    assignStudentSubject: useCallback(
       (studentDetails) =>
         dispatch(assignStudentsSubjectsRequest(studentDetails)),
       [dispatch]

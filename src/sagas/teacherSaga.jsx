@@ -8,7 +8,7 @@ import {
   assignSubjectToTeacherSuccess,
   removeSubjectFromTeacherSuccess,
 } from "../actions";
-import { take, takeEvery, put, select, call } from "redux-saga/effects";
+import { take, takeEvery, put, select } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
 import {
   ADD_TEACHER_REQUEST,
@@ -20,16 +20,22 @@ import { collections, db } from "../firebase";
 import { getCurrentUser } from "../selectors";
 import firebase from "firebase";
 import _ from "lodash";
+import axios from "../api";
 
 function* getTeachers() {
-  const teacherRef = collections.teacher;
-  const channel = eventChannel((subs) =>
-    teacherRef.onSnapshot((snap) => subs(snap.docs.map((doc) => doc.data())))
+  const ws = new WebSocket("ws://localhost:8000/teachers");
+  const channel = eventChannel(
+    (subs) =>
+      (ws.onmessage = (e) => {
+        subs(e.data);
+      })
   );
+
   try {
     while (true) {
-      const teachers = yield take(channel);
-      yield put(getTeachersSuccess(teachers));
+      const response = yield take(channel);
+      const teachers = JSON.parse(response);
+      yield put(getTeachersSuccess(teachers.data));
     }
   } catch (error) {
     yield put(setError(error.message));
@@ -70,16 +76,10 @@ function* getTeachersSaga({ payload: { filterBySubj } }) {
   }
 }
 
-function* addTeacherSaga({ payload: { email, id, metadata, coachingStats } }) {
+function* addTeacherSaga({ payload: { email, metadata, id } }) {
   yield put(showModal("LOADING_MODAL"));
   try {
-    yield collections["teacher"].doc(email).set({
-      metadata,
-      email,
-      id,
-      handledSubjects: [],
-      coachingStats,
-    });
+    yield axios.post("/register/teacher", { metadata, email, teacherID: id });
 
     yield put(hideModal());
     yield put(addTeacherSuccess());
@@ -91,32 +91,19 @@ function* addTeacherSaga({ payload: { email, id, metadata, coachingStats } }) {
   }
 }
 
-function* assignSubjectToTeacher({ payload: { email, metadata, subjects } }) {
-  const teacherRef = collections.teacher.doc(email);
-  const fieldVal = firebase.firestore.FieldValue;
+function* assignSubjectToTeacher({ payload: { ID, subjects } }) {
   yield put(hideModal());
   yield put(showModal("LOADING_MODAL"));
-
   try {
-    yield db.runTransaction(async (trans) => {
-      trans.update(teacherRef, {
-        handledSubjects: subjects.map(({ subjectName }) => subjectName),
-      });
-
-      subjects.forEach((subj) => {
-        const subjRef = collections.subjects.doc(subj.subjectName);
-        const teacherCollRef = subjRef.collection("teachers").doc(email);
-
-        trans.update(subjRef, {
-          totalTeachers: fieldVal.increment(1),
-        });
-
-        trans.set(teacherCollRef, {
-          email,
-          fullName: metadata.fullName,
-        });
-      });
-    });
+    yield axios.post(
+      "subjects/teacher",
+      subjects.map((subj) => {
+        return {
+          subjectID: subj.ID,
+          teacherID: ID,
+        };
+      })
+    );
     yield put(assignSubjectToTeacherSuccess());
     yield put(hideModal());
     yield put(
@@ -130,6 +117,40 @@ function* assignSubjectToTeacher({ payload: { email, metadata, subjects } }) {
   } catch (error) {
     yield put(setError(error.message));
   }
+  // const teacherRef = collections.teacher.doc(email);
+  // const fieldVal = firebase.firestore.FieldValue;
+  // yield put(hideModal());
+  // yield put(showModal("LOADING_MODAL"));
+  // try {
+  //   yield db.runTransaction(async (trans) => {
+  //     trans.update(teacherRef, {
+  //       handledSubjects: subjects.map(({ subjectName }) => subjectName),
+  //     });
+  //     subjects.forEach((subj) => {
+  //       const subjRef = collections.subjects.doc(subj.subjectName);
+  //       const teacherCollRef = subjRef.collection("teachers").doc(email);
+  //       trans.update(subjRef, {
+  //         totalTeachers: fieldVal.increment(1),
+  //       });
+  //       trans.set(teacherCollRef, {
+  //         email,
+  //         fullName: metadata.fullName,
+  //       });
+  //     });
+  //   });
+  // yield put(assignSubjectToTeacherSuccess());
+  // yield put(hideModal());
+  // yield put(
+  //   showAlert(
+  //     "SUCCESS",
+  //     `You have successfully assigned subject/s: ${subjects.map(
+  //       (subj) => subj.subjectName
+  //     )}`
+  //   )
+  // );
+  // } catch (error) {
+  //   yield put(setError(error.message));
+  // }
 }
 
 function* removeSubjectFromTeacher({

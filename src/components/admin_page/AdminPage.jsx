@@ -9,6 +9,7 @@ import AdminDrawer from "./AdminDrawer";
 import AdminRegistrationContainer from "./AdminRegistration/AdminRegistrationContainer";
 import ManageStudentsPageContainer from "./ManageStudentsPage/ManageStudentsPageContainer";
 import ManageTeachersPageContainer from "./ManageTeachersPage/ManageTeachersPageContainer";
+import ManageSubjectsPageContainer from "./ManageSubjectsPage/ManageSubjectsPageContainer";
 
 const useStyles = makeStyles({
   container: {
@@ -40,7 +41,7 @@ const AdminPage = () => {
           <AdminRegistrationContainer />
         </Route>
         <Route path={`${path}/manage-subjects`} exact>
-          <ManageSubjectsPage />
+          <ManageSubjectsPageContainer />
         </Route>
         <Route path={`${path}/coaching-log`} exact>
           <AdminCoachingLog />

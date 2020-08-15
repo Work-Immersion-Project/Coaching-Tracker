@@ -122,13 +122,18 @@ const formTheme = createMuiTheme({
   },
 });
 
-const ManageSubjectsPage = (props) => {
+const ManageSubjectsPage = ({
+  getSubjects,
+  addSubject,
+  hideModal,
+  showModal,
+  subjects,
+}) => {
   const classes = useStyles();
-  const { getSubjectsRequest, hideModal, addSubjectRequest, showModal } = props;
 
   useEffect(() => {
-    getSubjectsRequest();
-  }, [getSubjectsRequest]);
+    getSubjects();
+  }, [getSubjects]);
 
   const onDialogClose = () => {
     hideModal();
@@ -136,7 +141,7 @@ const ManageSubjectsPage = (props) => {
 
   const handleOnSubmit = (values) => {
     hideModal();
-    addSubjectRequest(values);
+    addSubject(values);
   };
 
   const onAddSubjectPressed = () => {
@@ -157,17 +162,17 @@ const ManageSubjectsPage = (props) => {
         justify="center"
       >
         <MaterialTable
-          data={props.subjects ? props.subjects : []}
+          data={subjects ? subjects : []}
           title="Subjects"
           columns={[
             { title: "Subject Name", field: "subjectName" },
             {
               title: "Assigned Teacher",
-              field: "teachers",
-              render: (rowData) =>
-                rowData.teachers === null && rowData.teachers.length === 0
+              field: "assignedTeachers",
+              render: ({ assignedTeachers }) =>
+                !assignedTeachers
                   ? ""
-                  : rowData.teachers.map((teacher) => (
+                  : assignedTeachers.map((teacher) => (
                       <Chip
                         className={classes.teacherChip}
                         label={teacher.email}
@@ -179,7 +184,7 @@ const ManageSubjectsPage = (props) => {
               title: "Enrolled Students",
               field: "enrolledStudents",
               render: ({ enrolledStudents }) =>
-                enrolledStudents && enrolledStudents.length === 0
+                !enrolledStudents
                   ? ""
                   : enrolledStudents.map((student) => (
                       <Chip
@@ -190,7 +195,7 @@ const ManageSubjectsPage = (props) => {
                     )),
             },
           ]}
-          isLoading={!props.subjects}
+          isLoading={!subjects}
           components={{
             Header: (props) => <StyledTableHeader {...props} />,
           }}
@@ -214,15 +219,4 @@ const ManageSubjectsPage = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    subjects: state.subjects.data,
-  };
-};
-
-export default connect(mapStateToProps, {
-  hideModal,
-  showModal,
-  addSubjectRequest,
-  getSubjectsRequest,
-})(ManageSubjectsPage);
+export default ManageSubjectsPage;

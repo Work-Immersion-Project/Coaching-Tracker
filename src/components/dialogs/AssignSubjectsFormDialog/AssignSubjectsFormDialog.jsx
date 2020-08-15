@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { reduxForm, FieldArray, formValueSelector } from "redux-form";
 import { connect } from "react-redux";
-import { getSubjectFieldsRequest } from "../../actions";
-import CustomAutoComplete from "../custom/CustomAutocomplete";
+import { getSubjectFieldsRequest } from "../../../actions";
+import CustomAutoComplete from "../../custom/CustomAutocomplete";
 import {
   Dialog,
   DialogTitle,
@@ -86,7 +86,7 @@ const subjectsFieldSelector = formValueSelector("AssignSubjectsFormDialog");
 
 const AssignSubjectsFormDialog = (props) => {
   const classes = useStyles();
-  console.log(props);
+
   const {
     open,
     onDialogClose,
@@ -95,14 +95,14 @@ const AssignSubjectsFormDialog = (props) => {
     onPositiveClick,
     handleSubmit,
     pristined,
-    subjectFields,
-    getSubjectFieldsRequest,
+    getSubjectsFields,
     currentSubjects,
+    subjects,
   } = props;
 
   useEffect(() => {
-    getSubjectFieldsRequest();
-  }, [getSubjectFieldsRequest]);
+    getSubjectsFields();
+  }, [getSubjectsFields]);
 
   return (
     <ThemeProvider theme={formTheme}>
@@ -120,11 +120,12 @@ const AssignSubjectsFormDialog = (props) => {
                   component={CustomAutoComplete}
                   inputComponent={TextField}
                   options={
-                    subjectFields
-                      ? subjectFields.filter(
+                    subjects
+                      ? subjects.filter(
                           (field) =>
                             currentSubjects.filter(
-                              (currSubj) => currSubj === field.subjectName
+                              (currSubj) =>
+                                currSubj.subjectName === field.subjectName
                             ).length === 0
                         )
                       : []

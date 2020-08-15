@@ -18,6 +18,7 @@ import { collections, db } from "../firebase";
 import { getCurrentUser, getGapiCalendarClient } from "../selectors";
 import { v4 as uuidV4 } from "uuid";
 import { convertCoachingScheduleDates } from "../utils";
+import axios from "../api";
 import firebase from "firebase";
 
 //** GET COACHING SESSIONS */
@@ -164,54 +165,54 @@ function* addCoachingSessionSaga({
       createdAt: new Date(),
       status: "pending",
     };
-
-    const fieldVal = firebase.firestore.FieldValue;
-
-    yield db
-      .runTransaction(async (trans) => {
-        const teacherCoachingSessionRef = teacherRef
-          .collection("coachingSessions")
-          .doc(coachingSessionID);
-        trans.update(teacherRef, {
-          "coachingStats.pending": fieldVal.increment(1),
-        });
-        trans.set(coachingSessionRef, coachingSessionData);
-        trans.set(teacherCoachingSessionRef, {
-          coachingSessionId: coachingSessionID,
-        });
-        //Iterate for each student
-        studentAttendees.forEach((student) => {
-          const studentRef = collections.student.doc(student.email);
-          const studentCoachingSessionCollectionRef = studentRef
-            .collection("coachingSessions")
-            .doc(coachingSessionID);
-          trans.update(studentRef, {
-            "coachingStats.pending": fieldVal.increment(1),
-          });
-          trans.set(studentCoachingSessionCollectionRef, {
-            coachingSessionId: coachingSessionID,
-          });
-        });
-        return studentAttendees;
-      })
-      .then((students) => {
-        // TODO: Add Notification
-        // let message = `Your teacher ${metadata.fullName} has scheduled a session.`;
-        // students.forEach((student) => {
-        //   dispatch(
-        //     addNotification(
-        //       { ...student, type: "student" },
-        //       message,
-        //       coachingSessionId,
-        //       "pending"
-        //     )
-        //   );
-        // });
-      });
-
+    yield axios.post("coaching-sessions", coachingSessionData);
     yield put(hideModal());
     yield put(addCoachingScheduleSuccess(coachingSessionData));
     yield put(showAlert("SUCCESS", "Coaching Schedule Added!"));
+
+    // const fieldVal = firebase.firestore.FieldValue;
+
+    // yield db
+    //   .runTransaction(async (trans) => {
+    //     const teacherCoachingSessionRef = teacherRef
+    //       .collection("coachingSessions")
+    //       .doc(coachingSessionID);
+    //     trans.update(teacherRef, {
+    //       "coachingStats.pending": fieldVal.increment(1),
+    //     });
+    //     trans.set(coachingSessionRef, coachingSessionData);
+    //     trans.set(teacherCoachingSessionRef, {
+    //       coachingSessionId: coachingSessionID,
+    //     });
+    //     //Iterate for each student
+    //     studentAttendees.forEach((student) => {
+    //       const studentRef = collections.student.doc(student.email);
+    //       const studentCoachingSessionCollectionRef = studentRef
+    //         .collection("coachingSessions")
+    //         .doc(coachingSessionID);
+    //       trans.update(studentRef, {
+    //         "coachingStats.pending": fieldVal.increment(1),
+    //       });
+    //       trans.set(studentCoachingSessionCollectionRef, {
+    //         coachingSessionId: coachingSessionID,
+    //       });
+    //     });
+    //     return studentAttendees;
+    //   })
+    //   .then((students) => {
+    //     // TODO: Add Notification
+    //     // let message = `Your teacher ${metadata.fullName} has scheduled a session.`;
+    //     // students.forEach((student) => {
+    //     //   dispatch(
+    //     //     addNotification(
+    //     //       { ...student, type: "student" },
+    //     //       message,
+    //     //       coachingSessionId,
+    //     //       "pending"
+    //     //     )
+    //     //   );
+    //     // });
+    //   });
   } catch (error) {
     yield put(setError(error.message));
   }

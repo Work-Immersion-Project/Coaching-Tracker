@@ -160,18 +160,12 @@ const ManageTeachersPage = ({
       },
     });
   };
-  const onSubmit = ({ email, metadata }, currentSubjects, values) => {
+  const onSubmit = ({ ID }, values) => {
     hideModal();
     assignSubjectToTeacherRequest({
+      ID,
       ...values,
-      subjects: [
-        ...values.subjects,
-        ...currentSubjects.map((subject) => {
-          return { subjectName: subject };
-        }),
-      ],
-      email,
-      metadata,
+      subjects: [...values.subjects],
     });
   };
 
@@ -181,8 +175,7 @@ const ManageTeachersPage = ({
       onDialogClose: onDialogClose,
       title: `Assign Subjects to ${rowData.metadata.fullName}`,
       onNegativeClick: onDialogClose,
-      onPositiveClick: (values) =>
-        onSubmit(rowData, rowData.handledSubjects, values),
+      onPositiveClick: (values) => onSubmit(rowData, values),
     });
   };
 
@@ -206,20 +199,24 @@ const ManageTeachersPage = ({
               title: "Teacher Name",
               field: "metadata",
               render: ({ metadata }) => (
-                <Typography>{`${metadata.fullName}`}</Typography>
+                <Typography>{`${metadata.firstName} ${metadata.middleName} ${metadata.lastName}`}</Typography>
               ),
             },
             {
               title: "Handled Subjects",
               field: "handledSubjects",
               render: (rowData) =>
-                rowData.handledSubjects.map((subject) => (
-                  <Chip
-                    key={subject}
-                    label={subject}
-                    onDelete={() => onRemoveSubjectPressed(rowData, subject)}
-                  />
-                )),
+                rowData.handledSubjects
+                  ? rowData.handledSubjects.map((subject) => (
+                      <Chip
+                        key={subject.ID}
+                        label={subject.subjectName}
+                        onDelete={() =>
+                          onRemoveSubjectPressed(rowData, subject.subjectName)
+                        }
+                      />
+                    ))
+                  : "No Subjects Enrolled",
             },
           ]}
           actions={[

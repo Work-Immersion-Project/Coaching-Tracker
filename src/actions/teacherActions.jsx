@@ -8,7 +8,6 @@ import {
   REMOVE_SUBJECT_FROM_TEACHER_REQUEST,
   REMOVE_SUBJECT_FROM_TEACHER_SUCCESS,
 } from "../types";
-import _ from "lodash";
 
 export const getTeachersRequest = (filterBySubj) => {
   return { type: GET_TEACHERS_REQUEST, payload: { filterBySubj } };

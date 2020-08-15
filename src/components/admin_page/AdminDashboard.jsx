@@ -24,11 +24,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AdminDashboard = (props) => {
-  const {
-    user: {
-      metadata: { fName, lName, mName },
-    },
-  } = props;
+  const { user } = props;
 
   const classes = useStyles();
   return (
@@ -94,9 +90,7 @@ const AdminDashboard = (props) => {
         <Grid>
           <Card className={classes.colorCard}>
             <CardContent>
-              <Typography align="center" variant="h4">
-                {`${fName} ${mName} ${lName}`}
-              </Typography>
+              <Typography align="center" variant="h4"></Typography>
               <Typography align="center" variant="h5">
                 Admin Name
               </Typography>

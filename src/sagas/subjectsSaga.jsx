@@ -4,6 +4,7 @@ import { addSubjectSuccess, setError, getSubjectsSuccess } from "../actions";
 import { GET_SUBJECTS_REQUEST, ADD_SUBJECT_REQUEST } from "../types";
 import { getSubjectsFromState } from "../selectors";
 import axios from "../api";
+import { API_BASE_URL } from "../consts/api";
 
 function* addSubject({ payload: { subjectName } }) {
   try {
@@ -21,12 +22,16 @@ function* addSubject({ payload: { subjectName } }) {
 
     yield put(addSubjectSuccess());
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 
 function* getSubjects() {
-  const ws = new WebSocket("ws://localhost:8000/subjects");
+  const ws = new WebSocket(`ws://${API_BASE_URL}/subjects`);
   const event = eventChannel((sub) => (ws.onmessage = (m) => sub(m.data)));
 
   try {
@@ -36,7 +41,11 @@ function* getSubjects() {
       yield put(getSubjectsSuccess(subjects.data));
     }
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 

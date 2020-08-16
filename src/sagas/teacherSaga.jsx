@@ -20,9 +20,11 @@ import { collections, db } from "../firebase";
 import { getCurrentUser } from "../selectors";
 import firebase from "firebase";
 import axios from "../api";
+import { API_BASE_URL } from "../consts/api";
 
 function* getTeachers() {
-  const ws = new WebSocket("ws://localhost:8000/teachers");
+  const ws = new WebSocket(`ws://${API_BASE_URL}/teachers`);
+
   const channel = eventChannel(
     (subs) =>
       (ws.onmessage = (e) => {
@@ -65,14 +67,18 @@ function* addTeacherSaga({ payload: { email, metadata, id } }) {
   yield put(showModal("LOADING_MODAL"));
   try {
     yield axios.post("/register/teacher", { metadata, email, teacherID: id });
-
     yield put(hideModal());
     yield put(addTeacherSuccess());
     yield put(
       showAlert("SUCCESS", `Teacher ${metadata.fullName} has been added!`)
     );
+    console.log(metadata);
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 
@@ -100,42 +106,12 @@ function* assignSubjectToTeacher({ payload: { ID, subjects } }) {
       )
     );
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
-  // const teacherRef = collections.teacher.doc(email);
-  // const fieldVal = firebase.firestore.FieldValue;
-  // yield put(hideModal());
-  // yield put(showModal("LOADING_MODAL"));
-  // try {
-  //   yield db.runTransaction(async (trans) => {
-  //     trans.update(teacherRef, {
-  //       handledSubjects: subjects.map(({ subjectName }) => subjectName),
-  //     });
-  //     subjects.forEach((subj) => {
-  //       const subjRef = collections.subjects.doc(subj.subjectName);
-  //       const teacherCollRef = subjRef.collection("teachers").doc(email);
-  //       trans.update(subjRef, {
-  //         totalTeachers: fieldVal.increment(1),
-  //       });
-  //       trans.set(teacherCollRef, {
-  //         email,
-  //         fullName: metadata.fullName,
-  //       });
-  //     });
-  //   });
-  // yield put(assignSubjectToTeacherSuccess());
-  // yield put(hideModal());
-  // yield put(
-  //   showAlert(
-  //     "SUCCESS",
-  //     `You have successfully assigned subject/s: ${subjects.map(
-  //       (subj) => subj.subjectName
-  //     )}`
-  //   )
-  // );
-  // } catch (error) {
-  //   yield put(setError(error.message));
-  // }
 }
 
 function* removeSubjectFromTeacher({

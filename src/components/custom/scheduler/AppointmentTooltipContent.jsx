@@ -116,11 +116,14 @@ export const AppointmentTooltipContent = withStyles({
         return null;
       }
 
-      if (appointmentData.status === "waiting" && accessType === "student") {
+      if (
+        appointmentData.status === "waiting" &&
+        loggedInUser.type === "student"
+      ) {
         return null;
       } else if (
         appointmentData.status === "waiting" &&
-        accessType === "teacher"
+        loggedInUser.type === "teacher"
       ) {
         return (
           <Grid

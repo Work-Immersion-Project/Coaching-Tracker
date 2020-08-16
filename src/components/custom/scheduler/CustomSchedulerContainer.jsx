@@ -5,7 +5,6 @@ import {
   openAddEventDrawer,
   showModal,
   hideModal,
-  confirmCoachingSchedule,
   updateAppointmentTooltip,
   showAppointmentTooltip,
   hideAppointmentTooltip,

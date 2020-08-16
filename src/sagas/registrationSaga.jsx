@@ -22,7 +22,10 @@ function* registerUserSaga({
   yield put(showModal("LOADING_MODAL"));
   try {
     const metadata = {
-      fullname: `${firstName} ${middleName} ${lastName}`,
+      fullName:
+        middleName !== ""
+          ? `${firstName} ${middleName} ${lastName}`
+          : `${firstName} ${lastName}`,
       firstName,
       middleName,
       lastName,
@@ -36,7 +39,11 @@ function* registerUserSaga({
       yield put(addStudentRequest({ id, email, course, metadata }));
     }
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 

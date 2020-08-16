@@ -17,17 +17,17 @@ import {
   updateCoachingScheduleStatusSuccess,
   requestCoachingScheduleSuccess,
 } from "../actions";
-import { collections, db } from "../firebase";
 import { getCurrentUser, getGapiCalendarClient } from "../selectors";
 import { v4 as uuidV4 } from "uuid";
 import { convertCoachingScheduleDates } from "../utils";
 import axios from "../api";
+import { API_BASE_URL } from "../consts/api";
 
 //** GET COACHING SESSIONS */
 
 function* getStudentCoachingSessions(studentID) {
   const ws = new WebSocket(
-    `ws://localhost:8000/coaching-sessions/student/${studentID}`
+    `ws://${API_BASE_URL}/coaching-sessions/student/${studentID}`
   );
 
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));
@@ -45,9 +45,9 @@ function* getStudentCoachingSessions(studentID) {
 
 function* getTeacherCoachingSessions(teacherID) {
   const ws = new WebSocket(
-    `ws://localhost:8000/coaching-sessions/teacher/${teacherID}`
+    `ws://${API_BASE_URL}/coaching-sessions/teacher/${teacherID}`
   );
-  // const ws = new WebSocket(`ws://localhost:8000/coaching-sessions/teacher/2`);
+
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));
 
   try {
@@ -67,7 +67,11 @@ function* getTeacherCoachingSessions(teacherID) {
       );
     }
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 
@@ -146,7 +150,11 @@ function* addCoachingSessionSaga({
     yield put(addCoachingScheduleSuccess(coachingSessionData));
     yield put(showAlert("SUCCESS", "Coaching Schedule Added!"));
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 // END OF ADD COACHING SESSIONS
@@ -162,7 +170,11 @@ function* updateCoachingSessionSaga({ payload: { id, status } }) {
     yield put(showAlert("SUCCESS", "Schedule Updated Successfully!"));
     yield put(updateCoachingScheduleStatusSuccess());
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 
@@ -245,7 +257,11 @@ function* confirmCoachingSessionSaga({ payload: id }) {
       `coaching-sessions/student/${currentUser.ID}/confirm/${id}`
     );
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 // END OF CONFIRM COACHING SESSION

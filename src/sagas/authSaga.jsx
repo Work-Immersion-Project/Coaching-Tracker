@@ -26,7 +26,11 @@ function* checkAuthSaga() {
   // If there is a user logged in
   if (currentUser) {
     const { access_token } = gapiAuth.currentUser.get().getAuthResponse();
-    const response = yield axios.get(`/auth/sign-in/${currentUser.email}`);
+    const response = yield axios.get(`/auth/sign-in`, {
+      params: {
+        email: currentUser.email,
+      },
+    });
     const userData = response.data.data;
     if (_.isEmpty(userData)) {
       yield put(setError("User Not Found!"));

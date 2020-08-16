@@ -19,6 +19,7 @@ import {
 import { getCurrentUser } from "../selectors";
 import firebase from "firebase";
 import axios from "../api";
+import { API_BASE_URL } from "../consts/api";
 
 function* addStudentSaga({ payload: { email, metadata, course, id } }) {
   try {
@@ -40,7 +41,7 @@ function* addStudentSaga({ payload: { email, metadata, course, id } }) {
 }
 
 function* getStudents() {
-  const ws = new WebSocket("ws://localhost:8000/students");
+  const ws = new WebSocket(`ws://${API_BASE_URL}/students`);
 
   const channel = eventChannel((sub) => {
     return (ws.onmessage = (m) => {
@@ -54,7 +55,11 @@ function* getStudents() {
       yield put(getStudentsSuccess(students.data));
     }
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 
@@ -70,7 +75,11 @@ function* getStudentsBySubject() {
       .then((r) => r.data);
     yield put(getStudentsSuccess(response.data));
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 
@@ -83,29 +92,35 @@ function* getStudentsSaga({ payload: { filterBySubject } }) {
 }
 
 function* assignStudentSubjSaga({ payload: { ID, subjects } }) {
-  // const fieldValue = firebase.firestore.FieldValue;
-  // const studentRef = collections.student.doc(email);
-  yield put(hideModal());
-  yield put(showModal("LOADING_MODAL"));
-  yield axios.post(
-    "/subjects/student",
-    subjects.map((subj) => {
-      return {
-        subjectID: subj.ID,
-        studentID: ID,
-      };
-    })
-  );
+  try {
+    yield put(hideModal());
+    yield put(showModal("LOADING_MODAL"));
+    yield axios.post(
+      "/subjects/student",
+      subjects.map((subj) => {
+        return {
+          subjectID: subj.ID,
+          studentID: ID,
+        };
+      })
+    );
 
-  yield put(hideModal());
-  yield put(
-    showAlert(
-      "SUCCESS",
-      `Student has been enrolled to Subjects: ${subjects.map(
-        (subj) => subj.subjectName
-      )}`
-    )
-  );
+    yield put(hideModal());
+    yield put(
+      showAlert(
+        "SUCCESS",
+        `Student has been enrolled to Subjects: ${subjects.map(
+          (subj) => subj.subjectName
+        )}`
+      )
+    );
+  } catch (error) {
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
+  }
 }
 
 function* removeStudentSubjSaga({

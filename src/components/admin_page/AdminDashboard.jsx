@@ -24,8 +24,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AdminDashboard = (props) => {
-  const { user } = props;
-
   const classes = useStyles();
   return (
     <Grid

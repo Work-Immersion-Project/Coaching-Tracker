@@ -10,10 +10,9 @@ import {
   Divider,
   CircularProgress,
 } from "@material-ui/core";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { DatePicker, TimePicker } from "@material-ui/pickers";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { clearSubmitErrors } from "redux-form";
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -46,43 +45,6 @@ const useStyles = makeStyles(() => ({
     backgroundColor: "#95a3b3",
   },
 }));
-
-const validateDates = (values) => {
-  const errors = {};
-  const requiredFields = [
-    "title",
-    "description",
-    "startDate",
-    "endDate",
-    "startTime",
-    "endTime",
-  ];
-
-  requiredFields.forEach((field) => {
-    if (!values[field]) {
-      errors[field] = "Required!";
-    }
-  });
-
-  if (!values.studentAttendees) {
-    errors.studentAttendees = "Required!";
-  }
-
-  if (
-    values.endTime &&
-    /((1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm]))/gm.test(values.endTime)
-  ) {
-    errors.endTime = "Invalid Time Format";
-  }
-
-  if (
-    values.startTime &&
-    /((1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm]))/gm.test(values.startTime)
-  ) {
-    errors.startTime = "Invalid Time Format";
-  }
-  return errors;
-};
 
 const formTheme = createMuiTheme({
   overrides: {

@@ -2,7 +2,6 @@ import { takeEvery, put, select, take } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
 import { addSubjectSuccess, setError, getSubjectsSuccess } from "../actions";
 import { GET_SUBJECTS_REQUEST, ADD_SUBJECT_REQUEST } from "../types";
-import { collections } from "../firebase";
 import { getSubjectsFromState } from "../selectors";
 import axios from "../api";
 

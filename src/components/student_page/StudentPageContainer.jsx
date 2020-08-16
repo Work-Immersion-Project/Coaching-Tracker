@@ -1,9 +1,6 @@
 import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getCoachingScheduleRequest,
-  getCoachingSchedulesRequest,
-} from "../../actions";
+import { useDispatch } from "react-redux";
+import { getCoachingSchedulesRequest } from "../../actions";
 import StudentPage from "./StudentPage";
 
 const StudentPageContainer = () => {

@@ -8,14 +8,6 @@ import {
 } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import MaterialTable, { MTableHeader } from "material-table";
-import { connect } from "react-redux";
-import {
-  getTeachers,
-  showModal,
-  hideModal,
-  assignSubjectTeacher,
-  removeSubjectTeacher,
-} from "../../../actions";
 
 const useStyles = makeStyles(() => ({
   root: {

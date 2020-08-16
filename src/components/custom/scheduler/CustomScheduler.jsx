@@ -34,14 +34,16 @@ const CustomScheduler = ({
   confirmCoachingSchedule,
   updateVisibility,
   updateAppointmentMeta,
-
   tooltip,
 }) => {
   const studentInstances = _.flatten(
     coachingSessions.map((schedule) =>
       schedule.studentAttendees.map((student) => {
         return {
-          text: loggedInUser.email !== student.email ? student.fullName : "You",
+          text:
+            loggedInUser.email !== student.email
+              ? student.metadata.fullName
+              : "You",
           id: student.email,
           color: "red",
         };
@@ -72,8 +74,18 @@ const CustomScheduler = ({
     },
     {
       text: "Waiting For Response",
-      id: "waiting_for_response",
+      id: "waiting",
       color: "#BDA911",
+    },
+    {
+      text: "Waiting For Student's Confirmation",
+      id: "waiting_for_student_confirmation",
+      color: "#BDA911",
+    },
+    {
+      text: "Ongoing",
+      id: "ongoing",
+      color: "#8C7E10",
     },
     {
       text: "Overdue",
@@ -100,12 +112,12 @@ const CustomScheduler = ({
     hideModal();
   };
 
-  const onUpdateStatusButtonPressed = (eventId, status) => {
+  const onUpdateStatusButtonPressed = (id, status) => {
     let title = "";
     let content = "";
     if (status === "ongoing") {
       updateCoachingScheduleRequest({
-        coachingSessionID: eventId,
+        id,
         status,
       });
     } else {
@@ -126,7 +138,7 @@ const CustomScheduler = ({
         onNegativeClick: onDialogClose,
         onPositiveClick: () =>
           updateCoachingScheduleRequest({
-            coachingSessionID: eventId,
+            id,
             status,
           }),
       });

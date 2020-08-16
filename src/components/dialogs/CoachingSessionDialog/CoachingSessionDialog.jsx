@@ -19,10 +19,9 @@ import {
   showModal,
   hideModal,
   updateCoachingScheduleStatusRequest,
-  confirmCoachingSchedule,
-} from "../../actions";
+} from "../../../actions";
 import { connect } from "react-redux";
-import { isDayBehind, isMeetingAvailable } from "../../utils";
+import { isDayBehind, isMeetingAvailable } from "../../../utils";
 import moment from "moment";
 import classNames from "clsx";
 
@@ -152,7 +151,7 @@ const CoachingSessionDialog = ({
   showModal,
   coachingSession,
   coachingSessionId,
-  confirmCoachingSchedule,
+
   getCoachingSchedule,
   loggedInUser,
 }) => {
@@ -192,7 +191,7 @@ const CoachingSessionDialog = ({
         <Button
           className={classes.acceptMeetingButton}
           onClick={() => {
-            confirmCoachingSchedule(coachingSessionId);
+            // confirmCoachingSchedule(coachingSessionId);
           }}
           variant="contained"
         >
@@ -214,7 +213,7 @@ const CoachingSessionDialog = ({
           disabled={disabled}
           className={classes.acceptMeetingButton}
           onClick={() => {
-            confirmCoachingSchedule(coachingSessionId);
+            // confirmCoachingSchedule(coachingSessionId);
           }}
           variant="contained"
         >
@@ -458,5 +457,5 @@ export default connect(mapStateToProps, {
   showModal,
   hideModal,
   updateCoachingScheduleStatusRequest,
-  confirmCoachingSchedule,
+  // confirmCoachingSchedule,
 })(CoachingSessionDialog);

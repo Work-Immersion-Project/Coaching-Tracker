@@ -1,7 +1,6 @@
 import { takeEvery, put } from "redux-saga/effects";
 import { REGISTRATION_REGISTER_USER_REQUEST } from "../types";
 import {
-  registerUserSuccess,
   showModal,
   setError,
   addStudentRequest,

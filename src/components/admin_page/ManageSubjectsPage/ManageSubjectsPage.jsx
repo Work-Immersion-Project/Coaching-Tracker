@@ -1,13 +1,6 @@
 import React, { useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Grid, Chip, createMuiTheme, ThemeProvider } from "@material-ui/core";
-import {
-  hideModal,
-  showModal,
-  addSubjectRequest,
-  getSubjectsRequest,
-} from "../../../actions";
-import { connect } from "react-redux";
 import MaterialTable, { MTableHeader } from "material-table";
 
 const useStyles = makeStyles(() => ({

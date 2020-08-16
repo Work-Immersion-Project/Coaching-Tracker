@@ -20,7 +20,6 @@ export default (state = INITIAL_STATE, action) => {
     case ADD_COACHING_SCHEDULE_SUCCESS:
       return {
         ...state,
-        coachingSchedules: [...state.coachingSchedules, action.payload],
       };
     case GET_COACHING_SCHEDULES_REQUEST:
       return {

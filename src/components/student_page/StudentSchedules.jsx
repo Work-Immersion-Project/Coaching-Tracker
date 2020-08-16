@@ -8,7 +8,7 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import CustomScheduler from "../custom/scheduler/CustomScheduler";
+import CustomSchedulerContainer from "../custom/scheduler/CustomSchedulerContainer";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -151,7 +151,7 @@ const StudentSchedules = (props) => {
       return (
         <ThemeProvider theme={formTheme}>
           <Paper className={classes.scheduler}>
-            <CustomScheduler
+            <CustomSchedulerContainer
               accessType="student"
               className={classes.scheduler}
               calendarEvents={props.coachingSchedules}

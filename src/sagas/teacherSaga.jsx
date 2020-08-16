@@ -19,7 +19,6 @@ import {
 import { collections, db } from "../firebase";
 import { getCurrentUser } from "../selectors";
 import firebase from "firebase";
-import _ from "lodash";
 import axios from "../api";
 
 function* getTeachers() {
@@ -44,28 +43,14 @@ function* getTeachers() {
 
 function* getTeachersBySubj() {
   const loggedInStudent = yield select(getCurrentUser);
-  const teacherDocs = loggedInStudent.enrolledSubjects.map(
-    async (subj) =>
-      await collections.subjects
-        .doc(subj)
-        .collection("teachers")
-        .get()
-        .then((snap) => snap.docs.map((doc) => doc.data()))
-  );
-
-  const teachers = yield Promise.all(teacherDocs);
-  const filteredTeachers = _.mapKeys(
-    _.flatten(teachers),
-    (value) => value.email
-  );
-
-  yield put(
-    getTeachersSuccess(
-      _.map(filteredTeachers, (value, _) => {
-        return value;
-      })
-    )
-  );
+  const response = yield axios
+    .get("teachers/subject", {
+      params: {
+        ids: loggedInStudent.enrolledSubjects.map((s) => s.ID).join(),
+      },
+    })
+    .then((r) => r.data);
+  yield put(getTeachersSuccess(response.data));
 }
 
 function* getTeachersSaga({ payload: { filterBySubj } }) {

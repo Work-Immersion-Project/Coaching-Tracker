@@ -1,26 +1,16 @@
 import React, { useEffect } from "react";
-import { Field, reduxForm } from "redux-form";
-import { connect } from "react-redux";
 import { makeStyles, styled } from "@material-ui/core/styles";
-import {
-  getTeachersRequest,
-  showModal,
-  hideModal,
-  closeAddEventDrawer,
-  requestCoachingSchedule,
-} from "../../../actions";
 import {
   TextField,
   createMuiTheme,
   ThemeProvider,
   Button,
   Divider,
+  CircularProgress,
 } from "@material-ui/core";
-
-import CustomDatePicker from "../../custom/CustomDatePicker";
-import CustomTimePicker from "../../custom/CustomTimePicker";
-import CustomMaterialTextField from "../../custom/CustomMaterialTextField";
-import CustomAutoComplete from "../../custom/CustomAutocomplete";
+import { Autocomplete } from "@material-ui/lab";
+import { DatePicker, TimePicker } from "@material-ui/pickers";
+import { useForm, Controller } from "react-hook-form";
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -52,43 +42,6 @@ const useStyles = makeStyles(() => ({
     backgroundColor: "#95a3b3",
   },
 }));
-
-const validateDates = (values) => {
-  const errors = {};
-  const requiredFields = [
-    "title",
-    "description",
-    "startDate",
-    "endDate",
-    "startTime",
-    "endTime",
-  ];
-
-  requiredFields.forEach((field) => {
-    if (!values[field]) {
-      errors[field] = "Required!";
-    }
-  });
-
-  if (!values.studentAttendees) {
-    errors.studentAttendees = "Required!";
-  }
-
-  if (
-    values.endTime &&
-    /((1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm]))/gm.test(values.endTime)
-  ) {
-    errors.endTime = "Invalid Time Format";
-  }
-
-  if (
-    values.startTime &&
-    /((1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm]))/gm.test(values.startTime)
-  ) {
-    errors.startTime = "Invalid Time Format";
-  }
-  return errors;
-};
 
 const formTheme = createMuiTheme({
   overrides: {
@@ -210,27 +163,29 @@ const StyledTimePicker = styled(TextField)({
   margin: "0.5em 0",
 });
 
-const RequestEventForm = (props) => {
-  const { handleSubmit, pristine, submitting } = props;
-  const {
-    getTeachersBySubject,
-    hideModal,
-    showModal,
-    requestCoachingSchedule,
-    closeAddEventDrawer,
-  } = props;
+const RequestEventForm = ({
+  selectedDate,
+  getTeachers,
+  showModal,
+  hideModal,
+  teachers,
+  requestCoachingSession,
+  closeAddEventDrawer,
+}) => {
+  const { handleSubmit, register, errors, control } = useForm();
+
   const classes = useStyles();
 
   useEffect(() => {
-    getTeachersBySubject();
-  }, [getTeachersBySubject]);
+    getTeachers(true);
+  }, [getTeachers]);
 
   const onDialogClose = () => {
     hideModal();
   };
 
   const requestCoachingEvent = (values) => {
-    requestCoachingSchedule(values);
+    requestCoachingSession(values);
     closeAddEventDrawer();
   };
 
@@ -248,57 +203,117 @@ const RequestEventForm = (props) => {
   return (
     <ThemeProvider theme={formTheme}>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-        <Field
-          label="Add Title"
+        <TextField
           name="title"
-          component={CustomMaterialTextField}
+          label="Add Title"
+          inputRef={register({ required: true })}
+          error={errors.title !== undefined}
+          helperText={errors.title !== undefined ? "Required" : ""}
         />
-
         <Divider className={classes.divider} />
-        <Field
+        <Controller
+          as={DatePicker}
           label="Start Date"
+          control={control}
+          renderInput={(props) => (
+            <StyledDatePicker {...props} name="startDate" />
+          )}
           name="startDate"
-          dateFormat="MM/dd/yyyy"
-          inputComponent={StyledDatePicker}
-          component={CustomDatePicker}
+          inputRef={register({
+            required: true,
+          })}
+          allowKeyboardControl={false}
+          disablePast
+          defaultValue={selectedDate.startDate}
         />
-        <Field
-          inputComponent={StyledTimePicker}
+        <Controller
+          as={TimePicker}
           label="Start Time"
+          control={control}
+          renderInput={(props) => (
+            <StyledTimePicker {...props} name="startTime" />
+          )}
           name="startTime"
-          component={CustomTimePicker}
+          inputRef={register({
+            required: true,
+          })}
+          allowKeyboardControl={false}
+          defaultValue={selectedDate.startDate}
         />
         <Divider className={classes.divider2} />
-        <Field
-          inputComponent={StyledDatePicker}
+        <Controller
+          as={DatePicker}
           label="End Date"
+          control={control}
+          renderInput={(props) => (
+            <StyledDatePicker {...props} name="endDate" />
+          )}
           name="endDate"
-          dateFormat="MM/dd/yyyy"
-          component={CustomDatePicker}
+          inputRef={register({
+            required: true,
+          })}
+          allowKeyboardControl={false}
+          disablePast
+          defaultValue={selectedDate.endDate}
         />
-        <Field
-          inputComponent={StyledTimePicker}
+        <Controller
+          as={TimePicker}
           label="End Time"
+          control={control}
+          renderInput={(props) => (
+            <StyledTimePicker {...props} name="endTime" />
+          )}
           name="endTime"
-          component={CustomTimePicker}
+          inputRef={register({
+            required: true,
+          })}
+          allowKeyboardControl={false}
+          defaultValue={selectedDate.endDate}
         />
         <Divider className={classes.divider2} />
-        <Field
-          name="teacherAttendee"
-          multiple={false}
-          limitTags={1}
-          getOptionLabel={(option) => option.email}
-          component={CustomAutoComplete}
-          inputComponent={TextField}
-          options={props.teachers ? props.teachers : []}
+        <Controller
+          name="teacher"
+          defaultValue={[]}
+          control={control}
+          rules={{
+            validate: (teacher = "") => teacher !== "",
+          }}
+          render={(props) => {
+            return (
+              <Autocomplete
+                options={teachers !== null ? teachers : []}
+                loading={teachers === null}
+                getOptionLabel={(option) => option.email}
+                filterSelectedOptions
+                size={"small"}
+                onChange={(_, data) => {
+                  props.onChange(data);
+                }}
+                renderInput={(props) => (
+                  <TextField
+                    {...props}
+                    className={classes.addStudentsField}
+                    error={errors.teacher !== undefined}
+                    label="Teacher"
+                    helperText={errors.teacher !== undefined ? "Required" : ""}
+                    InputProps={{
+                      ...props.InputProps,
+                      endAdornment: (
+                        <>
+                          {teachers != null ? null : (
+                            <CircularProgress size={20} />
+                          )}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+              />
+            );
+          }}
         />
 
-        <Divider className={classes.divider2} />
-        <Button
-          type="submit"
-          className={classes.button}
-          disabled={pristine || submitting}
-        >
+        <Button type="submit" className={classes.button}>
           Create Coaching Schedule
         </Button>
       </form>
@@ -306,22 +321,4 @@ const RequestEventForm = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    teachers: state.teachers.data,
-  };
-};
-
-const RequestEventFormWithReduxForm = reduxForm({
-  form: "AddEventDrawerForm",
-  validate: validateDates,
-  enableReinitialize: true,
-})(RequestEventForm);
-
-export default connect(mapStateToProps, {
-  showModal,
-  hideModal,
-  closeAddEventDrawer,
-  requestCoachingSchedule,
-  getTeachersRequest,
-})(RequestEventFormWithReduxForm);
+export default RequestEventForm;

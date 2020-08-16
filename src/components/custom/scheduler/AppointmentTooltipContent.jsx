@@ -65,7 +65,10 @@ export const AppointmentTooltipContent = withStyles({
             className={classes.acceptMeetingButton}
             onClick={() => {
               updateVisibility(false);
-              confirmCoachingSchedule(appointmentData.coachingSessionId);
+              onUpdateStatusButtonPressed(
+                appointmentData.ID,
+                "waiting_for_student_confirmation"
+              );
             }}
             variant="contained"
           >
@@ -74,13 +77,13 @@ export const AppointmentTooltipContent = withStyles({
         );
       } else if (loggedInUser.type === "student") {
         // Get the all the confirmed Students
-        const studentsConfirmed = appointmentData.studentsConfirmed;
+        const confirmedStudents = appointmentData.confirmedStudents;
         let disabled = true;
 
-        if (_.isEmpty(studentsConfirmed)) {
+        if (_.isEmpty(confirmedStudents)) {
           disabled = false;
         } else if (
-          studentsConfirmed.filter(
+          confirmedStudents.filter(
             (student) => student.email === loggedInUser.email
           ).length === 0
         ) {
@@ -93,8 +96,7 @@ export const AppointmentTooltipContent = withStyles({
             className={classes.acceptMeetingButton}
             onClick={() => {
               updateVisibility(false);
-
-              confirmCoachingSchedule(appointmentData.coachingSessionId);
+              confirmCoachingSchedule(appointmentData.ID);
             }}
             variant="contained"
           >
@@ -114,13 +116,10 @@ export const AppointmentTooltipContent = withStyles({
         return null;
       }
 
-      if (
-        appointmentData.status === "waiting_for_response" &&
-        accessType === "student"
-      ) {
+      if (appointmentData.status === "waiting" && accessType === "student") {
         return null;
       } else if (
-        appointmentData.status === "waiting_for_response" &&
+        appointmentData.status === "waiting" &&
         accessType === "teacher"
       ) {
         return (
@@ -134,10 +133,7 @@ export const AppointmentTooltipContent = withStyles({
               className={classes.acceptMeetingButton}
               onClick={() => {
                 updateVisibility(false);
-                onUpdateStatusButtonPressed(
-                  appointmentData.coachingSessionId,
-                  "pending"
-                );
+                onUpdateStatusButtonPressed(appointmentData.ID, "pending");
               }}
               variant="contained"
             >
@@ -147,15 +143,45 @@ export const AppointmentTooltipContent = withStyles({
               className={classes.denyMeetingButton}
               onClick={() => {
                 updateVisibility(false);
-                onUpdateStatusButtonPressed(
-                  appointmentData.coachingSessionId,
-                  "denied"
-                );
+                onUpdateStatusButtonPressed(appointmentData.ID, "denied");
               }}
               variant="contained"
             >
               Deny Request
             </Button>
+          </Grid>
+        );
+      }
+
+      if (
+        appointmentData.status === "waiting_for_student_confirmation" &&
+        loggedInUser.type === "student"
+      ) {
+        return (
+          <Grid
+            className={classes.meetingButtonWrapper}
+            container
+            direction="column"
+            justify="center"
+          >
+            {renderConfirmationButton()}
+          </Grid>
+        );
+      } else if (
+        appointmentData.status === "waiting_for_student_confirmation" &&
+        loggedInUser.type === "teacher"
+      ) {
+        return (
+          <Grid
+            className={classes.meetingButtonWrapper}
+            container
+            direction="column"
+            justify="center"
+          >
+            <Typography align="center" variant="p">
+              Students Confirmed: {appointmentData.confirmedStudents.length} /{" "}
+              {appointmentData.studentAttendees.length}
+            </Typography>
           </Grid>
         );
       }
@@ -183,7 +209,9 @@ export const AppointmentTooltipContent = withStyles({
             <Typography align="center" variant="subtitle2">
               {appointmentData.meetingLink}
             </Typography>
-            {renderConfirmationButton()}
+            {loggedInUser.type === "teacher"
+              ? renderConfirmationButton()
+              : null}
           </Grid>
         );
       }
@@ -200,10 +228,7 @@ export const AppointmentTooltipContent = withStyles({
             onClick={() => {
               if (loggedInUser.type !== "student") {
                 updateVisibility(false);
-                onUpdateStatusButtonPressed(
-                  appointmentData.coachingSessionId,
-                  "ongoing"
-                );
+                onUpdateStatusButtonPressed(appointmentData.ID, "ongoing");
               }
               window.open(appointmentData.meetingLink, "_blank");
             }}
@@ -221,10 +246,7 @@ export const AppointmentTooltipContent = withStyles({
               className={classes.denyMeetingButton}
               onClick={() => {
                 updateVisibility(false);
-                onUpdateStatusButtonPressed(
-                  appointmentData.coachingSessionId,
-                  "cancelled"
-                );
+                onUpdateStatusButtonPressed(appointmentData.ID, "cancelled");
               }}
               variant="contained"
             >

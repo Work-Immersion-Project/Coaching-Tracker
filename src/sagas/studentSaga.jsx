@@ -18,7 +18,6 @@ import {
 } from "../actions";
 import { getCurrentUser } from "../selectors";
 import firebase from "firebase";
-import _ from "lodash";
 import axios from "../api";
 
 function* addStudentSaga({ payload: { email, metadata, course, id } }) {
@@ -62,29 +61,14 @@ function* getStudents() {
 function* getStudentsBySubject() {
   try {
     const currUser = yield select(getCurrentUser);
-
-    // const studentDocuments = currUser.handledSubjects.map(
-    //   async (subject) =>
-    //     await collections.subjects
-    //       .doc(subject)
-    //       .collection("enrolledStudents")
-    //       .get()
-    //       .then((snapshot) => snapshot.docs.map((document) => document.data()))
-    // );
-    // const students = yield Promise.all(studentDocuments);
-
-    // const filteredStudents = _.mapKeys(
-    //   _.flatten(students),
-    //   (value) => value.email
-    // );
-    // console.log(filteredStudents);
-    // yield put(
-    //   getStudentsSuccess(
-    //     Object.keys(filteredStudents).map((value) => {
-    //       return filteredStudents[value];
-    //     })
-    //   )
-    // );
+    const response = yield axios
+      .get(`/students/subject`, {
+        params: {
+          ids: currUser.handledSubjects.map((subj) => subj.ID).join(),
+        },
+      })
+      .then((r) => r.data);
+    yield put(getStudentsSuccess(response.data));
   } catch (error) {
     yield put(setError(error.message));
   }
@@ -112,28 +96,6 @@ function* assignStudentSubjSaga({ payload: { ID, subjects } }) {
       };
     })
   );
-
-  // yield db.runTransaction(async (transaction) => {
-  //   transaction.update(studentRef, {
-  //     enrolledSubjects: subjects.map(({ subjectName }) => subjectName),
-  //   });
-
-  //   subjects.forEach((subj) => {
-  //     const subjRef = collections.subjects.doc(subj.subjectName);
-  //     const enrolledStudentsRef = subjRef
-  //       .collection("enrolledStudents")
-  //       .doc(email);
-
-  //     transaction.update(subjRef, {
-  //       totalStudentsEnrolled: fieldValue.increment(1),
-  //     });
-
-  //     transaction.set(enrolledStudentsRef, {
-  //       email: email,
-  //       fullName: metadata.fullName,
-  //     });
-  //   });
-  // });
 
   yield put(hideModal());
   yield put(

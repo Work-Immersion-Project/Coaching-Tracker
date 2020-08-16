@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Drawer, Grid, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
-import RequestEventForm from "./RequestEventForm";
+import RequestEventFormContainer from "./RequestEventForm/RequestEventFormContainer";
 import { closeAddEventDrawer } from "../../../actions";
 
 const drawerWidth = 300;
@@ -51,7 +51,7 @@ const RequestEventDrawer = ({ addEventDrawerData, closeAddEventDrawer }) => {
           <Typography variant="h6" align="right">
             REQUEST EVENT
           </Typography>
-          <RequestEventForm initialValues={initialValues} />
+          <RequestEventFormContainer selectedDate={initialValues} />
         </Grid>
       );
     }

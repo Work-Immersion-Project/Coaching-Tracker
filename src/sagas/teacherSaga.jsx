@@ -20,10 +20,10 @@ import { collections, db } from "../firebase";
 import { getCurrentUser } from "../selectors";
 import firebase from "firebase";
 import axios from "../api";
-import { API_BASE_URL } from "../consts/api";
+import { WEB_SOCKET_BASE_URL } from "../consts/api";
 
 function* getTeachers() {
-  const ws = new WebSocket(`wss://${API_BASE_URL}/teachers`);
+  const ws = new WebSocket(`${WEB_SOCKET_BASE_URL}/teachers`);
 
   const channel = eventChannel(
     (subs) =>

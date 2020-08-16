@@ -34,6 +34,7 @@ const CustomScheduler = ({
   confirmCoachingSchedule,
   updateVisibility,
   updateAppointmentMeta,
+  acceptCoachingSchedule,
   tooltip,
 }) => {
   const studentInstances = _.flatten(
@@ -173,6 +174,7 @@ const CustomScheduler = ({
       onUpdateStatusButtonPressed,
       loggedInUser,
       confirmCoachingSchedule,
+      acceptCoachingSchedule,
       updateVisibility,
     };
   });

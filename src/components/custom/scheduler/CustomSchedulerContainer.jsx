@@ -10,6 +10,7 @@ import {
   hideAppointmentTooltip,
   updateCoachingScheduleStatusRequest,
   confirmCoachingScheduleRequest,
+  acceptCoachingScheduleRequest,
 } from "../../../actions";
 const CustomSchedulerContainer = () => {
   const dispatch = useDispatch();
@@ -41,6 +42,11 @@ const CustomSchedulerContainer = () => {
     updateCoachingScheduleRequest: useCallback(
       (sessionDetails) =>
         dispatch(updateCoachingScheduleStatusRequest(sessionDetails)),
+      [dispatch]
+    ),
+    acceptCoachingSchedule: useCallback(
+      (sessionDetails) =>
+        dispatch(acceptCoachingScheduleRequest(sessionDetails)),
       [dispatch]
     ),
     confirmCoachingSchedule: useCallback(

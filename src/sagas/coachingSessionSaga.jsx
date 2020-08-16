@@ -6,6 +6,7 @@ import {
   UPDATE_COACHING_SCHEDULE_STATUS_REQUEST,
   REQUEST_COACHING_SCHEDULE_REQUEST,
   CONFIRM_COACHING_SCHEDULE_REQUEST,
+  ACCEPT_COACHING_SCHEDULE_REQUEST,
 } from "../types";
 import {
   setError,
@@ -16,20 +17,20 @@ import {
   showAlert,
   updateCoachingScheduleStatusSuccess,
   requestCoachingScheduleSuccess,
+  acceptCoachingScheduleSuccess,
 } from "../actions";
 import { getCurrentUser, getGapiCalendarClient } from "../selectors";
 import { v4 as uuidV4 } from "uuid";
 import { convertCoachingScheduleDates } from "../utils";
 import axios from "../api";
-import { API_BASE_URL } from "../consts/api";
+import { WEB_SOCKET_BASE_URL } from "../consts/api";
 
 //** GET COACHING SESSIONS */
 
 function* getStudentCoachingSessions(studentID) {
   const ws = new WebSocket(
-    `wss://${API_BASE_URL}/coaching-sessions/student/${studentID}`
+    `${WEB_SOCKET_BASE_URL}/coaching-sessions/student/${studentID}`
   );
-
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));
 
   try {
@@ -39,13 +40,17 @@ function* getStudentCoachingSessions(studentID) {
       yield put(getCoachingSchedulesSuccess(coachingSessions.data));
     }
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 
 function* getTeacherCoachingSessions(teacherID) {
   const ws = new WebSocket(
-    `wss://${API_BASE_URL}/coaching-sessions/teacher/${teacherID}`
+    `${WEB_SOCKET_BASE_URL}/coaching-sessions/teacher/${teacherID}`
   );
 
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));
@@ -180,30 +185,23 @@ function* updateCoachingSessionSaga({ payload: { id, status } }) {
 
 // END OF UPDATE COACHING SESSIONS
 
-//** REQUEST COACHING SESSION */
-function* requestCoachingSessionSaga({
-  payload: { startDate, startTime, endDate, endTime, title, teacher },
+//** ACCEPT COACHING SESSION */
+function* acceptCoachingSessionSaga({
+  payload: { title, startDate, endDate, studentAttendees, ID },
 }) {
   const coachingSessionID = uuidV4();
   const gapiCalendar = yield select(getGapiCalendarClient);
-  const currentUser = yield select(getCurrentUser);
-
-  const {
-    formattedStartingDate,
-    formattedEndingDate,
-  } = convertCoachingScheduleDates(startDate, endDate, startTime, endTime);
-
   const event = {
     summary: title,
     description: title,
     start: {
-      dateTime: formattedStartingDate,
+      dateTime: startDate,
     },
     end: {
-      dateTime: formattedEndingDate,
+      dateTime: endDate,
     },
     sendNotifications: true,
-    attendees: [teacher],
+    attendees: studentAttendees,
     conferenceDataVersion: 1,
     reminders: {
       useDefault: "useDefault",
@@ -212,10 +210,6 @@ function* requestCoachingSessionSaga({
       createRequest: { requestId: coachingSessionID },
     },
   };
-
-  yield put(hideModal());
-  yield put(showModal("LOADING_MODAL"));
-
   try {
     const results = yield gapiCalendar.events
       .insert({
@@ -225,16 +219,46 @@ function* requestCoachingSessionSaga({
       .then((e) => e.result);
     const gmLink = results.conferenceData.entryPoints[0].uri;
     const eventID = results.id;
+    yield axios.patch(`coaching-sessions/accept/${ID}`, {
+      eventId: eventID,
+      meetingLink: gmLink,
+    });
+    yield put(hideModal());
+    yield put(acceptCoachingScheduleSuccess());
+    yield put(showAlert("SUCCESS", "Coaching Schedule Accepted!"));
+  } catch (error) {
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
+  }
+}
+// END OF ACCEPT COACHING SESSION
 
+//** REQUEST COACHING SESSION */
+function* requestCoachingSessionSaga({
+  payload: { startDate, startTime, endDate, endTime, title, teacher },
+}) {
+  const currentUser = yield select(getCurrentUser);
+
+  const {
+    formattedStartingDate,
+    formattedEndingDate,
+  } = convertCoachingScheduleDates(startDate, endDate, startTime, endTime);
+
+  yield put(hideModal());
+  yield put(showModal("LOADING_MODAL"));
+
+  try {
     const coachingSessionData = {
-      coachingSessionId: coachingSessionID,
       teacher: teacher,
       title: title,
       description: title,
       startDate: formattedStartingDate,
       endDate: formattedEndingDate,
-      eventId: eventID,
-      meetingLink: gmLink,
+      eventId: "",
+      meetingLink: "",
       studentAttendees: [currentUser],
       createdAt: new Date(),
       status: "waiting",
@@ -244,7 +268,11 @@ function* requestCoachingSessionSaga({
     yield put(requestCoachingScheduleSuccess(coachingSessionData));
     yield put(showAlert("SUCCESS", "Coaching Schedule Added!"));
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 // END OF REQUEST COACHING SESSION
@@ -280,4 +308,5 @@ export function* watchCoachingSession() {
     CONFIRM_COACHING_SCHEDULE_REQUEST,
     confirmCoachingSessionSaga
   );
+  yield takeEvery(ACCEPT_COACHING_SCHEDULE_REQUEST, acceptCoachingSessionSaga);
 }

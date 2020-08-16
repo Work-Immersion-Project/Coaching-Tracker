@@ -42,11 +42,12 @@ export const AppointmentTooltipContent = withStyles({
   },
 })(
   ({
+    confirmCoachingSchedule,
+    acceptCoachingSchedule,
     children,
     appointmentData,
     onUpdateStatusButtonPressed,
     accessType,
-    confirmCoachingSchedule,
     loggedInUser,
     classes,
     updateVisibility,
@@ -136,7 +137,7 @@ export const AppointmentTooltipContent = withStyles({
               className={classes.acceptMeetingButton}
               onClick={() => {
                 updateVisibility(false);
-                onUpdateStatusButtonPressed(appointmentData.ID, "pending");
+                acceptCoachingSchedule(appointmentData);
               }}
               variant="contained"
             >

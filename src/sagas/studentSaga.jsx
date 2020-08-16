@@ -19,7 +19,7 @@ import {
 import { getCurrentUser } from "../selectors";
 import firebase from "firebase";
 import axios from "../api";
-import { API_BASE_URL } from "../consts/api";
+import { WEB_SOCKET_BASE_URL } from "../consts/api";
 
 function* addStudentSaga({ payload: { email, metadata, course, id } }) {
   try {
@@ -35,13 +35,12 @@ function* addStudentSaga({ payload: { email, metadata, course, id } }) {
       showAlert("SUCCESS", `Student ${metadata.fullName} has been added!`)
     );
   } catch (error) {
-    console.log(error);
     yield put(setError(error.message));
   }
 }
 
 function* getStudents() {
-  const ws = new WebSocket(`wss://${API_BASE_URL}/students`);
+  const ws = new WebSocket(`${WEB_SOCKET_BASE_URL}/students`);
 
   const channel = eventChannel((sub) => {
     return (ws.onmessage = (m) => {

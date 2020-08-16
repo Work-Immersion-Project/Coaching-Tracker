@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/Coaching-Tracker/static/css/main.ac428dc0.chunk.css",
-    "main.js": "/Coaching-Tracker/static/js/main.4ec9a598.chunk.js",
-    "main.js.map": "/Coaching-Tracker/static/js/main.4ec9a598.chunk.js.map",
+    "main.js": "/Coaching-Tracker/static/js/main.2bb36ce8.chunk.js",
+    "main.js.map": "/Coaching-Tracker/static/js/main.2bb36ce8.chunk.js.map",
     "runtime-main.js": "/Coaching-Tracker/static/js/runtime-main.bb1d85c1.js",
     "runtime-main.js.map": "/Coaching-Tracker/static/js/runtime-main.bb1d85c1.js.map",
     "static/js/2.c6099359.chunk.js": "/Coaching-Tracker/static/js/2.c6099359.chunk.js",
     "static/js/2.c6099359.chunk.js.map": "/Coaching-Tracker/static/js/2.c6099359.chunk.js.map",
     "index.html": "/Coaching-Tracker/index.html",
-    "precache-manifest.36418ce0146411fc53e650abab5d2522.js": "/Coaching-Tracker/precache-manifest.36418ce0146411fc53e650abab5d2522.js",
+    "precache-manifest.afc348e5737272bf9582426c40c0a32b.js": "/Coaching-Tracker/precache-manifest.afc348e5737272bf9582426c40c0a32b.js",
     "service-worker.js": "/Coaching-Tracker/service-worker.js",
     "static/css/main.ac428dc0.chunk.css.map": "/Coaching-Tracker/static/css/main.ac428dc0.chunk.css.map",
     "static/js/2.c6099359.chunk.js.LICENSE.txt": "/Coaching-Tracker/static/js/2.c6099359.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.bb1d85c1.js",
     "static/js/2.c6099359.chunk.js",
     "static/css/main.ac428dc0.chunk.css",
-    "static/js/main.4ec9a598.chunk.js"
+    "static/js/main.2bb36ce8.chunk.js"
   ]
 }

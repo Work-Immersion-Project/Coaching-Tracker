@@ -31,7 +31,7 @@ function* addSubject({ payload: { subjectName } }) {
 }
 
 function* getSubjects() {
-  const ws = new WebSocket(`ws://${API_BASE_URL}/subjects`);
+  const ws = new WebSocket(`wss://${API_BASE_URL}/subjects`);
   const event = eventChannel((sub) => (ws.onmessage = (m) => sub(m.data)));
 
   try {

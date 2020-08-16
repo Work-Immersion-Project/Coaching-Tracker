@@ -27,7 +27,7 @@ import { API_BASE_URL } from "../consts/api";
 
 function* getStudentCoachingSessions(studentID) {
   const ws = new WebSocket(
-    `ws://${API_BASE_URL}/coaching-sessions/student/${studentID}`
+    `wss://${API_BASE_URL}/coaching-sessions/student/${studentID}`
   );
 
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));
@@ -45,7 +45,7 @@ function* getStudentCoachingSessions(studentID) {
 
 function* getTeacherCoachingSessions(teacherID) {
   const ws = new WebSocket(
-    `ws://${API_BASE_URL}/coaching-sessions/teacher/${teacherID}`
+    `wss://${API_BASE_URL}/coaching-sessions/teacher/${teacherID}`
   );
 
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));

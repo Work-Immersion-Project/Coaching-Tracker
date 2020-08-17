@@ -9,7 +9,7 @@ const prod = Axios.create({
 });
 
 const dev = Axios.create({
-  baseURL: `http://${config.API_BASE_URL}`,
+  baseURL: `https://${config.API_BASE_URL}`,
   headers: {
     "Content-Type": "application/json",
   },

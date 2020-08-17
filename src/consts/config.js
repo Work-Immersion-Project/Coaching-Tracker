@@ -1,12 +1,12 @@
 
 const prod= {
-    API_BASE_URL : "coaching-tracker-api.herokuapp.com",
-    WS_BASE_URL : `wss://coaching-tracker-api.herokuapp.com` 
+    API_BASE_URL : "coaching-tracker-api-prod.herokuapp.com",
+    WS_BASE_URL : `wss://coaching-tracker-api-prod.herokuapp.com` 
  }
 
  const dev = {
-     API_BASE_URL : "localhost:8000",
-     WS_BASE_URL : `ws://localhost:8000`,
+     API_BASE_URL : "coaching-tracker-api-dev.herokuapp.com/",
+     WS_BASE_URL : `wss://coaching-tracker-api-dev.herokuapp.com/`,
  }
 
  export const config = (process.env.NODE_ENV === 'development') ? dev : prod;

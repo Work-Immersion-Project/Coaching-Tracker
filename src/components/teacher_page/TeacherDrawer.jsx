@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Drawer,
@@ -10,10 +10,9 @@ import {
 // Icons
 import HomeIcon from "@material-ui/icons/Home";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import NotificationsIcon from "@material-ui/icons/Notifications";
-
+import history from "../../history";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import {
@@ -23,7 +22,7 @@ import {
   closeDrawer,
 } from "../../actions";
 
-const drawerWidth = 240;
+const drawerWidth = 250;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -31,21 +30,66 @@ const useStyles = makeStyles((theme) => ({
       width: drawerWidth,
       flexShrink: 0,
     },
+    height: "100%",
   },
   drawerPaper: {
     width: drawerWidth,
     backgroundColor: "#222222",
     color: "white",
+    height: "100%",
   },
-  iconColor: {
-    color: "#84DCC6",
+
+  imageContainer: {
+    height: "100px",
+    width: "100%",
+    display: "grid",
+    placeItems: "center",
   },
-  // necessary for content to be below app bar
-  toolbar: theme.mixins.toolbar,
+  image: {
+    width: "80%",
+  },
+
+  active: {
+    width: "100%",
+    margin: "0.3em 0",
+    backgroundSize: "200% 300%",
+    backgroundImage:
+      "linear-gradient(to right, rgba(0,0,0,0) 50%, rgba(255,255,255,1) 50%)",
+    transition: "all 1s ease",
+
+    borderRadius: "30px 0 0 30px",
+    backgroundPosition: "right bottom",
+    color: "#00364D",
+
+    "& $icon": {
+      color: "#00364D",
+    },
+  },
+  icon: {
+    color: "white",
+  },
+  inActive: {
+    margin: "0.3em 0",
+    backgroundSize: "200% 300%",
+    backgroundImage:
+      "linear-gradient(to right, rgba(0,0,0,0) 50%, rgba(255,255,255,1) 50%)",
+    transition: "all 1s ease",
+
+    "&:hover": {
+      color: "#00364D",
+      backgroundPosition: "right bottom",
+      "& $icon": {
+        color: "#00364D",
+      },
+    },
+    borderRadius: "30px 0 0 30px",
+  },
 }));
 
 const TeacherDrawer = (props) => {
   const classes = useStyles();
+  const [selectedPath, setSelectedPath] = useState(history.location.pathname);
+
   const drawerItems = [
     {
       text: "Home",
@@ -79,22 +123,30 @@ const TeacherDrawer = (props) => {
       },
     });
   };
+
   const renderListItems = () => {
     return drawerItems.map((item) => {
       const { path, text, icon } = item;
+      const pathname = `/Coaching-Tracker/teacher${path}`;
+      const isActive = selectedPath === pathname;
       return (
-        <ListItem
-          button
-          component={Link}
-          to={{
-            pathname: `/Coaching-Tracker/teacher${path}`,
-            state: { text: text },
-          }}
+        <div
+          className={isActive ? classes.active : classes.inActive}
           key={text}
         >
-          <ListItemIcon className={classes.iconColor}>{icon}</ListItemIcon>
-          <ListItemText primary={text} />
-        </ListItem>
+          <ListItem
+            button
+            component={Link}
+            to={{
+              pathname: pathname,
+              state: { text: text },
+            }}
+            onClick={() => setSelectedPath(pathname)}
+          >
+            <ListItemIcon className={classes.icon}>{icon}</ListItemIcon>
+            <ListItemText primary={text} />
+          </ListItem>
+        </div>
       );
     });
   };
@@ -115,11 +167,18 @@ const TeacherDrawer = (props) => {
             keepMounted: true,
           }}
         >
-          <div className={classes.toolbar} />
-          {renderListItems()}
+          <div className={classes.imageContainer}>
+            <img
+              alt="CIIT LOGO"
+              className={classes.image}
+              src={process.env.PUBLIC_URL + "/ciit_logo.png"}
+            />
+          </div>
+
+          <div>{renderListItems()}</div>
           <ListItem button onClick={handleSignoutButton}>
             <ListItemIcon>
-              <ExitToAppIcon className={classes.iconColor} />
+              <ExitToAppIcon className={classes.icon} />
             </ListItemIcon>
             <ListItemText primary="Sign Out" />
           </ListItem>
@@ -134,11 +193,21 @@ const TeacherDrawer = (props) => {
           }}
           anchor="left"
         >
-          <div className={classes.toolbar} />
-          {renderListItems()}
-          <ListItem button onClick={handleSignoutButton}>
+          <div className={classes.imageContainer}>
+            <img
+              alt="CIIT LOGO"
+              className={classes.image}
+              src={process.env.PUBLIC_URL + "/ciit_logo.png"}
+            />
+          </div>
+          <div> {renderListItems()}</div>
+          <ListItem
+            className={classes.inActive}
+            button
+            onClick={handleSignoutButton}
+          >
             <ListItemIcon>
-              <ExitToAppIcon className={classes.iconColor} />
+              <ExitToAppIcon className={classes.icon} />
             </ListItemIcon>
             <ListItemText primary="Sign Out" />
           </ListItem>

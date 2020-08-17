@@ -11,18 +11,24 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import CustomSchedulerContainer from "../custom/scheduler/CustomSchedulerContainer";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   content: {
     height: "100%",
     width: "100%",
     padding: "1em",
     overflow: "hidden",
-    backgroundColor: "#4B4E6D",
+    backgroundColor: "white",
+    borderTopLeftRadius: "30px",
+    borderBottomLeftRadius: "30px",
+    [theme.breakpoints.up("sm")]: {
+      zIndex: "1201",
+    },
   },
   scheduler: {
     height: "100%",
     width: "100%",
     overflow: "hidden",
+    borderRadius: "30px",
   },
 }));
 

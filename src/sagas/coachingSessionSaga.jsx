@@ -23,13 +23,13 @@ import { getCurrentUser, getGapiCalendarClient } from "../selectors";
 import { v4 as uuidV4 } from "uuid";
 import { convertCoachingScheduleDates } from "../utils";
 import axios from "../api";
-import { WEB_SOCKET_BASE_URL } from "../consts/api";
+import { config } from "../consts/config";
 
 //** GET COACHING SESSIONS */
 
 function* getStudentCoachingSessions(studentID) {
   const ws = new WebSocket(
-    `${WEB_SOCKET_BASE_URL}/coaching-sessions/student/${studentID}`
+    `${config.WS_BASE_URL}/coaching-sessions/student/${studentID}`
   );
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));
 
@@ -50,7 +50,7 @@ function* getStudentCoachingSessions(studentID) {
 
 function* getTeacherCoachingSessions(teacherID) {
   const ws = new WebSocket(
-    `${WEB_SOCKET_BASE_URL}/coaching-sessions/teacher/${teacherID}`
+    `${config.WS_BASE_URL}/coaching-sessions/teacher/${teacherID}`
   );
 
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));

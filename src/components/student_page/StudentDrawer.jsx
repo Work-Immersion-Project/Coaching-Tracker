@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Drawer,
@@ -20,6 +20,7 @@ import {
   hideModal,
   closeDrawer,
 } from "../../actions";
+import history from "../../history";
 
 const drawerWidth = 240;
 
@@ -29,20 +30,64 @@ const useStyles = makeStyles((theme) => ({
       width: drawerWidth,
       flexShrink: 0,
     },
+    height: "100%",
   },
   drawerPaper: {
     width: drawerWidth,
     backgroundColor: "#222222",
     color: "white",
+    height: "100%",
   },
-  iconColor: {
-    color: "#84DCC6",
+
+  imageContainer: {
+    height: "100px",
+    width: "100%",
+    display: "grid",
+    placeItems: "center",
   },
-  // necessary for content to be below app bar
-  toolbar: theme.mixins.toolbar,
+  image: {
+    width: "80%",
+  },
+
+  active: {
+    width: "100%",
+    margin: "0.3em 0",
+    backgroundSize: "200% 300%",
+    backgroundImage:
+      "linear-gradient(to right, rgba(0,0,0,0) 50%, rgba(255,255,255,1) 50%)",
+    transition: "all 1s ease",
+
+    borderRadius: "30px 0 0 30px",
+    backgroundPosition: "right bottom",
+    color: "#00364D",
+
+    "& $icon": {
+      color: "#00364D",
+    },
+  },
+  icon: {
+    color: "white",
+  },
+  inActive: {
+    margin: "0.3em 0",
+    backgroundSize: "200% 300%",
+    backgroundImage:
+      "linear-gradient(to right, rgba(0,0,0,0) 50%, rgba(255,255,255,1) 50%)",
+    transition: "all 1s ease",
+
+    "&:hover": {
+      color: "#00364D",
+      backgroundPosition: "right bottom",
+      "& $icon": {
+        color: "#00364D",
+      },
+    },
+    borderRadius: "30px 0 0 30px",
+  },
 }));
 
 const StudentDrawer = (props) => {
+  const [selectedPath, setSelectedPath] = useState(history.location.pathname);
   const classes = useStyles();
   const drawerItems = [
     {
@@ -80,19 +125,26 @@ const StudentDrawer = (props) => {
   const renderListItems = () => {
     return drawerItems.map((item) => {
       const { path, text, icon } = item;
+      const pathname = `/Coaching-Tracker/student${path}`;
+      const isActive = selectedPath === pathname;
       return (
-        <ListItem
-          button
-          component={Link}
-          to={{
-            pathname: `/Coaching-Tracker/student${path}`,
-            state: { text: text },
-          }}
+        <div
+          className={isActive ? classes.active : classes.inActive}
           key={text}
         >
-          <ListItemIcon className={classes.iconColor}>{icon}</ListItemIcon>
-          <ListItemText primary={text} />
-        </ListItem>
+          <ListItem
+            button
+            component={Link}
+            to={{
+              pathname: pathname,
+              state: { text: text },
+            }}
+            onClick={() => setSelectedPath(pathname)}
+          >
+            <ListItemIcon className={classes.icon}>{icon}</ListItemIcon>
+            <ListItemText primary={text} />
+          </ListItem>
+        </div>
       );
     });
   };
@@ -113,11 +165,21 @@ const StudentDrawer = (props) => {
             keepMounted: true,
           }}
         >
-          <div className={classes.toolbar} />
+          <div className={classes.imageContainer}>
+            <img
+              alt="CIIT LOGO"
+              className={classes.image}
+              src={process.env.PUBLIC_URL + "/ciit_logo.png"}
+            />
+          </div>
           {renderListItems()}
-          <ListItem button onClick={handleSignoutButton}>
+          <ListItem
+            className={classes.inActive}
+            button
+            onClick={handleSignoutButton}
+          >
             <ListItemIcon>
-              <ExitToAppIcon className={classes.iconColor} />
+              <ExitToAppIcon className={classes.icon} />
             </ListItemIcon>
             <ListItemText primary="Sign Out" />
           </ListItem>
@@ -132,11 +194,21 @@ const StudentDrawer = (props) => {
           }}
           anchor="left"
         >
-          <div className={classes.toolbar} />
+          <div className={classes.imageContainer}>
+            <img
+              alt="CIIT LOGO"
+              className={classes.image}
+              src={process.env.PUBLIC_URL + "/ciit_logo.png"}
+            />
+          </div>
           {renderListItems()}
-          <ListItem button onClick={handleSignoutButton}>
+          <ListItem
+            button
+            onClick={handleSignoutButton}
+            className={classes.inActive}
+          >
             <ListItemIcon>
-              <ExitToAppIcon className={classes.iconColor} />
+              <ExitToAppIcon className={classes.icon} />
             </ListItemIcon>
             <ListItemText primary="Sign Out" />
           </ListItem>

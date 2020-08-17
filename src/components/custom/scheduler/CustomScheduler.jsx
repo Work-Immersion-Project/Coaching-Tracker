@@ -86,7 +86,7 @@ const CustomScheduler = ({
     {
       text: "Ongoing",
       id: "ongoing",
-      color: "#8C7E10",
+      color: "#0091ea",
     },
     {
       text: "Overdue",

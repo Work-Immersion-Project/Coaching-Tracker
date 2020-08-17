@@ -9,10 +9,15 @@ import rootSaga from "./sagas";
 import AppContainer from "./components/AppContainer";
 import reducers from "./reducers";
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
 const saga = createSagaMiddleware();
-const store = createStore(reducers, composeEnhancers(applyMiddleware(saga)));
+let middlewares = [saga];
+let enhancers = [applyMiddleware(...middlewares)];
+if (process.env.NODE_ENV === "development") {
+  enhancers.push(
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  );
+}
+const store = createStore(reducers, compose(...enhancers));
 saga.run(rootSaga);
 
 ReactDOM.render(

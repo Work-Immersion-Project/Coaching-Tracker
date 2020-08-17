@@ -4,7 +4,7 @@ import { addSubjectSuccess, setError, getSubjectsSuccess } from "../actions";
 import { GET_SUBJECTS_REQUEST, ADD_SUBJECT_REQUEST } from "../types";
 import { getSubjectsFromState } from "../selectors";
 import axios from "../api";
-import { WEB_SOCKET_BASE_URL } from "../consts/api";
+import { config } from "../consts/config";
 
 function* addSubject({ payload: { subjectName } }) {
   try {
@@ -31,7 +31,7 @@ function* addSubject({ payload: { subjectName } }) {
 }
 
 function* getSubjects() {
-  const ws = new WebSocket(`${WEB_SOCKET_BASE_URL}/subjects`);
+  const ws = new WebSocket(`${config.WS_BASE_URL}/subjects`);
   const event = eventChannel((sub) => (ws.onmessage = (m) => sub(m.data)));
 
   try {

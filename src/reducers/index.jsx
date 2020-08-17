@@ -14,7 +14,7 @@ import alertsReducer from "./alertsReducer";
 import registrationReducer from "./registrationReducer";
 import notificationReducer from "./notificationReducer";
 import coachingLogReducer from "./coachingLogReducer";
-export default combineReducers({
+const reducers = combineReducers({
   auth: authReducer,
   form: formReducer,
   registration: registrationReducer,
@@ -31,3 +31,5 @@ export default combineReducers({
   drawer: drawerReducer,
   coaching: coachingReducer,
 });
+
+export default reducers;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Typography, List } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { CoachingSessionCard } from "../../custom/CoachingSessionCard";
@@ -18,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
       zIndex: "1201",
     },
   },
-
   onGoingSessionsWrapper: {
     width: "100%",
   },
@@ -43,12 +42,25 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   sessionsWrapper: {
-    marginTop: "1.5em",
     width: "100%",
-  },
-  sessions: {
+    height: "100%",
     borderRadius: "30px",
-    width: "100%",
+    overflowX: "auto",
+    marginBottom: "0.5em",
+    paddingRight: "0.5em",
+
+    // Scrollbar Related
+    "&::-webkit-scrollbar": {
+      width: "5px",
+    },
+    "&::-webkit-scrollbar-track": {
+      background: "#222222",
+      borderRadius: "20px",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      background: "#4EC8F4",
+      borderRadius: "20px",
+    },
   },
 }));
 
@@ -74,13 +86,8 @@ const TeacherDashboard = ({ onGoingCoachingSessions, coachingSessions }) => {
   };
 
   return (
-    <Grid className={classes.root} container direction="column">
-      <Grid
-        item
-        container
-        className={classes.onGoingSessionsWrapper}
-        zeroMinWidth
-      >
+    <Grid className={classes.root} container direction="row">
+      <Grid item container className={classes.onGoingSessionsWrapper} xs={12}>
         <Typography variant="h5">Ongoing Sessions</Typography>
         <Grid
           item
@@ -92,10 +99,10 @@ const TeacherDashboard = ({ onGoingCoachingSessions, coachingSessions }) => {
           {renderOnGoingSessions()}
         </Grid>
       </Grid>
-      <Grid className={classes.sessionsWrapper} item container zeroMinWidth>
-        <Typography variant="h5">Sessions</Typography>
-        <Grid item container spacing={2} zeroMinWidth>
-          <List className={classes.sessions}>{renderCoachingSessions()}</List>
+      <Typography variant="h5">Sessions</Typography>
+      <Grid className={classes.sessionsWrapper} item container xs={12}>
+        <Grid item container spacing={2} direction="column" xs={12}>
+          {renderCoachingSessions()}
         </Grid>
       </Grid>
     </Grid>

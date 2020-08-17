@@ -10,7 +10,7 @@ export const onGoingSessionsSelector = createSelector(
     )
 );
 
-export const normalCoachingSessionsSelector = createSelector(
+export const allCoachingSessionsSelector = createSelector(
   coachingSessionsSelector,
   (coachingSessions) =>
     coachingSessions.filter(

@@ -113,7 +113,7 @@ function* signInSaga() {
     yield put(
       signInSuccess({
         isSignedIn: true,
-        user: { ...userData, type: userData.type },
+        user: { ...userData, type: user.type },
         userToken: access_token,
       })
     );

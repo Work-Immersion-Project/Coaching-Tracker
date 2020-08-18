@@ -128,7 +128,11 @@ const TeacherDrawer = (props) => {
     return drawerItems.map((item) => {
       const { path, text, icon } = item;
       const pathname = `/Coaching-Tracker/teacher${path}`;
-      const isActive = selectedPath === pathname;
+      const formattedSelectedPath = selectedPath.endsWith("/")
+        ? selectedPath
+        : `${selectedPath}/`;
+
+      const isActive = formattedSelectedPath === pathname;
       return (
         <div
           className={isActive ? classes.active : classes.inActive}

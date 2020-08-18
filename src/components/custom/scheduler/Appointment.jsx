@@ -19,16 +19,18 @@ const Appointment = ({
   children,
   data,
   classes,
-  toggleVisibility,
-  updateAppointmentTooltip,
+  setAppointmentMeta,
+  setTooltipVisibility,
+  onClick,
   ...restProps
 }) => {
   return (
     <Appointments.Appointment
+      data={data}
       {...restProps}
       onClick={({ target }) => {
-        toggleVisibility();
-        updateAppointmentTooltip({
+        setTooltipVisibility(true);
+        setAppointmentMeta({
           target:
             target.parentElement.parentElement.parentElement.parentElement,
           data,

@@ -1,9 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Drawer, Grid, Typography } from "@material-ui/core";
-import { connect } from "react-redux";
-import { closeAddEventDrawer } from "../../../actions";
-import AddEventFormContainer from "./AddEventForm/AddEventFormContainer";
+import AddEventFormContainer from "../AddEventForm/AddEventFormContainer";
 
 const drawerWidth = 300;
 
@@ -47,7 +45,7 @@ const AddEventDrawer = ({ addEventDrawerData, closeAddEventDrawer }) => {
       return (
         <Grid container className={classes.content}>
           <Typography variant="h6" className={classes.title}>
-            ADD EVENT
+            Create Coaching Session
           </Typography>
           <AddEventFormContainer selectedDate={selectedDate} />
         </Grid>
@@ -79,12 +77,4 @@ const AddEventDrawer = ({ addEventDrawerData, closeAddEventDrawer }) => {
     </div>
   );
 };
-const mapStateToProps = (state) => {
-  return {
-    addEventDrawerData: state.drawer.addEventDrawer,
-  };
-};
-
-export default connect(mapStateToProps, {
-  closeAddEventDrawer,
-})(AddEventDrawer);
+export default AddEventDrawer;

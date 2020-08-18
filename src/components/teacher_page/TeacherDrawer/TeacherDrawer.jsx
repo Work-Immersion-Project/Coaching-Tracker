@@ -12,15 +12,8 @@ import HomeIcon from "@material-ui/icons/Home";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import NotificationsIcon from "@material-ui/icons/Notifications";
-import history from "../../history";
-import { connect } from "react-redux";
+import history from "../../../history";
 import { Link } from "react-router-dom";
-import {
-  signOutRequest,
-  showModal,
-  hideModal,
-  closeDrawer,
-} from "../../actions";
 
 const drawerWidth = 250;
 
@@ -222,15 +215,4 @@ const TeacherDrawer = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    isDrawerOpen: state.drawer.navigationDrawer.isOpen,
-  };
-};
-
-export default connect(mapStateToProps, {
-  closeDrawer,
-  signOutRequest,
-  showModal,
-  hideModal,
-})(TeacherDrawer);
+export default TeacherDrawer;

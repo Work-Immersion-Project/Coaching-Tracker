@@ -8,8 +8,11 @@ import {
   closeAddEventDrawer,
 } from "../../../../actions";
 import RequestEventForm from "./RequestEventForm";
+import { useState } from "react";
 
 const RequestEventFormContainer = ({ selectedDate }) => {
+  const [isTeacherListOpen, setTeacherListState] = useState(false);
+
   const dispatch = useDispatch();
   const dispatchToProps = {
     getTeachers: useCallback(
@@ -40,6 +43,8 @@ const RequestEventFormContainer = ({ selectedDate }) => {
       {...stateToProps}
       {...dispatchToProps}
       selectedDate={selectedDate}
+      isTeacherListOpen={isTeacherListOpen}
+      setTeacherListState={setTeacherListState}
     />
   );
 };

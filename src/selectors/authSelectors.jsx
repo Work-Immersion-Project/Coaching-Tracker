@@ -1,1 +1,1 @@
-export const getCurrentUser = (state) => state.auth.data.user;
+export const currentUserSelector = (state) => state.auth.data.user;

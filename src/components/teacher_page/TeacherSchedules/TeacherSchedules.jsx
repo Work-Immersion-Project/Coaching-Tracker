@@ -1,6 +1,4 @@
 import React from "react";
-import { getCoachingScheduleRequest } from "../../actions";
-import { connect } from "react-redux";
 import {
   Paper,
   CircularProgress,
@@ -8,10 +6,12 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import CustomSchedulerContainer from "../custom/scheduler/CustomSchedulerContainer";
+import CustomSchedulerContainer from "../../custom/scheduler/CustomSchedulerContainer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    display: "grid",
+    placeContent: "center",
     padding: "2em",
     height: "100%",
     width: "100%",
@@ -153,18 +153,18 @@ const formTheme = createMuiTheme({
   },
 });
 
-const TeacherSchedules = (props) => {
+const TeacherSchedules = ({ isLoading, coachingSessions }) => {
   const classes = useStyles();
 
   const renderContent = () => {
-    if (props.coachingSchedules) {
+    if (isLoading !== null && !isLoading) {
       return (
         <ThemeProvider theme={formTheme}>
           <Paper className={classes.scheduler}>
             <CustomSchedulerContainer
               accessType="teacher"
               className={classes.scheduler}
-              calendarEvents={props.calendarEvents}
+              coachingSessions={coachingSessions}
             />
           </Paper>
         </ThemeProvider>
@@ -176,12 +176,4 @@ const TeacherSchedules = (props) => {
   return <div className={classes.root}>{renderContent()}</div>;
 };
 
-const mapStateToProps = (state) => {
-  return {
-    coachingSchedules: state.coaching.coachingSchedules,
-  };
-};
-
-export default connect(mapStateToProps, {
-  getCoachingScheduleRequest,
-})(TeacherSchedules);
+export default TeacherSchedules;

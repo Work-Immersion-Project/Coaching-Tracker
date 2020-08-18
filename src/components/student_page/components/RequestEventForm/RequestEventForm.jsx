@@ -171,14 +171,18 @@ const RequestEventForm = ({
   teachers,
   requestCoachingSession,
   closeAddEventDrawer,
+  isTeacherListOpen,
+  setTeacherListState,
 }) => {
   const { handleSubmit, register, errors, control } = useForm();
 
   const classes = useStyles();
 
   useEffect(() => {
-    getTeachers(true);
-  }, [getTeachers]);
+    if (isTeacherListOpen) {
+      getTeachers(true);
+    }
+  }, [isTeacherListOpen, getTeachers]);
 
   const onDialogClose = () => {
     hideModal();
@@ -282,10 +286,13 @@ const RequestEventForm = ({
             return (
               <Autocomplete
                 options={teachers !== null ? teachers : []}
-                loading={teachers === null}
+                loading={isTeacherListOpen && teachers === null}
                 getOptionLabel={(option) => option.email}
                 filterSelectedOptions
                 size={"small"}
+                onOpen={() => {
+                  setTeacherListState(true);
+                }}
                 onChange={(_, data) => {
                   props.onChange(data);
                 }}
@@ -300,9 +307,9 @@ const RequestEventForm = ({
                       ...props.InputProps,
                       endAdornment: (
                         <>
-                          {teachers != null ? null : (
+                          {isTeacherListOpen && teachers === null ? (
                             <CircularProgress size={20} />
-                          )}
+                          ) : null}
                         </>
                       ),
                     }}

@@ -1,74 +1,86 @@
 import React from "react";
 import {
   Button,
-  Grid,
   InputLabel,
   TextField,
   MenuItem,
   Select,
   FormControl,
   FormHelperText,
+  Paper,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import _ from "lodash";
 import { useForm, Controller } from "react-hook-form";
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: "100%",
+    display: "grid",
     width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: "0 1em",
-    overflow: "hidden",
-    backgroundColor: "white",
-    borderTopLeftRadius: "30px",
-    borderBottomLeftRadius: "30px",
-    padding: "2em",
-    [theme.breakpoints.up("sm")]: {
-      zIndex: "1201",
-    },
+    placeContent: "center",
   },
   buttonStyle: {
     backgroundColor: "red",
     color: "white",
   },
-
+  formWrapper: {
+    padding: "2em",
+    backgroundColor: "white",
+    borderRadius: "30px",
+    justifySelf: "center",
+    display: "grid",
+    gridGap: "1em",
+    gridTemplateColumns: "repeat(auto-fit, minmax(800px, 1fr))",
+  },
   form: {
-    backgroundColor: "#222222",
-    borderRadius: "1em",
-    maxWidth: "600px",
-    padding: "1em",
+    width: "100%",
+    display: "grid",
+    gridGap: "1em",
+    placeItems: "center",
   },
   textField: {
-    borderRadius: "10px",
     width: "100%",
-    borderColor: "white",
-    borderStyle: "solid",
-    borderWidth: 2,
-    color: "white",
-    paddingLeft: "0.5em",
-    "& input:error": {
-      borderColor: "red",
-      borderWidth: 2,
+
+    // Text Fields
+    "label + &": {
+      color: "#4EC8F4",
+    },
+    "& label.Mui-focused": {
+      color: "#4EC8F4",
+    },
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "30px",
+      "& fieldset": {
+        borderColor: "#00364D",
+      },
+      "&:hover fieldset": {
+        borderColor: "#4ec8f4",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "#4ec8f4",
+      },
     },
   },
+
   selectField: {
-    borderRadius: "10px",
-    color: "white",
-    width: "100%",
-    border: "2px solid white",
-    paddingLeft: "0.5em",
-  },
-  subjectField: {
-    borderRadius: "10px",
-    color: "white",
-    border: "2px solid white",
-    paddingLeft: "0.5em",
-  },
-  selectValue: {
-    color: "black",
+    // Text Fields
+    "label + &": {
+      color: "#4EC8F4",
+    },
+    "& label.Mui-focused": {
+      color: "#4EC8F4",
+    },
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "30px",
+      "& fieldset": {
+        borderColor: "#00364D",
+      },
+      "&:hover fieldset": {
+        borderColor: "#4ec8f4",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "#4ec8f4",
+      },
+    },
   },
 
   inputLabel: {
@@ -79,10 +91,13 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "start",
   },
   submitButton: {
-    backgroundColor: "#84DCC6",
+    backgroundColor: "#00364D",
     "&:hover": {
-      backgroundColor: "#52aa95",
+      backgroundColor: "#4EC8F4",
     },
+    maxWidth: "500px",
+    color: "white",
+    borderRadius: "30px",
     marginTop: "1em",
     margin: "0 5em",
   },
@@ -116,32 +131,31 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
 
   const renderStudentForms = () => {
     return (
-      <Grid item sm>
-        <FormControl fullWidth error={errors.course !== undefined}>
-          <InputLabel>Course</InputLabel>
-          <Controller
-            as={Select}
-            name="course"
-            control={control}
-            defaultValue=""
-            fullWidth
-            rules={{ required: true }}
-          >
-            <MenuItem value={""}></MenuItem>
-            <MenuItem value={"BMA"}>Bachelor of Multimedia Arts</MenuItem>
-            <MenuItem value={"BFA"}>Bachelor of Fine Arts</MenuItem>
-            <MenuItem value={"BSCS"}>
-              Bachelor of Science in Computer Science
-            </MenuItem>
-            <MenuItem value={"BSEMC"}>
-              Bachelor of Science in Entertainment and Multimedia Computing
-            </MenuItem>
-          </Controller>
-          <FormHelperText>
-            {_.isUndefined(errors.course) ? "" : "Required"}
-          </FormHelperText>
-        </FormControl>
-      </Grid>
+      <FormControl fullWidth error={errors.course !== undefined}>
+        <InputLabel>Course</InputLabel>
+        <Controller
+          className={classes.textField}
+          as={Select}
+          name="course"
+          variant="outlined"
+          control={control}
+          defaultValue=""
+          rules={{ required: true }}
+        >
+          <MenuItem value={""}></MenuItem>
+          <MenuItem value={"BMA"}>Bachelor of Multimedia Arts</MenuItem>
+          <MenuItem value={"BFA"}>Bachelor of Fine Arts</MenuItem>
+          <MenuItem value={"BSCS"}>
+            Bachelor of Science in Computer Science
+          </MenuItem>
+          <MenuItem value={"BSEMC"}>
+            Bachelor of Science in Entertainment and Multimedia Computing
+          </MenuItem>
+        </Controller>
+        <FormHelperText>
+          {_.isUndefined(errors.course) ? "" : "Required"}
+        </FormHelperText>
+      </FormControl>
     );
   };
 
@@ -164,87 +178,76 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
 
   return (
     <>
-      <Grid container className={classes.root} elevation={3}>
-        <Grid
-          item
-          container
-          className={classes.form}
-          direction="column"
-          justify="center"
-          component="form"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <Grid item sm>
+      <div className={classes.root}>
+        <Paper className={classes.formWrapper} elevation={5}>
+          <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
             <TextField
+              variant="outlined"
+              className={classes.textField}
               name="firstName"
               error={errors.firstName !== undefined}
               label="First Name"
-              fullWidth
               defaultValue=""
               inputRef={register({
                 required: true,
               })}
               helperText={_.isUndefined(errors.firstName) ? "" : "Required"}
             />
-          </Grid>
-          <Grid item sm>
+
             <TextField
+              className={classes.textField}
+              variant="outlined"
               name="middleName"
               label="Middle Name"
               defaultValue=""
-              fullWidth
               inputRef={register}
             />
-          </Grid>
-          <Grid item sm>
             <TextField
+              className={classes.textField}
+              variant="outlined"
               error={errors.lastName !== undefined}
               name="lastName"
               label="Last Name"
               defaultValue=""
-              fullWidth
               inputRef={register({
                 required: true,
               })}
               helperText={_.isUndefined(errors.lastName) ? "" : "Required"}
             />
-          </Grid>
-          <Grid item sm>
             <TextField
+              className={classes.textField}
+              variant="outlined"
               error={errors.email !== undefined}
               name="email"
               label="Email"
               defaultValue=""
-              fullWidth
               inputRef={register({
                 required: true,
                 pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@ciit.edu.ph$/,
               })}
               helperText={validateEmail()}
             />
-          </Grid>
-          <Grid item sm>
             <TextField
+              className={classes.textField}
+              variant="outlined"
               error={errors.id !== undefined}
               name="id"
               label="ID"
-              fullWidth
               defaultValue=""
               inputRef={register({
                 required: true,
               })}
               helperText={_.isUndefined(errors.id) ? "" : "Required"}
             />
-          </Grid>
-          <Grid item sm>
             <FormControl fullWidth error={errors.type !== undefined}>
               <InputLabel>Type</InputLabel>
               <Controller
-                as={Select}
+                as={
+                  <Select className={classes.selectField} variant="outlined" />
+                }
                 name="type"
                 control={control}
                 defaultValue=""
-                fullWidth
                 rules={{ required: true }}
               >
                 <MenuItem value={"student"}>Student</MenuItem>
@@ -254,17 +257,17 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
                 {_.isUndefined(errors.type) ? "" : "Required"}
               </FormHelperText>
             </FormControl>
-          </Grid>
-          {renderForms()}
-          <Button
-            type="submit"
-            className={classes.submitButton}
-            variant="contained"
-          >
-            Submit
-          </Button>
-        </Grid>
-      </Grid>
+            {renderForms()}
+            <Button
+              type="submit"
+              className={classes.submitButton}
+              variant="contained"
+            >
+              Submit
+            </Button>
+          </form>
+        </Paper>
+      </div>
     </>
   );
 };

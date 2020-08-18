@@ -39,20 +39,33 @@ function* getTeachers() {
       yield put(getTeachersSuccess(teachers.data));
     }
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 
 function* getTeachersBySubj() {
-  const loggedInStudent = yield select(getCurrentUser);
-  const response = yield axios
-    .get("teachers/subject", {
-      params: {
-        ids: loggedInStudent.enrolledSubjects.map((s) => s.ID).join(),
-      },
-    })
-    .then((r) => r.data);
-  yield put(getTeachersSuccess(response.data));
+  try {
+    const loggedInStudent = yield select(getCurrentUser);
+    const response = yield axios
+      .get("teachers/subject", {
+        params: {
+          ids: loggedInStudent.enrolledSubjects.map((s) => s.ID).join(),
+        },
+      })
+      .then((r) => r.data);
+    yield put(getTeachersSuccess(response.data));
+  } catch (error) {
+    if (error.response) {
+      yield put(getTeachersSuccess([]));
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
+  }
 }
 
 function* getTeachersSaga({ payload: { filterBySubj } }) {
@@ -72,7 +85,6 @@ function* addTeacherSaga({ payload: { email, metadata, id } }) {
     yield put(
       showAlert("SUCCESS", `Teacher ${metadata.fullName} has been added!`)
     );
-    console.log(metadata);
   } catch (error) {
     if (error.response) {
       yield put(setError(error.response.data.error.message));

@@ -35,7 +35,11 @@ function* addStudentSaga({ payload: { email, metadata, course, id } }) {
       showAlert("SUCCESS", `Student ${metadata.fullName} has been added!`)
     );
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 
@@ -77,6 +81,7 @@ function* getStudentsBySubject() {
     if (error.response) {
       yield put(setError(error.response.data.error.message));
     } else {
+      yield put(getStudentsSuccess([]));
       yield put(setError(error.message));
     }
   }

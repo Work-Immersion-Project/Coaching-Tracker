@@ -1,25 +1,27 @@
 import React from "react";
-import { Grid, Typography } from "@material-ui/core";
+import { Typography, Paper, CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { CoachingSessionListItem } from "../../custom/CoachingSessionListItem";
 import { CoachingSessionCard } from "../../custom/CoachingSessionCard";
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    display: "grid",
+    gridTemplate: "1fr 1fr / 1fr",
+    gridGap: "50px",
+    padding: "2em",
     height: "100%",
     width: "100%",
+    boxSizing: "border-box",
     overflow: "hidden",
-    backgroundColor: "white",
-    borderTopLeftRadius: "30px",
-    borderBottomLeftRadius: "30px",
-    padding: "2em",
-    [theme.breakpoints.up("sm")]: {
-      zIndex: "1201",
-    },
   },
   onGoingSessionsWrapper: {
-    width: "100%",
+    padding: "1em 1em 2em 1em",
+    backgroundColor: "white",
+    borderRadius: "30px",
+    overflow: "hidden",
   },
+
   onGoingSessions: {
     borderRadius: "30px",
     marginTop: "1em",
@@ -41,16 +43,23 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   sessionsWrapper: {
-    width: "100%",
-    height: "100%",
+    padding: "1em 1em 2em 1em",
+    backgroundColor: "white",
     borderRadius: "30px",
+    overflow: "hidden",
+  },
+  sessions: {
+    borderRadius: "30px",
+    height: "100%",
     overflowX: "auto",
-    marginBottom: "0.5em",
-    paddingRight: "0.5em",
+    marginBottom: "2em",
+    paddingRight: "1.5em",
+
+    backgroundColor: "white",
 
     // Scrollbar Related
     "&::-webkit-scrollbar": {
-      width: "5px",
+      display: "none",
     },
     "&::-webkit-scrollbar-track": {
       background: "#222222",
@@ -60,10 +69,6 @@ const useStyles = makeStyles((theme) => ({
       background: "#4EC8F4",
       borderRadius: "20px",
     },
-  },
-  sessions: {
-    borderRadius: "30px",
-    width: "100%",
   },
 }));
 
@@ -80,35 +85,37 @@ const StudentDashboard = ({ onGoingCoachingSessions, coachingSessions }) => {
   };
 
   const renderCoachingSessions = () => {
-    return coachingSessions.map((coachingSession) => (
-      <CoachingSessionListItem
-        key={coachingSession.ID}
-        coachingSessionDetails={coachingSession}
-      />
-    ));
+    if (coachingSessions && coachingSessions.length !== 0) {
+      return coachingSessions.map((coachingSession) => (
+        <CoachingSessionListItem
+          key={coachingSession.ID}
+          coachingSessionDetails={coachingSession}
+        />
+      ));
+    }
+    return (
+      <div
+        style={{
+          height: "100%",
+          display: "grid",
+          placeContent: "center",
+        }}
+      >
+        <CircularProgress />
+      </div>
+    );
   };
-
   return (
-    <Grid className={classes.root} container direction="row">
-      <Grid item container className={classes.onGoingSessionsWrapper} xs={12}>
+    <div className={classes.root}>
+      <Paper className={classes.onGoingSessionsWrapper}>
         <Typography variant="h5">Ongoing Sessions</Typography>
-        <Grid
-          item
-          container
-          className={classes.onGoingSessions}
-          spacing={2}
-          zeroMinWidth
-        >
-          {renderOnGoingSessions()}
-        </Grid>
-      </Grid>
-      <Typography variant="h5">Sessions</Typography>
-      <Grid className={classes.sessionsWrapper} item container xs={12}>
-        <Grid item container spacing={2}>
-          {renderCoachingSessions()}
-        </Grid>
-      </Grid>
-    </Grid>
+        {renderOnGoingSessions()}
+      </Paper>
+      <Paper className={classes.sessionsWrapper}>
+        <Typography variant="h5">Sessions</Typography>
+        <div className={classes.sessions}>{renderCoachingSessions()}</div>
+      </Paper>
+    </div>
   );
 };
 

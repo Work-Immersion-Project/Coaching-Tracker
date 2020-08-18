@@ -5,18 +5,9 @@ import MaterialTable, { MTableHeader } from "material-table";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: "100%",
+    padding: "2em",
     width: "100%",
-    display: "grid",
-    placeItems: "center",
-
-    overflow: "hidden",
-    backgroundColor: "white",
-    borderTopLeftRadius: "30px",
-    borderBottomLeftRadius: "30px",
-    [theme.breakpoints.up("sm")]: {
-      zIndex: "1201",
-    },
+    boxSizing: "border-box",
   },
   table: {
     width: "100%",

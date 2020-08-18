@@ -22,6 +22,26 @@ import WeekTableCell from "./WeekTableCell";
 import AppointmentContent from "./AppointmentContent";
 import Appointment from "./Appointment";
 import _ from "lodash";
+import { makeStyles } from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    // Scrollbar Related
+    "& .MuiGrid-root": {
+      "&::-webkit-scrollbar": {
+        height: "5px",
+      },
+      "&::-webkit-scrollbar-track": {
+        background: "#222222",
+        borderRadius: "20px",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        background: "#4EC8F4",
+        borderRadius: "20px",
+      },
+    },
+  },
+}));
 
 const CustomScheduler = ({
   coachingSessions,
@@ -37,6 +57,7 @@ const CustomScheduler = ({
   acceptCoachingSchedule,
   tooltip,
 }) => {
+  const classes = useStyles();
   const studentInstances = _.flatten(
     coachingSessions.map((schedule) =>
       schedule.studentAttendees.map((student) => {
@@ -194,7 +215,7 @@ const CustomScheduler = ({
 
   return (
     <Scheduler
-      height="auto"
+      className={classes.root}
       data={coachingSessions}
       onCellClick={openAddEventDrawer}
     >

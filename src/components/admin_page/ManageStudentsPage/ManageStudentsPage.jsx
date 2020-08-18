@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import MaterialTable, { MTableHeader } from "material-table";
 import {
-  Grid,
   Typography,
   Chip,
   createMuiTheme,
@@ -9,12 +8,11 @@ import {
 } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    height: "100%",
+    padding: "2em",
     width: "100%",
-    padding: "1em",
-    backgroundColor: "#4B4E6D",
+    boxSizing: "border-box",
   },
 }));
 
@@ -167,12 +165,7 @@ const ManageStudentsPage = ({
 
   return (
     <ThemeProvider theme={formTheme}>
-      <Grid
-        className={classes.root}
-        container
-        direction="column"
-        justify="center"
-      >
+      <div className={classes.root}>
         <MaterialTable
           title="Students"
           data={students ? students : []}
@@ -227,7 +220,7 @@ const ManageStudentsPage = ({
             },
           }}
         />
-      </Grid>
+      </div>
     </ThemeProvider>
   );
 };

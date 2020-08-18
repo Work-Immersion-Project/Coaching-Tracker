@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import {
-  Grid,
   Typography,
   Chip,
   createMuiTheme,
@@ -9,12 +8,11 @@ import {
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import MaterialTable, { MTableHeader } from "material-table";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    height: "100%",
+    padding: "2em",
     width: "100%",
-    padding: "1em",
-    background: "#4B4E6D",
+    boxSizing: "border-box",
   },
 }));
 
@@ -123,13 +121,6 @@ const ManageTeachersPage = ({
   removeSubjectFromTeacherRequest,
 }) => {
   const classes = useStyles();
-  // const {
-  //   getTeachers,
-  //   hideModal,
-  //   showModal,
-  //   removeSubjectTeacher,
-  //   assignSubjectTeacher,
-  // } = props;
 
   useEffect(() => {
     getTeachersRequest(false);
@@ -173,12 +164,7 @@ const ManageTeachersPage = ({
 
   return (
     <ThemeProvider theme={formTheme}>
-      <Grid
-        className={classes.root}
-        container
-        direction="column"
-        justify="center"
-      >
+      <div className={classes.root}>
         <MaterialTable
           title="Teachers"
           data={teachers ? teachers : []}
@@ -225,7 +211,7 @@ const ManageTeachersPage = ({
             },
           }}
         />
-      </Grid>
+      </div>
     </ThemeProvider>
   );
 };

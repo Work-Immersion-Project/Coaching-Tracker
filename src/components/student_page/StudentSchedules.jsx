@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import {
-  Grid,
   Paper,
   CircularProgress,
   createMuiTheme,
@@ -11,16 +10,20 @@ import { makeStyles } from "@material-ui/core/styles";
 import CustomSchedulerContainer from "../custom/scheduler/CustomSchedulerContainer";
 
 const useStyles = makeStyles((theme) => ({
-  content: {
+  root: {
+    padding: "2em",
     height: "100%",
     width: "100%",
-    padding: "1em",
     overflow: "hidden",
-    backgroundColor: "#4B4E6D",
+    boxSizing: "border-box",
   },
+
   scheduler: {
     height: "100%",
     width: "100%",
+    alignSelf: "center",
+    backgroundColor: "white",
+    borderRadius: "30px",
     overflow: "hidden",
   },
 }));
@@ -163,16 +166,7 @@ const StudentSchedules = (props) => {
     return <CircularProgress />;
   };
 
-  return (
-    <Grid
-      className={classes.content}
-      container
-      justify="center"
-      alignItems="center"
-    >
-      {renderContent()}
-    </Grid>
-  );
+  return <div className={classes.root}>{renderContent()}</div>;
 };
 
 const mapStateToProps = (state) => {

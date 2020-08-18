@@ -128,9 +128,10 @@ const TeacherDrawer = (props) => {
     return drawerItems.map((item) => {
       const { path, text, icon } = item;
       const pathname = `/Coaching-Tracker/teacher${path}`;
-      const formattedSelectedPath = selectedPath.endsWith("/")
-        ? selectedPath
-        : `${selectedPath}/`;
+
+      const formattedSelectedPath = selectedPath.endsWith("teacher")
+        ? selectedPath + "/"
+        : selectedPath;
 
       const isActive = formattedSelectedPath === pathname;
       return (

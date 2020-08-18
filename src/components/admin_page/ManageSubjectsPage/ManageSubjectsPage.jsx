@@ -3,17 +3,21 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Grid, Chip, createMuiTheme, ThemeProvider } from "@material-ui/core";
 import MaterialTable, { MTableHeader } from "material-table";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    height: "100%",
+    padding: "2em",
     width: "100%",
-    padding: "1em",
-    background: "#4B4E6D",
+    boxSizing: "border-box",
+  },
+  table: {
+    width: "100%",
+    height: "100%",
+    borderRadius: "20px",
+    overflow: "hidden",
   },
   fontColor: {
     color: "white",
   },
-
   teacherChip: {
     margin: "0.25em",
   },
@@ -28,13 +32,18 @@ const StyledTableHeader = withStyles({})(
   }
 );
 
-const formTheme = createMuiTheme({
+const tableTheme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#4caf50",
+    },
+    secondary: {
+      main: "#ff9100",
+    },
+  },
   overrides: {
     MuiPaper: {
-      root: {
-        color: "white",
-        backgroundColor: "#222222",
-      },
+      rounded: "20px",
     },
     MuiInput: {
       root: {
@@ -122,6 +131,98 @@ const ManageSubjectsPage = ({
   showModal,
   subjects,
 }) => {
+  const tableTheme = createMuiTheme({
+    palette: {
+      primary: {
+        main: "#4caf50",
+      },
+      secondary: {
+        main: "#ff9100",
+      },
+    },
+    overrides: {
+      MuiPaper: {
+        rounded: "20px",
+      },
+      MuiInput: {
+        root: {
+          color: "#84DCC6",
+        },
+        underline: {
+          minWidth: "270px",
+          "&:before": {
+            borderBottom: "1px solid rgba(132, 220, 198, 1)",
+          },
+          "&:after": {
+            borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+          },
+          "&:hover:not($disabled):not($focused):not($error):before": {
+            borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+          },
+        },
+      },
+      MuiIconButton: {
+        root: {
+          color: "#84DCC6",
+          "&$disabled": {
+            color: "#222222",
+          },
+        },
+        colorInherit: {
+          color: "#84DCC6",
+        },
+      },
+
+      MuiInputBase: {
+        input: {
+          color: "white",
+        },
+      },
+      MuiSelect: {
+        icon: {
+          color: "#84DCC6",
+        },
+      },
+      MuiTypography: {
+        caption: {
+          color: "white",
+        },
+      },
+      MuiTableCell: {
+        body: {
+          color: "white",
+        },
+        head: {
+          color: "#84DCC6",
+        },
+      },
+      MuiTableSortLabel: {
+        root: {
+          color: "#84DCC6",
+          "&$active": {
+            color: "#84DCC6",
+            "&& $icon": {
+              color: "#84DCC6",
+            },
+          },
+          "&:hover": {
+            color: "#84DCC6",
+          },
+        },
+      },
+      MuiIcon: {
+        fontSizeSmall: {
+          color: "#84DCC6",
+        },
+      },
+      MuiTablePagination: {
+        root: {
+          color: "white",
+        },
+      },
+    },
+  });
+
   const classes = useStyles();
 
   useEffect(() => {
@@ -147,14 +248,10 @@ const ManageSubjectsPage = ({
   };
 
   return (
-    <ThemeProvider theme={formTheme}>
-      <Grid
-        className={classes.root}
-        container
-        direction="column"
-        justify="center"
-      >
+    <ThemeProvider theme={tableTheme}>
+      <div className={classes.root}>
         <MaterialTable
+          className={classes.table}
           data={subjects ? subjects : []}
           title="Subjects"
           columns={[
@@ -207,7 +304,7 @@ const ManageSubjectsPage = ({
             },
           }}
         />
-      </Grid>
+      </div>
     </ThemeProvider>
   );
 };

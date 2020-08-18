@@ -172,6 +172,7 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
               error={errors.firstName !== undefined}
               label="First Name"
               fullWidth
+              defaultValue=""
               inputRef={register({
                 required: true,
               })}
@@ -182,6 +183,7 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
             <TextField
               name="middleName"
               label="Middle Name"
+              defaultValue=""
               fullWidth
               inputRef={register}
             />
@@ -191,6 +193,7 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
               error={errors.lastName !== undefined}
               name="lastName"
               label="Last Name"
+              defaultValue=""
               fullWidth
               inputRef={register({
                 required: true,
@@ -203,6 +206,7 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
               error={errors.email !== undefined}
               name="email"
               label="Email"
+              defaultValue=""
               fullWidth
               inputRef={register({
                 required: true,
@@ -217,6 +221,7 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
               name="id"
               label="ID"
               fullWidth
+              defaultValue=""
               inputRef={register({
                 required: true,
               })}
@@ -234,7 +239,6 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
                 fullWidth
                 rules={{ required: true }}
               >
-                <MenuItem value={""}></MenuItem>
                 <MenuItem value={"student"}>Student</MenuItem>
                 <MenuItem value={"teacher"}>Teacher</MenuItem>
               </Controller>

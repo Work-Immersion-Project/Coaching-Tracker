@@ -24,12 +24,17 @@ const useStyles = makeStyles((theme) => ({
   },
 
   onGoingSessions: {
-    borderRadius: "30px",
-    marginTop: "1em",
-    width: "100%",
+    display: "flex",
     flexWrap: "nowrap",
 
+    alignItems: "center",
+    borderRadius: "30px",
+    height: "100%",
     overflowY: "auto",
+
+    backgroundColor: "white",
+
+    WebkitOverflowScrolling: "touch",
     // Scrollbar Related
     "&::-webkit-scrollbar": {
       height: "5px",
@@ -54,10 +59,11 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     overflowX: "auto",
     marginBottom: "2em",
+
     paddingRight: "1.5em",
 
     backgroundColor: "white",
-
+    WebkitOverflowScrolling: "touch",
     // Scrollbar Related
     "&::-webkit-scrollbar": {
       display: "none",
@@ -77,16 +83,59 @@ const TeacherDashboard = ({ onGoingCoachingSessions, coachingSessions }) => {
   const classes = useStyles();
 
   const renderOnGoingSessions = () => {
-    return onGoingCoachingSessions.map((coachingSession) => (
-      <CoachingSessionCard
-        key={coachingSession.ID}
-        coachingSessionDetails={coachingSession}
-      />
-    ));
+    if (onGoingCoachingSessions) {
+      if (onGoingCoachingSessions.length === 0) {
+        return (
+          <div
+            style={{
+              height: "100%",
+              width: "100%",
+
+              display: "grid",
+              placeContent: "center",
+            }}
+          >
+            <Typography variant="h5">No Ongoing Sessions</Typography>
+          </div>
+        );
+      }
+
+      return onGoingCoachingSessions.map((coachingSession) => (
+        <CoachingSessionCard
+          key={coachingSession.ID}
+          coachingSessionDetails={coachingSession}
+        />
+      ));
+    }
+    return (
+      <div
+        style={{
+          height: "100%",
+          display: "grid",
+          placeContent: "center",
+        }}
+      >
+        <CircularProgress />
+      </div>
+    );
   };
 
   const renderCoachingSessions = () => {
-    if (coachingSessions && coachingSessions.length !== 0) {
+    if (coachingSessions) {
+      if (coachingSessions.length === 0) {
+        return (
+          <div
+            style={{
+              height: "100%",
+              display: "grid",
+              placeContent: "center",
+            }}
+          >
+            <Typography variant="h5">No Sessions</Typography>
+          </div>
+        );
+      }
+
       return coachingSessions.map((coachingSession) => (
         <CoachingSessionListItem
           key={coachingSession.ID}
@@ -111,7 +160,7 @@ const TeacherDashboard = ({ onGoingCoachingSessions, coachingSessions }) => {
     <div className={classes.root}>
       <Paper className={classes.onGoingSessionsWrapper}>
         <Typography variant="h5">Ongoing Sessions</Typography>
-        {renderOnGoingSessions()}
+        <div className={classes.onGoingSessions}>{renderOnGoingSessions()}</div>
       </Paper>
       <Paper className={classes.sessionsWrapper}>
         <Typography variant="h5">Sessions</Typography>

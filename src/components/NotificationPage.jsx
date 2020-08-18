@@ -22,7 +22,7 @@ const useStyles = makeStyles(() => ({
   root: {
     height: "100%",
     width: "100%",
-    backgroundColor: "#4B4E6D",
+    backgroundColor: "white",
     padding: "1em",
   },
   notificationCard: {

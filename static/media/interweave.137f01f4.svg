@@ -1,0 +1,26 @@
+<svg width="1016" height="707" viewBox="0 0 1016 707" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0)">
+<rect x="686" y="-457.068" width="47.8635" height="1055.04" transform="rotate(-30 686 -457.068)" fill="#A5DAE7"/>
+<rect x="568" y="-347.068" width="47.8635" height="1055.04" transform="rotate(-30 568 -347.068)" fill="#A5DAE7"/>
+<rect x="156" y="-103.068" width="47.8635" height="1055.04" transform="rotate(-30 156 -103.068)" fill="#A5DAE7"/>
+<rect x="557.521" y="-102" width="47.8635" height="1055.04" transform="rotate(30 557.521 -102)" fill="#4EC8F4"/>
+<rect x="1136.52" y="178" width="47.8635" height="1055.04" transform="rotate(30 1136.52 178)" fill="#4EC8F4"/>
+<rect x="351" y="-80.0682" width="47.8635" height="1055.04" transform="rotate(-30 351 -80.0682)" fill="#A5DAE7"/>
+<rect x="1429.52" y="214" width="47.8635" height="1055.04" transform="rotate(30 1429.52 214)" fill="#4EC8F4"/>
+<rect x="1319.52" y="179" width="47.8635" height="1055.04" transform="rotate(30 1319.52 179)" fill="#00364D"/>
+<rect x="1278.52" y="154" width="47.8635" height="1055.04" transform="rotate(30 1278.52 154)" fill="#4EC8F4"/>
+<rect x="1084.52" y="-102" width="47.8635" height="1055.04" transform="rotate(30 1084.52 -102)" fill="#4EC8F4"/>
+<rect x="-177" y="-40.0682" width="47.8635" height="1055.04" transform="rotate(-30 -177 -40.0682)" fill="#A5DAE7"/>
+<rect x="974.521" y="-137" width="47.8635" height="1055.04" transform="rotate(30 974.521 -137)" fill="#00364D"/>
+<rect x="933.521" y="-162" width="47.8635" height="1055.04" transform="rotate(30 933.521 -162)" fill="#4EC8F4"/>
+<rect x="791.521" y="-138" width="47.8635" height="1055.04" transform="rotate(30 791.521 -138)" fill="#4EC8F4"/>
+<rect x="440.521" y="-126" width="47.8635" height="1055.04" transform="rotate(30 440.521 -126)" fill="#00364D"/>
+<rect x="406.521" y="-162" width="47.8635" height="1055.04" transform="rotate(30 406.521 -162)" fill="#4EC8F4"/>
+<rect x="-263" y="-114.068" width="47.8635" height="1055.04" transform="rotate(-30 -263 -114.068)" fill="#4EC8F4"/>
+</g>
+<defs>
+<clipPath id="clip0">
+<path d="M0 30C0 13.4314 13.4315 0 30 0H1016V707H30C13.4314 707 0 693.569 0 677V30Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>

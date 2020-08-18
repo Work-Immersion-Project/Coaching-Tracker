@@ -8,10 +8,12 @@ import {
   FormControl,
   FormHelperText,
   Paper,
+  FormControlLabel,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import _ from "lodash";
 import { useForm, Controller } from "react-hook-form";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "grid",
@@ -21,6 +23,10 @@ const useStyles = makeStyles((theme) => ({
   buttonStyle: {
     backgroundColor: "red",
     color: "white",
+  },
+  selectLabel: {
+    marginLeft: "1em",
+    color: "black"
   },
   formWrapper: {
     padding: "2em",
@@ -62,13 +68,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   selectField: {
+    width: "100%",
     // Text Fields
-    "label + &": {
-      color: "#4EC8F4",
-    },
-    "& label.Mui-focused": {
-      color: "#4EC8F4",
-    },
     "& .MuiOutlinedInput-root": {
       borderRadius: "30px",
       "& fieldset": {
@@ -80,6 +81,12 @@ const useStyles = makeStyles((theme) => ({
       "&.Mui-focused fieldset": {
         borderColor: "#4ec8f4",
       },
+    },
+  },
+
+  selectFieldLabel: {
+    "&.MuiFormLabel-root": {
+      color: "#4EC8F4",
     },
   },
 
@@ -101,6 +108,8 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "1em",
     margin: "0 5em",
   },
+
+
 }));
 
 const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
@@ -131,12 +140,12 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
 
   const renderStudentForms = () => {
     return (
-      <FormControl fullWidth error={errors.course !== undefined}>
-        <InputLabel>Course</InputLabel>
+      <FormControl fullWidth error={errors.course !== undefined} className={classes.selectField}>
+        {/* <InputLabel className={classes.selectLabel} >Course</InputLabel> */}
         <Controller
-          className={classes.textField}
           as={Select}
           name="course"
+          label="Course"
           variant="outlined"
           control={control}
           defaultValue=""
@@ -239,17 +248,19 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
               })}
               helperText={_.isUndefined(errors.id) ? "" : "Required"}
             />
-            <FormControl fullWidth error={errors.type !== undefined}>
-              <InputLabel>Type</InputLabel>
-              <Controller
+            <FormControl fullWidth error={errors.type !== undefined} className={classes.selectField} >
+            <InputLabel className={classes.selectLabel}>Type</InputLabel>
+              <Controller 
                 as={
-                  <Select className={classes.selectField} variant="outlined" />
+                  <Select variant="outlined" />
                 }
-                name="type"
+                name="type" 
+                label="Type"
                 control={control}
                 defaultValue=""
                 rules={{ required: true }}
               >
+                
                 <MenuItem value={"student"}>Student</MenuItem>
                 <MenuItem value={"teacher"}>Teacher</MenuItem>
               </Controller>

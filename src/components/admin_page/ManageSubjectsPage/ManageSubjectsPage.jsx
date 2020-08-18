@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     borderRadius: "20px",
     overflow: "hidden",
+    
   },
   fontColor: {
     color: "white",
@@ -32,97 +33,6 @@ const StyledTableHeader = withStyles({})(
   }
 );
 
-const tableTheme = createMuiTheme({
-  palette: {
-    primary: {
-      main: "#4caf50",
-    },
-    secondary: {
-      main: "#ff9100",
-    },
-  },
-  overrides: {
-    MuiPaper: {
-      rounded: "20px",
-    },
-    MuiInput: {
-      root: {
-        color: "#84DCC6",
-      },
-      underline: {
-        minWidth: "270px",
-        "&:before": {
-          borderBottom: "1px solid rgba(132, 220, 198, 1)",
-        },
-        "&:after": {
-          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
-        },
-        "&:hover:not($disabled):not($focused):not($error):before": {
-          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
-        },
-      },
-    },
-    MuiIconButton: {
-      root: {
-        color: "#84DCC6",
-        "&$disabled": {
-          color: "#222222",
-        },
-      },
-      colorInherit: {
-        color: "#84DCC6",
-      },
-    },
-
-    MuiInputBase: {
-      input: {
-        color: "white",
-      },
-    },
-    MuiSelect: {
-      icon: {
-        color: "#84DCC6",
-      },
-    },
-    MuiTypography: {
-      caption: {
-        color: "white",
-      },
-    },
-    MuiTableCell: {
-      body: {
-        color: "white",
-      },
-      head: {
-        color: "#84DCC6",
-      },
-    },
-    MuiTableSortLabel: {
-      root: {
-        color: "#84DCC6",
-        "&$active": {
-          color: "#84DCC6",
-          "&& $icon": {
-            color: "#84DCC6",
-          },
-        },
-        "&:hover": {
-          color: "#84DCC6",
-        },
-      },
-    },
-    MuiIcon: {
-      fontSizeSmall: {
-        color: "#84DCC6",
-      },
-    },
-    MuiTablePagination: {
-      root: {
-        color: "white",
-      },
-    },
-  },
-});
 
 const ManageSubjectsPage = ({
   getSubjects,
@@ -143,6 +53,10 @@ const ManageSubjectsPage = ({
     overrides: {
       MuiPaper: {
         rounded: "20px",
+        root: {
+          color: "white",
+          backgroundColor: "#222222",
+        },
       },
       MuiInput: {
         root: {

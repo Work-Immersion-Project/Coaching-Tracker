@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     width: "100%",
     padding: "1em",
-    color: "#84DCC6",
+    color: "#4EC8F4",
     align: "center",
   },
   timePicker: {

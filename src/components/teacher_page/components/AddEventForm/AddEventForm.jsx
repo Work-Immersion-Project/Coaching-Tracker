@@ -11,7 +11,7 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import { useForm, Controller } from "react-hook-form";
-import { DatePicker, TimePicker } from "@material-ui/pickers";
+import { DatePicker, TimePicker,  } from "@material-ui/pickers";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const useStyles = makeStyles(() => ({
@@ -61,10 +61,10 @@ const formTheme = createMuiTheme({
     },
     MuiPickersCalendar: {
       daysHeader: {
-        backgroundColor: "#84DCC6",
+        backgroundColor: "black",
       },
       weekDayLabel: {
-        color: "black",
+        color: "white",
       },
     },
     MuiPickersArrowSwitcher: {
@@ -80,6 +80,13 @@ const formTheme = createMuiTheme({
       },
       daySelected: {
         backgroundColor: "#3f51b5",
+        "&:hover": {
+          backgroundColor:"#3f51b5",
+        },
+        "&:focus": {
+          backgroundColor: "#3f51b5",
+        },
+        color: "white",
       },
       dayDisabled: {
         color: "red",
@@ -99,7 +106,7 @@ const formTheme = createMuiTheme({
       root: {
         color: "white",
         "&$focused": {
-          color: "#84DCC6",
+          color: "#4EC8F4",
         },
       },
     },
@@ -111,26 +118,26 @@ const formTheme = createMuiTheme({
       underline: {
         minWidth: "270px",
         "&:before": {
-          borderBottom: "1px solid rgba(132, 220, 198, 1)",
+          borderBottom: "1px solid rgba(78,200,244, 1)",
         },
         "&:after": {
-          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+          borderBottom: `2px solid rgba(78,200,244, 1)`,
         },
         "&:hover:not($disabled):not($focused):not($error):before": {
-          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+          borderBottom: `2px solid rgba(78,200,244, 1)`,
         },
       },
     },
 
     MuiIconButton: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
 
     MuiFormHelperText: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
 
@@ -142,11 +149,11 @@ const formTheme = createMuiTheme({
     },
     MuiButton: {
       root: {
-        backgroundColor: "#84DCC6",
+        backgroundColor: "#4EC8F4",
         "&:hover": {
-          backgroundColor: "#52aa95",
+          backgroundColor: "#0097c1",
           "@media (hover: none)": {
-            backgroundColor: "#84DCC6",
+            backgroundColor: "#4EC8F4",
           },
         },
       },

@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     width: "100%",
     alignSelf: "center",
-    backgroundColor: "white",
+    backgroundColor: "#222222",
     borderRadius: "30px",
     overflow: "hidden",
   },
@@ -32,6 +32,12 @@ const formTheme = createMuiTheme({
   overrides: {
     MuiPaper: {
       root: {
+        backgroundColor: "#222222",
+      },
+    },
+
+    MuiPopover: {
+      paper: {
         backgroundColor: "#222222",
       },
     },
@@ -67,30 +73,30 @@ const formTheme = createMuiTheme({
         color: "white",
       },
       highlightedText: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
       otherMonth: {
         color: "rgba(244, 244, 244, 0.38)",
       },
       today: {
         color: "#222222",
-        background: "#84DCC6",
+        background: "#4EC8F4",
       },
     },
 
     MuiIconButton: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
 
     MuiButton: {
       root: {
-        backgroundColor: "#84DCC6",
+        backgroundColor: "#4EC8F4",
         "&:hover": {
-          backgroundColor: "#52aa95",
+          backgroundColor: "#0097c1",
           "@media (hover: none)": {
-            backgroundColor: "#84DCC6",
+            backgroundColor: "#4EC8F4",
           },
         },
       },
@@ -100,7 +106,7 @@ const formTheme = createMuiTheme({
     },
     MuiInputBase: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
 
@@ -113,20 +119,20 @@ const formTheme = createMuiTheme({
     MuiOutlinedInput: {
       root: {
         "&$focused $notchedOutline": {
-          borderColor: "#84DCC6",
+          borderColor: "#4EC8F4",
         },
         "&:hover:not($disabled):not($focused):not($error) $notchedOutline": {
-          borderColor: "#84DCC6",
+          borderColor: "#4EC8F4",
         },
       },
       notchedOutline: {
-        borderColor: "#84DCC6",
+        borderColor: "#4EC8F4",
       },
     },
 
     MuiTableCell: {
       head: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
       body: {
         color: "white",
@@ -135,13 +141,13 @@ const formTheme = createMuiTheme({
 
     MuiMenuItem: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
 
     MuiSelect: {
       icon: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
   },

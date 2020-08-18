@@ -7,12 +7,12 @@ import classNames from "clsx";
 
 const MonthTableCell = withStyles(({ palette }) => ({
   dayBehindCell: {
-    backgroundColor: fade(palette.action.disabledBackground, 0.04),
+    backgroundColor: "#111",
     "&:hover": {
-      backgroundColor: fade(palette.action.disabledBackground, 0.04),
+      backgroundColor:"#111",
     },
     "&:focus": {
-      backgroundColor: fade(palette.action.disabledBackground, 0.04),
+      backgroundColor: "#111",
     },
   },
 }))(({ classes, onCellClick, ...restProps }) => {

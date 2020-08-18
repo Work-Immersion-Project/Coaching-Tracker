@@ -12,21 +12,23 @@ import {
   confirmCoachingScheduleRequest,
   acceptCoachingScheduleRequest,
 } from "../../../actions";
-const CustomSchedulerContainer = () => {
+import { coachingSessionStudentInstancesSelector } from "../../../selectors";
+const CustomSchedulerContainer = ({ coachingSessions }) => {
   const dispatch = useDispatch();
-  const [visible, setVisibility] = useState(false);
-  const [appointmentMeta, setAppointmentMeta] = useState({
-    data: {},
-    target: null,
-  });
+  const showModal = useCallback(
+    (type, props) => dispatch(showModal(type, props)),
+    [dispatch]
+  );
+  const hideModal = useCallback(() => dispatch(hideModal()), [dispatch]);
+  const updateCoachingScheduleRequest = useCallback(
+    (sessionDetails) =>
+      dispatch(updateCoachingScheduleStatusRequest(sessionDetails)),
+    [dispatch]
+  );
   const stateToProps = useSelector((state) => {
     return {
-      coachingSessions: state.coaching.coachingSchedules,
       loggedInUser: state.auth.data.user,
-      tooltip: {
-        appointmentMeta,
-        visible,
-      },
+      studentInstances: coachingSessionStudentInstancesSelector(state),
     };
   });
 
@@ -35,15 +37,7 @@ const CustomSchedulerContainer = () => {
       (eventData) => dispatch(openAddEventDrawer(eventData)),
       [dispatch]
     ),
-    showModal: useCallback((type, props) => dispatch(showModal(type, props)), [
-      dispatch,
-    ]),
-    hideModal: useCallback(() => dispatch(hideModal()), [dispatch]),
-    updateCoachingScheduleRequest: useCallback(
-      (sessionDetails) =>
-        dispatch(updateCoachingScheduleStatusRequest(sessionDetails)),
-      [dispatch]
-    ),
+
     acceptCoachingSchedule: useCallback(
       (sessionDetails) =>
         dispatch(acceptCoachingScheduleRequest(sessionDetails)),
@@ -67,21 +61,48 @@ const CustomSchedulerContainer = () => {
       [dispatch]
     ),
   };
-
-  const handleAppointmentMetaChange = (appointmentMeta) => {
-    setAppointmentMeta(appointmentMeta);
+  const onDialogClose = () => {
+    hideModal();
   };
 
-  const handleVisibilityChange = (isVisible) => {
-    setVisibility(isVisible);
+  const onUpdateStatusButtonPressed = (id, status) => {
+    let title = "";
+    let content = "";
+    if (status === "ongoing") {
+      updateCoachingScheduleRequest({
+        id,
+        status,
+      });
+    } else {
+      if (status === "pending") {
+        title = "Accept Schedule Request?";
+        content = "Are you sure that you are available at this date?";
+      } else if (status === "cancelled") {
+        title = "Cancel Schedule?";
+        content = "Are you sure that you want to cancel this session?";
+      } else if (status === "denied") {
+        title = "Deny Schedule Request?";
+        content = "Are you sure that you want to deny this session?";
+      }
+      showModal("CONFIRMATION_MODAL", {
+        onDialogClose: onDialogClose,
+        title,
+        content,
+        onNegativeClick: onDialogClose,
+        onPositiveClick: () =>
+          dispatchToProps.updateCoachingScheduleRequest({
+            id,
+            status,
+          }),
+      });
+    }
   };
-
   return (
     <CustomScheduler
       {...dispatchToProps}
       {...stateToProps}
-      updateAppointmentMeta={handleAppointmentMetaChange}
-      updateVisibility={handleVisibilityChange}
+      coachingSessions={coachingSessions}
+      onUpdateStatusButtonPressed={onUpdateStatusButtonPressed}
     />
   );
 };

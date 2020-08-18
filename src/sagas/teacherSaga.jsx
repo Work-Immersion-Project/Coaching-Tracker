@@ -17,7 +17,7 @@ import {
   REMOVE_SUBJECT_FROM_TEACHER_REQUEST,
 } from "../types";
 import { collections, db } from "../firebase";
-import { getCurrentUser } from "../selectors";
+import { currentUserSelector } from "../selectors";
 import firebase from "firebase";
 import axios from "../api";
 import { config } from "../consts/config";
@@ -49,7 +49,7 @@ function* getTeachers() {
 
 function* getTeachersBySubj() {
   try {
-    const loggedInStudent = yield select(getCurrentUser);
+    const loggedInStudent = yield select(currentUserSelector);
     const response = yield axios
       .get("teachers/subject", {
         params: {

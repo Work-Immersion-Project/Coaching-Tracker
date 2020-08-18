@@ -19,7 +19,7 @@ import {
   requestCoachingScheduleSuccess,
   acceptCoachingScheduleSuccess,
 } from "../actions";
-import { getCurrentUser, getGapiCalendarClient } from "../selectors";
+import { currentUserSelector, getGapiCalendarClient } from "../selectors";
 import { v4 as uuidV4 } from "uuid";
 import { convertCoachingScheduleDates } from "../utils";
 import axios from "../api";
@@ -32,12 +32,22 @@ function* getStudentCoachingSessions(studentID) {
     `${config.WS_BASE_URL}/coaching-sessions/student/${studentID}`
   );
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));
-  console.log(studentID);
+
   try {
     while (true) {
       const response = yield take(channel);
       const coachingSessions = JSON.parse(response);
-      yield put(getCoachingSchedulesSuccess(coachingSessions.data));
+      yield put(
+        getCoachingSchedulesSuccess(
+          coachingSessions.data.map((s) => {
+            const sched = s;
+            return {
+              ...sched,
+              students: sched.studentAttendees.map((st) => st.email),
+            };
+          })
+        )
+      );
     }
   } catch (error) {
     if (error.response) {
@@ -81,7 +91,7 @@ function* getTeacherCoachingSessions(teacherID) {
 }
 
 function* getCoachingSessionsSaga({ payload: { isStudent } }) {
-  const currentUser = yield select(getCurrentUser);
+  const currentUser = yield select(currentUserSelector);
 
   if (isStudent) {
     yield getStudentCoachingSessions(currentUser.ID);
@@ -98,7 +108,7 @@ function* addCoachingSessionSaga({
 }) {
   const coachingSessionID = uuidV4();
   const gapiCalendar = yield select(getGapiCalendarClient);
-  const currentUser = yield select(getCurrentUser);
+  const currentUser = yield select(currentUserSelector);
 
   const {
     formattedStartingDate,
@@ -241,7 +251,7 @@ function* acceptCoachingSessionSaga({
 function* requestCoachingSessionSaga({
   payload: { startDate, startTime, endDate, endTime, title, teacher },
 }) {
-  const currentUser = yield select(getCurrentUser);
+  const currentUser = yield select(currentUserSelector);
 
   const {
     formattedStartingDate,
@@ -280,7 +290,7 @@ function* requestCoachingSessionSaga({
 
 //** CONFIRM COACHING SESSION */
 function* confirmCoachingSessionSaga({ payload: id }) {
-  const currentUser = yield select(getCurrentUser);
+  const currentUser = yield select(currentUserSelector);
   try {
     yield axios.post(
       `coaching-sessions/student/${currentUser.ID}/confirm/${id}`

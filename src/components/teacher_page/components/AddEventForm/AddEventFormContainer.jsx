@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getStudentsRequest,
@@ -10,6 +10,7 @@ import {
 import AddEventForm from "./AddEventForm";
 
 const AddEventFormContainer = ({ selectedDate }) => {
+  const [isStudentListOpen, setStudentListState] = useState(false);
   const dispatch = useDispatch();
 
   const stateToProps = useSelector((state) => {
@@ -40,6 +41,8 @@ const AddEventFormContainer = ({ selectedDate }) => {
       {...dispatchToProps}
       {...stateToProps}
       selectedDate={selectedDate}
+      isStudentListOpen={isStudentListOpen}
+      setStudentListState={setStudentListState}
     />
   );
 };

@@ -13,6 +13,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { DatePicker, TimePicker,  } from "@material-ui/pickers";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { useState } from "react";
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -182,12 +183,14 @@ const AddEventForm = ({
   addCoachingSessionRequest,
 }) => {
   const { handleSubmit, register, control, errors } = useForm();
-
+  const [isStudentListOpened, setStudentListState] = useState(false);
   const classes = useStyles();
 
   useEffect(() => {
-    getStudentsRequest(true);
-  }, [getStudentsRequest]);
+    if (isStudentListOpened) {
+      getStudentsRequest(true);
+    }
+  }, [isStudentListOpened, getStudentsRequest]);
 
   const onDialogClose = () => {
     hideModal();
@@ -218,6 +221,7 @@ const AddEventForm = ({
           inputRef={register({ required: true })}
           error={errors.title !== undefined}
           helperText={errors.title !== undefined ? "Required" : ""}
+          defaultValue=""
         />
         <Divider className={classes.divider} />
         <Controller
@@ -231,7 +235,6 @@ const AddEventForm = ({
           inputRef={register({
             required: true,
           })}
-          allowKeyboardControl={false}
           disablePast
           defaultValue={selectedDate.startDate}
         />
@@ -246,7 +249,6 @@ const AddEventForm = ({
           inputRef={register({
             required: true,
           })}
-          allowKeyboardControl={false}
           defaultValue={selectedDate.startDate}
         />
         <Divider className={classes.divider2} />
@@ -261,7 +263,6 @@ const AddEventForm = ({
           inputRef={register({
             required: true,
           })}
-          allowKeyboardControl={false}
           disablePast
           defaultValue={selectedDate.endDate}
         />
@@ -276,7 +277,6 @@ const AddEventForm = ({
           inputRef={register({
             required: true,
           })}
-          allowKeyboardControl={false}
           defaultValue={selectedDate.endDate}
         />
         <Divider className={classes.divider2} />
@@ -291,13 +291,16 @@ const AddEventForm = ({
             return (
               <Autocomplete
                 options={students !== null ? students : []}
-                loading={students === null}
+                loading={isStudentListOpened && students === null}
                 getOptionLabel={(option) => option.email}
                 multiple
                 filterSelectedOptions
                 size={"small"}
                 onChange={(_, data) => {
                   props.onChange(data);
+                }}
+                onOpen={() => {
+                  setStudentListState(true);
                 }}
                 renderInput={(props) => (
                   <TextField
@@ -312,9 +315,9 @@ const AddEventForm = ({
                       ...props.InputProps,
                       endAdornment: (
                         <>
-                          {students != null ? null : (
+                          {isStudentListOpened && students === null ? (
                             <CircularProgress size={20} />
-                          )}
+                          ) : null}
                         </>
                       ),
                     }}

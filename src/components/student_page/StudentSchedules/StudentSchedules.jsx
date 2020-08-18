@@ -1,5 +1,5 @@
 import React from "react";
-import { connect } from "react-redux";
+
 import {
   Paper,
   CircularProgress,
@@ -7,10 +7,12 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import CustomSchedulerContainer from "../custom/scheduler/CustomSchedulerContainer";
+import CustomSchedulerContainer from "../../custom/scheduler/CustomSchedulerContainer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    display: "grid",
+    placeContent: "center",
     padding: "2em",
     height: "100%",
     width: "100%",
@@ -153,17 +155,17 @@ const formTheme = createMuiTheme({
   },
 });
 
-const StudentSchedules = (props) => {
+const StudentSchedules = ({ isLoading, coachingSessions }) => {
   const classes = useStyles();
   const renderContent = () => {
-    if (props.coachingSchedules) {
+    if (!isLoading) {
       return (
         <ThemeProvider theme={formTheme}>
           <Paper className={classes.scheduler}>
             <CustomSchedulerContainer
               accessType="student"
               className={classes.scheduler}
-              calendarEvents={props.coachingSchedules}
+              coachingSessions={coachingSessions}
             />
           </Paper>
         </ThemeProvider>
@@ -175,10 +177,4 @@ const StudentSchedules = (props) => {
   return <div className={classes.root}>{renderContent()}</div>;
 };
 
-const mapStateToProps = (state) => {
-  return {
-    coachingSchedules: state.coaching.coachingSchedules,
-  };
-};
-
-export default connect(mapStateToProps)(StudentSchedules);
+export default StudentSchedules;

@@ -16,7 +16,7 @@ import {
   showModal,
   removeStudentSubjectSuccess,
 } from "../actions";
-import { getCurrentUser } from "../selectors";
+import { currentUserSelector } from "../selectors";
 import firebase from "firebase";
 import axios from "../api";
 import { config } from "../consts/config";
@@ -68,7 +68,7 @@ function* getStudents() {
 
 function* getStudentsBySubject() {
   try {
-    const currUser = yield select(getCurrentUser);
+    const currUser = yield select(currentUserSelector);
     const response = yield axios
       .get(`/students/subject`, {
         params: {

@@ -3,11 +3,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch, Redirect, Switch } from "react-router-dom";
 
 import StudentDrawer from "./StudentDrawer";
-import StudentSchedules from "./StudentSchedules";
 import NotificationPage from "../NotificationPage";
-import RequestEventDrawer from "./components/RequestEventDrawer";
+import RequestEventDrawerContainer from "./components/RequestEventDrawer/RequestEventDrawerContainer";
 import { StudentDashboardContainer } from "./StudentDashboard/StudentDashboardContainer";
 import InterweaveBG from "../custom/svgs/interweave.svg";
+import StudentSchedulesContainer from "./StudentSchedules/StudentSchedulesContainer";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -60,7 +60,7 @@ const StudentPage = ({ getCoachingSchedulesRequest }) => {
               <StudentDashboardContainer />
             </Route>
             <Route path={`${path}/schedules`} exact>
-              <StudentSchedules />
+              <StudentSchedulesContainer />
             </Route>
             <Route path={`${path}/notifications`} exact>
               <NotificationPage />
@@ -69,7 +69,7 @@ const StudentPage = ({ getCoachingSchedulesRequest }) => {
           </Switch>
         </div>
       </div>
-      <RequestEventDrawer />
+      <RequestEventDrawerContainer />
     </div>
   );
 };

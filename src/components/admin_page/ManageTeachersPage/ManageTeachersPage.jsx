@@ -9,12 +9,20 @@ import {
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import MaterialTable, { MTableHeader } from "material-table";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     height: "100%",
     width: "100%",
-    padding: "1em",
-    background: "#4B4E6D",
+    display: "grid",
+    placeItems: "center",
+    overflow: "hidden",
+    backgroundColor: "white",
+    borderTopLeftRadius: "30px",
+    borderBottomLeftRadius: "30px",
+    padding: "2em",
+    [theme.breakpoints.up("sm")]: {
+      zIndex: "1201",
+    },
   },
 }));
 

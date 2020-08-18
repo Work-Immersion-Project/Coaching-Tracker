@@ -12,12 +12,8 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import _ from "lodash";
 import { useForm, Controller } from "react-hook-form";
-const useStyles = makeStyles(() => ({
-  buttonStyle: {
-    backgroundColor: "red",
-    color: "white",
-  },
-  content: {
+const useStyles = makeStyles((theme) => ({
+  root: {
     height: "100%",
     width: "100%",
     display: "flex",
@@ -25,8 +21,20 @@ const useStyles = makeStyles(() => ({
     justifyContent: "center",
     alignItems: "center",
     padding: "0 1em",
-    backgroundColor: "#4B4E6D",
+    overflow: "hidden",
+    backgroundColor: "white",
+    borderTopLeftRadius: "30px",
+    borderBottomLeftRadius: "30px",
+    padding: "2em",
+    [theme.breakpoints.up("sm")]: {
+      zIndex: "1201",
+    },
   },
+  buttonStyle: {
+    backgroundColor: "red",
+    color: "white",
+  },
+
   form: {
     backgroundColor: "#222222",
     borderRadius: "1em",
@@ -156,7 +164,7 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
 
   return (
     <>
-      <Grid container className={classes.content} elevation={3}>
+      <Grid container className={classes.root} elevation={3}>
         <Grid
           item
           container

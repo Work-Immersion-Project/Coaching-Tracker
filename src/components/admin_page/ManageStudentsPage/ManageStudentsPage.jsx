@@ -9,12 +9,21 @@ import {
 } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     height: "100%",
     width: "100%",
+    display: "grid",
+    placeItems: "center",
     padding: "1em",
-    backgroundColor: "#4B4E6D",
+    overflow: "hidden",
+    backgroundColor: "white",
+    borderTopLeftRadius: "30px",
+    borderBottomLeftRadius: "30px",
+    padding: "2em",
+    [theme.breakpoints.up("sm")]: {
+      zIndex: "1201",
+    },
   },
 }));
 

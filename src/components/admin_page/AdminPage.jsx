@@ -17,6 +17,7 @@ const useStyles = makeStyles({
     flexDirection: "row",
     height: "100vh",
     width: "100%",
+    backgroundColor: "#222222",
   },
   content: {
     display: "flex",
@@ -32,27 +33,25 @@ const AdminPage = () => {
   return (
     <div className={classes.container}>
       <AdminDrawer />
-      <div className={classes.content}>
-        <CustomAppbar />
-        <Route path={`${path}`} exact>
-          <AdminDashboard />
-        </Route>
-        <Route path={`${path}/registration`} exact>
-          <AdminRegistrationContainer />
-        </Route>
-        <Route path={`${path}/manage-subjects`} exact>
-          <ManageSubjectsPageContainer />
-        </Route>
-        <Route path={`${path}/coaching-log`} exact>
-          <AdminCoachingLog />
-        </Route>
-        <Route path={`${path}/manage-teachers`} exact>
-          <ManageTeachersPageContainer />
-        </Route>
-        <Route path={`${path}/manage-students`} exact>
-          <ManageStudentsPageContainer />
-        </Route>
-      </div>
+
+      <Route path={`${path}`} exact>
+        <AdminDashboard />
+      </Route>
+      <Route path={`${path}/registration`} exact>
+        <AdminRegistrationContainer />
+      </Route>
+      <Route path={`${path}/manage-subjects`} exact>
+        <ManageSubjectsPageContainer />
+      </Route>
+      <Route path={`${path}/coaching-log`} exact>
+        <AdminCoachingLog />
+      </Route>
+      <Route path={`${path}/manage-teachers`} exact>
+        <ManageTeachersPageContainer />
+      </Route>
+      <Route path={`${path}/manage-students`} exact>
+        <ManageStudentsPageContainer />
+      </Route>
     </div>
   );
 };

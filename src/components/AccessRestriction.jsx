@@ -1,6 +1,7 @@
 import React from "react";
 import { Grid, Paper } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import InterweaveBG from "../components/custom/svgs/interweave.svg";
 
 import { Typography } from "@material-ui/core";
 
@@ -8,10 +9,13 @@ const useStyles = makeStyles(() => ({
   content: {
     height: "100vh",
     width: "100%",
-    backgroundColor: "#4B4E6D",
+    backgroundColor: "white",
+    backgroundImage: `url(${InterweaveBG})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
   },
   containerpaper: {
-    backgroundColor: "#212642",
+    backgroundColor: "#222222",
     padding: "20px",
   },
   line1: {

@@ -10,9 +10,12 @@ const useStyles = makeStyles({
   root: {
     width: "100vw",
     height: "100vh",
-    backgroundColor: "#4B4E6D",
+    backgroundColor: "#222222",
     color: "white",
   },
+  circle: {
+    color: "#4EC8F4"
+  }
 });
 
 const LoginPage = (props) => {
@@ -57,7 +60,7 @@ const LoginPage = (props) => {
           justify="center"
           alignItems="center"
         >
-          <CircularProgress />
+          <CircularProgress className={classes.circle} />
           <Typography align="center">Signing In</Typography>
         </Grid>
       );

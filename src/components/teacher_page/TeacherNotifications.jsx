@@ -71,7 +71,7 @@ const TeacherNotifications = (props) => {
       alignContent="center"
       direction="column"
     >
-      <Card elevation={4} className={classes.notificationCard}>
+      <Card elevation={4} >
         <Grid className={classes.content} item container direction="column">
           <Grid container justify="flex-end">
             <IconButton>

@@ -32,7 +32,7 @@ function* getStudentCoachingSessions(studentID) {
     `${config.WS_BASE_URL}/coaching-sessions/student/${studentID}`
   );
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));
-
+  console.log(studentID);
   try {
     while (true) {
       const response = yield take(channel);
@@ -82,6 +82,7 @@ function* getTeacherCoachingSessions(teacherID) {
 
 function* getCoachingSessionsSaga({ payload: { isStudent } }) {
   const currentUser = yield select(getCurrentUser);
+
   if (isStudent) {
     yield getStudentCoachingSessions(currentUser.ID);
   } else {

@@ -58,11 +58,12 @@ function* checkAuthSaga() {
         const userData = yield axios
           .get(`/${user.type}s/${currentUser.getEmail()}`)
           .then((r) => r.data);
+
         yield put(checkAuthSuccess());
         yield put(
           signInSuccess({
             isSignedIn: true,
-            user: { ...userData, type: user.type },
+            user: { ...userData.data, type: user.type },
             userToken: access_token,
           })
         );
@@ -106,14 +107,14 @@ function* signInSaga() {
       .get(`/${user.type}s/${currentUser.getEmail()}`)
       .then((r) => r.data);
 
-    if (_.isEmpty(userData)) {
+    if (_.isEmpty(userData.data)) {
       return;
     }
 
     yield put(
       signInSuccess({
         isSignedIn: true,
-        user: { ...userData, type: user.type },
+        user: { ...userData.data, type: user.type },
         userToken: access_token,
       })
     );

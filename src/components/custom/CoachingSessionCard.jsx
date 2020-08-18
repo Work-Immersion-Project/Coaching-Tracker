@@ -11,6 +11,10 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "20px",
     gridTemplateRows: "auto 1fr auto",
     overflow: "hidden",
+    "&:hover": {
+      transition: "box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+    },
+    margin: "0 0.5em",
   },
   header: {
     backgroundColor: "#222222",

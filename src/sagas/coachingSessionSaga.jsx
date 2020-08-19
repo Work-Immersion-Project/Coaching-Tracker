@@ -32,7 +32,9 @@ function* getStudentCoachingSessions(studentID) {
     `${config.WS_BASE_URL}/coaching-sessions/student/${studentID}`
   );
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));
-
+  setInterval(() => {
+    ws.send("keepalive");
+  }, config.WS_TIMEOUT);
   try {
     while (true) {
       const response = yield take(channel);
@@ -64,11 +66,14 @@ function* getTeacherCoachingSessions(teacherID) {
   );
 
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));
-
+  setInterval(() => {
+    ws.send("keepalive");
+  }, config.WS_TIMEOUT);
   try {
     while (true) {
       const response = yield take(channel);
       const coachingSessions = JSON.parse(response);
+
       yield put(
         getCoachingSchedulesSuccess(
           coachingSessions.data.map((s) => {

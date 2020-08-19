@@ -51,9 +51,11 @@ function* getStudents() {
       sub(m.data);
     });
   });
+  setInterval(() => {
+    ws.send("keepalive");
+  }, config.WS_TIMEOUT);
   try {
     while (true) {
-      yield ws.send("keep-alive");
       const response = yield take(channel);
       const students = JSON.parse(response);
       yield put(getStudentsSuccess(students.data));

@@ -6,20 +6,24 @@ import {
   hideModal,
   showModal,
   addCoachingScheduleRequest,
+  getStudentFieldsRequest,
 } from "../../../../actions";
 import AddEventForm from "./AddEventForm";
+import { currentUserSelector } from "../../../../selectors";
 
 const AddEventFormContainer = ({ selectedDate }) => {
-  const [isStudentListOpen, setStudentListState] = useState(false);
   const dispatch = useDispatch();
 
   const stateToProps = useSelector((state) => {
-    return { students: state.students.data };
+    return {
+      students: state.fields.data.studentFields,
+      handledSubjects: currentUserSelector(state).handledSubjects,
+    };
   });
 
   const dispatchToProps = {
-    getStudentsRequest: useCallback(
-      (filterBySubject) => dispatch(getStudentsRequest(filterBySubject)),
+    getStudentFields: useCallback(
+      (subjectID) => dispatch(getStudentFieldsRequest(subjectID)),
       [dispatch]
     ),
     addCoachingSessionRequest: useCallback(
@@ -41,8 +45,6 @@ const AddEventFormContainer = ({ selectedDate }) => {
       {...dispatchToProps}
       {...stateToProps}
       selectedDate={selectedDate}
-      isStudentListOpen={isStudentListOpen}
-      setStudentListState={setStudentListState}
     />
   );
 };

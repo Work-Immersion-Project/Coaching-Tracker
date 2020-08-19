@@ -106,7 +106,15 @@ function* getCoachingSessionsSaga({ payload: { isStudent } }) {
 
 //** ADD COACHING SESSIONS */
 function* addCoachingSessionSaga({
-  payload: { startDate, startTime, endDate, endTime, title, studentAttendees },
+  payload: {
+    startDate,
+    startTime,
+    endDate,
+    endTime,
+    title,
+    studentAttendees,
+    subject,
+  },
 }) {
   const coachingSessionID = uuidV4();
   const gapiCalendar = yield select(getGapiCalendarClient);
@@ -162,6 +170,7 @@ function* addCoachingSessionSaga({
       studentAttendees: studentAttendees,
       createdAt: new Date(),
       status: "pending",
+      subject: subject,
     };
     yield axios.post("coaching-sessions", coachingSessionData);
     yield put(hideModal());
@@ -252,7 +261,7 @@ function* acceptCoachingSessionSaga({
 
 //** REQUEST COACHING SESSION */
 function* requestCoachingSessionSaga({
-  payload: { startDate, startTime, endDate, endTime, title, teacher },
+  payload: { startDate, startTime, endDate, endTime, title, teacher, subject },
 }) {
   const currentUser = yield select(currentUserSelector);
 
@@ -276,6 +285,7 @@ function* requestCoachingSessionSaga({
       studentAttendees: [currentUser],
       createdAt: new Date(),
       status: "waiting",
+      subject: subject,
     };
     yield axios.post("coaching-sessions", coachingSessionData);
     yield put(hideModal());

@@ -11,7 +11,9 @@ function* updateWebsocketSaga() {
       setTimeout(resolve, config.WS_TIMEOUT);
     });
     websockets.forEach((ws) => {
-      ws.send("keep-alive");
+      if (!ws.CLOSED) {
+        ws.send("keep-alive");
+      }
     });
   }
 }

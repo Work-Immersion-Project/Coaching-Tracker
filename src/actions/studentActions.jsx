@@ -9,6 +9,8 @@ import {
   ASSIGN_STUDENT_SUBJECT_SUCCESS,
   REMOVE_STUDENT_SUBJECT_REQUEST,
   REMOVE_STUDENT_SUBJECT_SUCCESS,
+  GET_STUDENTS_BY_SUBJECT_REQUEST,
+  GET_STUDENTS_BY_SUBJECT_SUCCESS,
 } from "../types";
 
 export const getStudentRequest = () => {
@@ -22,6 +24,14 @@ export const getStudentSuccess = (results) => {
     data: results,
     error: null,
   };
+};
+
+export const getStudentsBySubjRequest = (subjectID) => {
+  return { type: GET_STUDENTS_BY_SUBJECT_REQUEST, payload: subjectID };
+};
+
+export const getStudentsBySubjSuccess = (students) => {
+  return { type: GET_STUDENTS_BY_SUBJECT_SUCCESS, payload: students };
 };
 
 export const getStudentsRequest = (filterBySubject) => {

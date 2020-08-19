@@ -2,12 +2,12 @@ import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch, Switch, Redirect } from "react-router-dom";
 
-import TeacherDrawer from "./TeacherDrawer/TeacherDrawer";
 import NotificationPage from "../NotificationPage";
 import AddEventDrawerContainer from "./components/AddEventDrawer/AddEventDrawerContainer";
 import TeacherDashboardContainer from "./TeacherDashboard/TeacherDashboardContainer";
 import InterweaveBG from "../custom/svgs/interweave.svg";
 import TeacherSchedulesContainer from "./TeacherSchedules/TeacherSchedulesContainer";
+import TeacherDrawerContainer from "./TeacherDrawer/TeacherDrawerContainer";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -51,7 +51,7 @@ const TeacherPage = ({ getCoachingSchedulesRequest }) => {
 
   return (
     <div className={classes.container}>
-      <TeacherDrawer />
+      <TeacherDrawerContainer />
 
       <div className={classes.background}>
         <div className={classes.content}>

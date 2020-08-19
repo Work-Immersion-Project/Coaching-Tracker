@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme) => ({
     width: "40%",
   },
   logo: {
-    backgroundColor: "black",
     width: `30%`,
   },
   background: {
@@ -126,7 +125,7 @@ const LandingPage = ({
                   <img
                     alt="CIIT LOGO"
                     className={classes.logo}
-                    src={`${process.env.PUBLIC_URL}/ciit_logo.png`}
+                    src={`${process.env.PUBLIC_URL}/ciit_dark_logo.png`}
                   />
                   <Typography variant="h6">Coaching Tracker</Typography>
                 </div>

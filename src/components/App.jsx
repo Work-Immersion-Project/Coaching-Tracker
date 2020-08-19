@@ -24,7 +24,11 @@ const useStyles = makeStyles((theme) => ({
   },
   consentButton: {
     backgroundColor: "#4EC8F4 ",
+    "&:hover": {
+      backgroundColor: "#0097c1",
+    },
     borderRadius: "10px ",
+    marginRight: "1em"
   },
 }));
 const App = ({
@@ -82,7 +86,7 @@ const App = ({
       >
         <Typography>
           Our website uses cookies to ensure best user experience, and also this
-          is needed for signin in.
+          is needed for signing in.
         </Typography>
       </CookieConsent>
     </LocalizationProvider>

@@ -25,27 +25,28 @@ const useStyles = makeStyles(() => ({
   notificationCard: {
     height: "100%",
     width: "100%",
+    borderRadius: "30px",
     backgroundColor: "#222222",
   },
   emptyContent: {
     width: "100%",
     height: "100%",
-    color: "#84DCC6",
+    color: "#4EC8F4",
   },
   content: {
     width: "100%",
     padding: "2em",
-    color: "#84DCC6",
+    color: "#4EC8F4",
   },
   unseenIndicator: {
-    color: "#4B4E6D",
+    color: "#00364D",
   },
   divider: {
     height: "0.1px",
     backgroundColor: "#95a3b3",
   },
   deleteIcon: {
-    color: "#84DCC6",
+    color: "#4EC8F4",
   },
   notifMessage: {
     padding: "0.5em 0.5em",

@@ -66,6 +66,7 @@ export const AppointmentTooltipContent = withStyles({
             className={classes.acceptMeetingButton}
             onClick={() => {
               toggleTooltipVisibility(false);
+
               onUpdateStatusButtonPressed(
                 appointmentData.ID,
                 "waiting_for_student_confirmation"
@@ -265,22 +266,29 @@ export const AppointmentTooltipContent = withStyles({
     const onUpdateStatusButtonPressed = (id, status) => {
       let title = "";
       let content = "";
-      if (status === "ongoing") {
-        updateCoachingSession({
-          id,
-          status,
-        });
-      } else {
-        if (status === "pending") {
-          title = "Accept Schedule Request?";
+
+      switch (status) {
+        case "ongoing":
+          updateCoachingSession({ id, status });
+          break;
+        case "pending":
+          title = "Accept Coaching Session Request?";
           content = "Are you sure that you are available at this date?";
-        } else if (status === "cancelled") {
-          title = "Cancel Schedule?";
+          break;
+        case "cancelled":
+          title = "Cancel Session?";
           content = "Are you sure that you want to cancel this session?";
-        } else if (status === "denied") {
-          title = "Deny Schedule Request?";
+          break;
+        case "denied":
+          title = "Deny Coaching Session Request?";
           content = "Are you sure that you want to deny this session?";
-        }
+          break;
+        case "waiting_for_student_confirmation":
+          updateCoachingSession({ id, status });
+          break;
+      }
+
+      if (title !== "" && content !== "") {
         showModal("CONFIRMATION_MODAL", {
           onDialogClose: onDialogClose,
           title,

@@ -34,6 +34,7 @@ function* getTeachers() {
 
   try {
     while (true) {
+      yield ws.send("keep-alive");
       const response = yield take(channel);
       const teachers = JSON.parse(response);
       yield put(getTeachersSuccess(teachers.data));

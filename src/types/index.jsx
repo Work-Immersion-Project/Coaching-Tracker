@@ -13,4 +13,5 @@ export * from "./alertTypes";
 export * from "./notificationTypes";
 export * from "./registrationTypes";
 export * from "./coachingLogTypes";
-export * from "./appointmentTypes";
+
+export * from "./schedulerTypes";

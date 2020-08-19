@@ -3,8 +3,7 @@ import React from "react";
 import { Button, Grid, Typography } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import DuoIcon from "@material-ui/icons/Duo";
-import { isDayBehind, isMeetingAvailable } from "../../../utils";
-import _ from "lodash";
+import { isDayBehind, isMeetingAvailable } from "../../../../utils";
 
 export const AppointmentTooltipContent = withStyles({
   container: {
@@ -42,15 +41,16 @@ export const AppointmentTooltipContent = withStyles({
   },
 })(
   ({
-    confirmCoachingSchedule,
-    acceptCoachingSchedule,
+    confirmCoachingSession,
+    acceptCoachingSession,
+    updateCoachingSession,
+    hideModal,
+    showModal,
     children,
     appointmentData,
-    onUpdateStatusButtonPressed,
-    accessType,
-    loggedInUser,
+    currentUser,
     classes,
-    setTooltipVisibility,
+    toggleTooltipVisibility,
     ...restProps
   }) => {
     const dayBehind = isDayBehind(new Date(appointmentData.endDate));
@@ -60,12 +60,12 @@ export const AppointmentTooltipContent = withStyles({
     );
 
     const renderConfirmationButton = () => {
-      if (loggedInUser.type === "teacher") {
+      if (currentUser.type === "teacher") {
         return (
           <Button
             className={classes.acceptMeetingButton}
             onClick={() => {
-              setTooltipVisibility(false);
+              toggleTooltipVisibility(false);
               onUpdateStatusButtonPressed(
                 appointmentData.ID,
                 "waiting_for_student_confirmation"
@@ -76,55 +76,53 @@ export const AppointmentTooltipContent = withStyles({
             Finish Session
           </Button>
         );
-      } else if (loggedInUser.type === "student") {
-        // Get the all the confirmed Students
-        const confirmedStudents = appointmentData.confirmedStudents;
-        let disabled = true;
-
-        if (_.isEmpty(confirmedStudents)) {
-          disabled = false;
-        } else if (
-          confirmedStudents.filter(
-            (student) => student.email === loggedInUser.email
-          ).length === 0
-        ) {
-          disabled = false;
-        }
-
-        return (
-          <Button
-            disabled={disabled}
-            className={classes.acceptMeetingButton}
-            onClick={() => {
-              setTooltipVisibility(false);
-              confirmCoachingSchedule(appointmentData.ID);
-            }}
-            variant="contained"
-          >
-            Finish Session
-          </Button>
-        );
       }
+
+      // Get the all the confirmed Students
+      const confirmedStudents = appointmentData.confirmedStudents;
+      let disabled = true;
+
+      if (
+        confirmedStudents.filter(
+          (student) => student.email === currentUser.email
+        ).length === 0
+      ) {
+        disabled = false;
+      }
+
+      return (
+        <Button
+          disabled={disabled}
+          className={classes.acceptMeetingButton}
+          onClick={() => {
+            toggleTooltipVisibility(false);
+            confirmCoachingSession(appointmentData.ID);
+          }}
+          variant="contained"
+        >
+          Finish Session
+        </Button>
+      );
     };
 
     const renderUpdateButtons = () => {
       if (
-        appointmentData.status === "denied" ||
-        appointmentData.status === "overdue" ||
-        appointmentData.status === "cancelled" ||
-        appointmentData.status === "finished"
+        ["denied", "overdue", "cancelled", "finished"].includes(
+          appointmentData.status
+        )
       ) {
         return null;
       }
 
       if (
         appointmentData.status === "waiting" &&
-        loggedInUser.type === "student"
+        currentUser.type === "student"
       ) {
         return null;
-      } else if (
+      }
+      if (
         appointmentData.status === "waiting" &&
-        loggedInUser.type === "teacher"
+        currentUser.type === "teacher"
       ) {
         return (
           <Grid
@@ -136,8 +134,8 @@ export const AppointmentTooltipContent = withStyles({
             <Button
               className={classes.acceptMeetingButton}
               onClick={() => {
-                setTooltipVisibility(false);
-                acceptCoachingSchedule(appointmentData);
+                toggleTooltipVisibility(false);
+                acceptCoachingSession(appointmentData);
               }}
               variant="contained"
             >
@@ -146,7 +144,7 @@ export const AppointmentTooltipContent = withStyles({
             <Button
               className={classes.denyMeetingButton}
               onClick={() => {
-                setTooltipVisibility(false);
+                toggleTooltipVisibility(false);
                 onUpdateStatusButtonPressed(appointmentData.ID, "denied");
               }}
               variant="contained"
@@ -159,7 +157,7 @@ export const AppointmentTooltipContent = withStyles({
 
       if (
         appointmentData.status === "waiting_for_student_confirmation" &&
-        loggedInUser.type === "student"
+        currentUser.type === "student"
       ) {
         return (
           <Grid
@@ -171,9 +169,10 @@ export const AppointmentTooltipContent = withStyles({
             {renderConfirmationButton()}
           </Grid>
         );
-      } else if (
+      }
+      if (
         appointmentData.status === "waiting_for_student_confirmation" &&
-        loggedInUser.type === "teacher"
+        currentUser.type === "teacher"
       ) {
         return (
           <Grid
@@ -202,7 +201,7 @@ export const AppointmentTooltipContent = withStyles({
               disabled={!meetingAvailable || dayBehind}
               className={classes.meetingButton}
               onClick={() => {
-                setTooltipVisibility(false);
+                toggleTooltipVisibility(false);
                 window.open(appointmentData.meetingLink, "_blank");
               }}
               variant="contained"
@@ -213,9 +212,7 @@ export const AppointmentTooltipContent = withStyles({
             <Typography align="center" variant="subtitle2">
               {appointmentData.meetingLink}
             </Typography>
-            {loggedInUser.type === "teacher"
-              ? renderConfirmationButton()
-              : null}
+            {currentUser.type === "teacher" ? renderConfirmationButton() : null}
           </Grid>
         );
       }
@@ -230,8 +227,8 @@ export const AppointmentTooltipContent = withStyles({
             disabled={!meetingAvailable || dayBehind}
             className={classes.meetingButton}
             onClick={() => {
-              if (loggedInUser.type !== "student") {
-                setTooltipVisibility(false);
+              if (currentUser.type !== "student") {
+                toggleTooltipVisibility(false);
                 onUpdateStatusButtonPressed(appointmentData.ID, "ongoing");
               }
               window.open(appointmentData.meetingLink, "_blank");
@@ -245,11 +242,11 @@ export const AppointmentTooltipContent = withStyles({
             {!meetingAvailable || dayBehind ? "" : appointmentData.meetingLink}
           </Typography>
 
-          {loggedInUser.type !== "student" ? (
+          {currentUser.type !== "student" ? (
             <Button
               className={classes.denyMeetingButton}
               onClick={() => {
-                setTooltipVisibility(false);
+                toggleTooltipVisibility(false);
                 onUpdateStatusButtonPressed(appointmentData.ID, "cancelled");
               }}
               variant="contained"
@@ -261,6 +258,42 @@ export const AppointmentTooltipContent = withStyles({
       );
     };
 
+    const onDialogClose = () => {
+      hideModal();
+    };
+
+    const onUpdateStatusButtonPressed = (id, status) => {
+      let title = "";
+      let content = "";
+      if (status === "ongoing") {
+        updateCoachingSession({
+          id,
+          status,
+        });
+      } else {
+        if (status === "pending") {
+          title = "Accept Schedule Request?";
+          content = "Are you sure that you are available at this date?";
+        } else if (status === "cancelled") {
+          title = "Cancel Schedule?";
+          content = "Are you sure that you want to cancel this session?";
+        } else if (status === "denied") {
+          title = "Deny Schedule Request?";
+          content = "Are you sure that you want to deny this session?";
+        }
+        showModal("CONFIRMATION_MODAL", {
+          onDialogClose: onDialogClose,
+          title,
+          content,
+          onNegativeClick: onDialogClose,
+          onPositiveClick: () =>
+            updateCoachingSession({
+              id,
+              status,
+            }),
+        });
+      }
+    };
     return (
       <AppointmentTooltip.Content
         {...restProps}

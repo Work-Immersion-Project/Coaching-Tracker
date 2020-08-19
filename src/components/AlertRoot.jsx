@@ -17,10 +17,10 @@ const AlertRoot = ({
   const onClose = () => {
     hideAlert();
     hideError();
+    hideModal();
   };
 
   if (error) {
-    hideModal();
     return (
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}

@@ -11,5 +11,5 @@ export * from "./alertActions";
 export * from "./registrationActions";
 export * from "./notificationActions";
 export * from "./coachingLogActions";
-export * from "./appointmentActions";
+export * from "./schedulerActions";
 export * from "./gapiActions";

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { ViewState } from "@devexpress/dx-react-scheduler";
-import { connectProps } from "@devexpress/dx-react-core";
+
 import {
   Scheduler,
   DayView,
@@ -14,15 +14,15 @@ import {
   AppointmentTooltip,
   Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import { AppointmentTooltipContent } from "./AppointmentTooltipContent";
+import { AppointmentTooltipContent } from "./AppointmentTooltipContent/AppointmentTooltipContent";
 import { AppointmentTooltipHeader } from "./AppointmentTooltipHeader";
 import MonthTableCell from "./MonthTableCell";
 import DayTableCell from "./DayTableCell";
 import WeekTableCell from "./WeekTableCell";
 import AppointmentContent from "./AppointmentContent";
-import Appointment from "./Appointment";
 import { makeStyles } from "@material-ui/core";
-import { useState } from "react";
+import AppointmentContainer from "./Appointment/AppointmentContainer";
+import AppointmentTooltipContentContainer from "./AppointmentTooltipContent/AppointmentTooltipContentContainer";
 const statuses = [
   {
     text: "Pending",
@@ -75,16 +75,12 @@ const CustomScheduler = ({
   openAddEventDrawer,
   accessType,
   onUpdateStatusButtonPressed,
-  loggedInUser,
-  acceptCoachingSchedule,
-  confirmCoachingSchedule,
+
   studentInstances,
+  toggleTooltipVisibility,
+  updateAppointmentMeta,
+  tooltip,
 }) => {
-  const [tooltipVisible, setTooltipVisibility] = useState(false);
-  const [appointmentMeta, setAppointmentMeta] = useState({
-    target: null,
-    data: {},
-  });
   const classes = useStyles();
   const resources = [
     {
@@ -137,33 +133,15 @@ const CustomScheduler = ({
       <TodayButton />
       <Appointments
         appointmentContentComponent={AppointmentContent}
-        appointmentComponent={(props) => (
-          <Appointment
-            {...props}
-            setAppointmentMeta={setAppointmentMeta}
-            setTooltipVisibility={setTooltipVisibility}
-          />
-        )}
+        appointmentComponent={AppointmentContainer}
       />
       <Resources data={resources} mainResourceName="status" />
       <AppointmentTooltip
-        visible={tooltipVisible}
-        onVisibilityChange={setTooltipVisibility}
-        onAppointmentMetaChange={setAppointmentMeta}
-        appointmentMeta={appointmentMeta}
-        contentComponent={(props) => (
-          <AppointmentTooltipContent
-            {...props}
-            {...{
-              accessType,
-              onUpdateStatusButtonPressed,
-              loggedInUser,
-              confirmCoachingSchedule,
-              acceptCoachingSchedule,
-              setTooltipVisibility,
-            }}
-          />
-        )}
+        visible={tooltip.isVisible}
+        onVisibilityChange={toggleTooltipVisibility}
+        onAppointmentMetaChange={updateAppointmentMeta}
+        appointmentMeta={{ target: tooltip.target, data: tooltip.data }}
+        contentComponent={AppointmentTooltipContentContainer}
         headerComponent={(props) => (
           <AppointmentTooltipHeader {...props} accessType={accessType} />
         )}

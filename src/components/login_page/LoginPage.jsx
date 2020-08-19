@@ -14,33 +14,13 @@ const useStyles = makeStyles({
     color: "white",
   },
   circle: {
-    color: "#4EC8F4"
-  }
+    color: "#4EC8F4",
+  },
 });
 
 const LoginPage = (props) => {
   const { errorMessage } = props;
   const classes = useStyles();
-
-  useEffect(() => {
-    const location = history.location;
-    const { from } = location.state || {
-      from: { pathName: "/Coaching-Tracker" },
-    };
-
-    if (props.authData) {
-      const { isSignedIn, user } = props.authData;
-      if (isSignedIn) {
-        if (!_.isEmpty(user) && user) {
-          if (from.pathName === "/Coaching-Tracker") {
-            history.replace(`${from.pathName}/${user.type}`);
-          } else {
-            history.replace(from);
-          }
-        }
-      }
-    }
-  }, [props.authData]);
 
   const renderContent = () => {
     if (errorMessage) {
@@ -99,7 +79,7 @@ const mapStateToProps = (state) => {
   return {
     authData: state.auth.data,
     gapiAuth,
-    errorMessage: state.errors.error,
+    errorMessage: state.errors.errorMessage,
   };
 };
 

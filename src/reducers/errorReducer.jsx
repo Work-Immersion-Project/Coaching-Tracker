@@ -1,4 +1,4 @@
-import { HIDE_ERROR } from "../types/errorTypes";
+import { HIDE_ERROR, SET_ERROR } from "../types/errorTypes";
 
 const INITIAL_STATE = {
   errorMessage: null,
@@ -6,12 +6,22 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   const { error } = action;
-  if (error) {
-    return {
-      errorMessage: error,
-    };
-  } else if (action.type === HIDE_ERROR) {
-    return INITIAL_STATE;
+
+  switch (action.type) {
+    case SET_ERROR: {
+      return {
+        ...state,
+        errorMessage: error,
+      };
+    }
+    case HIDE_ERROR: {
+      return {
+        ...state,
+        errorMessage: null,
+      };
+    }
+    default: {
+      return { ...state };
+    }
   }
-  return state;
 };

@@ -2,12 +2,14 @@ import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import NotificationPage from "./NotificationPage";
 import { hideModal, showModal, updateNotificationRequest } from "../../actions";
+import { currentUserSelector } from "../../selectors";
 
 const NotificationPageContainer = () => {
   const dispatch = useDispatch();
   const stateToProps = useSelector((state) => {
     return {
       notifications: state.notifications.data,
+      currentUser: currentUserSelector(state),
     };
   });
 

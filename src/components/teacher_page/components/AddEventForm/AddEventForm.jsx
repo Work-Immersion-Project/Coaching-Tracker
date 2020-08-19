@@ -196,7 +196,7 @@ const AddEventForm = ({
   const classes = useStyles();
 
   useEffect(() => {
-    if (selectedSubject && isStudentListOpened) {
+    if (isStudentListOpened && selectedSubject !== null) {
       getStudentFields(selectedSubject.ID);
     }
   }, [selectedSubject, isStudentListOpened, getStudentFields]);
@@ -220,7 +220,6 @@ const AddEventForm = ({
       onPositiveClick: () => addCoachingEvent(coachingDetails),
     });
   };
-
   return (
     <ThemeProvider theme={formTheme}>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
@@ -237,9 +236,7 @@ const AddEventForm = ({
           as={DatePicker}
           label="Start Date"
           control={control}
-          renderInput={(props) => (
-            <StyledDatePicker {...props} name="startDate" />
-          )}
+          renderInput={(props) => <StyledDatePicker {...props} />}
           name="startDate"
           inputRef={register({
             required: true,
@@ -251,23 +248,20 @@ const AddEventForm = ({
           as={TimePicker}
           label="Start Time"
           control={control}
-          renderInput={(props) => (
-            <StyledTimePicker {...props} name="startTime" />
-          )}
+          renderInput={(props) => <StyledTimePicker {...props} />}
           name="startTime"
           inputRef={register({
             required: true,
           })}
           defaultValue={selectedDate.startDate}
+          disableMaskedInput
         />
         <Divider className={classes.divider2} />
         <Controller
           as={DatePicker}
           label="End Date"
           control={control}
-          renderInput={(props) => (
-            <StyledDatePicker {...props} name="endDate" />
-          )}
+          renderInput={(props) => <StyledDatePicker {...props} />}
           name="endDate"
           inputRef={register({
             required: true,
@@ -279,14 +273,13 @@ const AddEventForm = ({
           as={TimePicker}
           label="End Time"
           control={control}
-          renderInput={(props) => (
-            <StyledTimePicker {...props} name="endTime" />
-          )}
+          renderInput={(props) => <StyledTimePicker {...props} />}
           name="endTime"
           inputRef={register({
             required: true,
           })}
           defaultValue={selectedDate.endDate}
+          disableMaskedInput
         />
         <Divider className={classes.divider2} />
         <FormControl fullWidth error={errors.subject !== undefined}>
@@ -320,7 +313,7 @@ const AddEventForm = ({
             return (
               <Autocomplete
                 options={students !== null ? students : []}
-                loading={isStudentListOpened && students === null}
+                loading={isStudentListOpened && students.length === 0}
                 getOptionLabel={(option) => option.email}
                 multiple
                 filterSelectedOptions
@@ -344,7 +337,7 @@ const AddEventForm = ({
                       ...props.InputProps,
                       endAdornment: (
                         <>
-                          {isStudentListOpened && students === null ? (
+                          {isStudentListOpened && students.length === 0 ? (
                             <CircularProgress size={20} />
                           ) : null}
                         </>

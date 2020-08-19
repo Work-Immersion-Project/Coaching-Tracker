@@ -233,9 +233,7 @@ const RequestEventForm = ({
           as={DatePicker}
           label="Start Date"
           control={control}
-          renderInput={(props) => (
-            <StyledDatePicker {...props} name="startDate" />
-          )}
+          renderInput={(props) => <StyledDatePicker {...props} />}
           name="startDate"
           inputRef={register({
             required: true,
@@ -248,24 +246,21 @@ const RequestEventForm = ({
           as={TimePicker}
           label="Start Time"
           control={control}
-          renderInput={(props) => (
-            <StyledTimePicker {...props} name="startTime" />
-          )}
+          renderInput={(props) => <StyledTimePicker {...props} />}
           name="startTime"
           inputRef={register({
             required: true,
           })}
           allowKeyboardControl={false}
           defaultValue={selectedDate.startDate}
+          disableMaskedInput
         />
         <Divider className={classes.divider2} />
         <Controller
           as={DatePicker}
           label="End Date"
           control={control}
-          renderInput={(props) => (
-            <StyledDatePicker {...props} name="endDate" />
-          )}
+          renderInput={(props) => <StyledDatePicker {...props} />}
           name="endDate"
           inputRef={register({
             required: true,
@@ -278,15 +273,14 @@ const RequestEventForm = ({
           as={TimePicker}
           label="End Time"
           control={control}
-          renderInput={(props) => (
-            <StyledTimePicker {...props} name="endTime" />
-          )}
+          renderInput={(props) => <StyledTimePicker {...props} />}
           name="endTime"
           inputRef={register({
             required: true,
           })}
           allowKeyboardControl={false}
           defaultValue={selectedDate.endDate}
+          disableMaskedInput
         />
         <Divider className={classes.divider2} />
         <FormControl fullWidth error={errors.subject !== undefined}>
@@ -319,8 +313,8 @@ const RequestEventForm = ({
           render={(props) => {
             return (
               <Autocomplete
-                options={teachers !== null ? teachers : []}
-                loading={isTeacherListOpen && teachers === null}
+                options={teachers}
+                loading={isTeacherListOpen && teachers.length === 0}
                 getOptionLabel={(option) => option.email}
                 filterSelectedOptions
                 size={"small"}
@@ -341,7 +335,7 @@ const RequestEventForm = ({
                       ...props.InputProps,
                       endAdornment: (
                         <>
-                          {isTeacherListOpen && teachers === null ? (
+                          {isTeacherListOpen && teachers.length === 0 ? (
                             <CircularProgress size={20} />
                           ) : null}
                         </>

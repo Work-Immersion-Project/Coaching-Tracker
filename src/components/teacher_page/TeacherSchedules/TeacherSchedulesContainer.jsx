@@ -1,7 +1,19 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import TeacherSchedules from "./TeacherSchedules";
-const TeacherSchedulesContainer = () => {
+import { showModal, hideModal } from "../../../actions";
+
+const TeacherSchedulesContainer = (props) => {
+  const dispatch = useDispatch();
+
+  const dispatchToProps = {
+    showModal: useCallback((type, props) => dispatch(showModal(type, props)), [
+      dispatch,
+    ]),
+    hideModal: useCallback(() => dispatch(hideModal()), [dispatch]),
+  };
+
   const stateToProps = useSelector((state) => {
     return {
       coachingSessions: state.coaching.coachingSchedules,
@@ -9,7 +21,7 @@ const TeacherSchedulesContainer = () => {
     };
   });
 
-  return <TeacherSchedules {...stateToProps} />;
+  return <TeacherSchedules {...stateToProps} {...dispatchToProps} {...props} />;
 };
 
 export default TeacherSchedulesContainer;

@@ -14,6 +14,7 @@ import "./App.css";
 import LandingPageContainer from "./landing_page/LandingPageContainer";
 import CookieConsent from "react-cookie-consent";
 import { makeStyles, Typography, Button } from "@material-ui/core";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   consentContainer: {
@@ -38,6 +39,16 @@ const App = ({
   updateWebsockets,
 }) => {
   const classes = useStyles();
+
+  useEffect(() => {
+    moment.updateLocale("en", {
+      relativeTime: {
+        ss: "%d secs",
+        m: "a minute",
+        mm: "%d mins",
+      },
+    });
+  }, []);
 
   useEffect(() => {
     updateWebsockets();

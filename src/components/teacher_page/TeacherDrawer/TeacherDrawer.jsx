@@ -128,11 +128,12 @@ const TeacherDrawer = ({
       const { path, text, icon } = item;
       const pathname = `/Coaching-Tracker/teacher${path}`;
 
-      const formattedSelectedPath = selectedPath.endsWith("teacher")
-        ? selectedPath + "/"
-        : selectedPath;
+      const formattedSelectedPath = selectedPath.replace(/\/\d/, "");
+      const convertedPath = selectedPath.endsWith("teacher")
+        ? formattedSelectedPath + "/"
+        : formattedSelectedPath;
 
-      const isActive = formattedSelectedPath === pathname;
+      const isActive = convertedPath === pathname;
       return (
         <div
           className={isActive ? classes.active : classes.inActive}

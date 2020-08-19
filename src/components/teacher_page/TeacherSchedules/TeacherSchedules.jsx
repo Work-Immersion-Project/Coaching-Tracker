@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Paper,
   CircularProgress,
@@ -7,6 +7,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CustomSchedulerContainer from "../../custom/scheduler/CustomSchedulerContainer";
+import { toInteger } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -146,8 +147,25 @@ const formTheme = createMuiTheme({
   },
 });
 
-const TeacherSchedules = ({ isLoading, coachingSessions }) => {
+const TeacherSchedules = ({
+  isLoading,
+  coachingSessions,
+  showModal,
+  hideModal,
+
+  match,
+  ...restProps
+}) => {
   const classes = useStyles();
+
+  useEffect(() => {
+    if (match.params.id) {
+      showModal("COACHING_SESSION_MODAL", {
+        onDialogClose: () => hideModal(),
+        selectedCoachingSessionID: toInteger(match.params.id),
+      });
+    }
+  }, [match.params.id, showModal, hideModal]);
 
   const renderContent = () => {
     if (isLoading !== null && !isLoading) {

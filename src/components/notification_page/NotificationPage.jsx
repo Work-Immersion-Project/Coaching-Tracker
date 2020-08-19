@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Grid,
@@ -16,6 +16,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Lens from "@material-ui/icons/Lens";
 import _ from "lodash";
 import moment from "moment";
+
 const useStyles = makeStyles(() => ({
   root: {
     height: "100%",
@@ -58,20 +59,8 @@ const NotificationPage = ({
   showModal,
   notifications,
   updateNotification,
+  currentUser,
 }) => {
-  const onDialogClose = () => {
-    hideModal();
-  };
-
-  useEffect(() => {
-    moment.updateLocale("en", {
-      relativeTime: {
-        ss: "%d secs",
-        m: "a minute",
-        mm: "%d mins",
-      },
-    });
-  }, []);
   const onNotificationClick = ({
     payload: { coachingSessionID },
     ID,
@@ -80,8 +69,9 @@ const NotificationPage = ({
     if (!seen) {
       updateNotification(ID);
     }
+
     showModal("COACHING_SESSION_MODAL", {
-      onDialogClose: onDialogClose,
+      onDialogClose: () => hideModal(),
       selectedCoachingSessionID: coachingSessionID,
     });
   };

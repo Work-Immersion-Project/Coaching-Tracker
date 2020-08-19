@@ -60,15 +60,24 @@ const TeacherPage = ({ getCoachingSchedules, getNotifications }) => {
       <div className={classes.background}>
         <div className={classes.content}>
           <Switch>
-            <Route path={`${path}`} exact>
-              <TeacherDashboardContainer />
-            </Route>
-            <Route path={`${path}/schedules`} exact>
-              <TeacherSchedulesContainer />
-            </Route>
-            <Route path={`${path}/notifications`} exact>
-              <NotificationPageContainer />
-            </Route>
+            <Route
+              path={`${path}`}
+              exact
+              component={TeacherDashboardContainer}
+            />
+
+            <Route
+              path={`${path}/schedules/:id?`}
+              exact
+              component={TeacherSchedulesContainer}
+            />
+
+            <Route
+              path={`${path}/notifications`}
+              exact
+              component={NotificationPageContainer}
+            />
+
             <Redirect to={`${path}`} />
           </Switch>
         </div>

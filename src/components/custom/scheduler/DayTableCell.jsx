@@ -1,6 +1,5 @@
 import React from "react";
 import { DayView } from "@devexpress/dx-react-scheduler-material-ui";
-import { fade } from "@material-ui/core/styles/colorManipulator";
 import { withStyles } from "@material-ui/core/styles";
 import { isDayBehind } from "../../../utils";
 import classNames from "clsx";
@@ -8,7 +7,7 @@ const DayTableCell = withStyles(({ palette }) => ({
   dayBehindCell: {
     backgroundColor: "#111",
     "&:hover": {
-      backgroundColor:"#111",
+      backgroundColor: "#111",
     },
     "&:focus": {
       backgroundColor: "#111",

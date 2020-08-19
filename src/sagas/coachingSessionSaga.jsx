@@ -7,6 +7,7 @@ import {
   REQUEST_COACHING_SCHEDULE_REQUEST,
   CONFIRM_COACHING_SCHEDULE_REQUEST,
   ACCEPT_COACHING_SCHEDULE_REQUEST,
+  GET_COACHING_SCHEDULE_REQUEST,
 } from "../types";
 import {
   setError,
@@ -19,6 +20,7 @@ import {
   requestCoachingScheduleSuccess,
   acceptCoachingScheduleSuccess,
   createWebsocket,
+  getCoachingScheduleSuccess,
 } from "../actions";
 import { currentUserSelector, getGapiCalendarClient } from "../selectors";
 import { v4 as uuidV4 } from "uuid";
@@ -317,6 +319,21 @@ function* confirmCoachingSessionSaga({ payload: id }) {
   }
 }
 // END OF CONFIRM COACHING SESSION
+
+function* getCoachingSessionSaga({ payload }) {
+  try {
+    const response = yield axios
+      .get(`coaching-sessions/${payload}`)
+      .then((r) => r.data);
+    yield put(getCoachingScheduleSuccess(response.data));
+  } catch (error) {
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
+  }
+}
 export function* watchCoachingSession() {
   yield takeEvery(GET_COACHING_SCHEDULES_REQUEST, getCoachingSessionsSaga);
   yield takeEvery(ADD_COACHING_SCHEDULE_REQUEST, addCoachingSessionSaga);
@@ -333,4 +350,5 @@ export function* watchCoachingSession() {
     confirmCoachingSessionSaga
   );
   yield takeEvery(ACCEPT_COACHING_SCHEDULE_REQUEST, acceptCoachingSessionSaga);
+  yield takeEvery(GET_COACHING_SCHEDULE_REQUEST, getCoachingSessionSaga);
 }

@@ -8,6 +8,8 @@ import { watchField } from "./fieldSaga";
 import { watchSubjects } from "./subjectsSaga";
 import { watchCoachingSession } from "./coachingSessionSaga";
 import { watchWebsocket } from "./websocketSaga";
+import { watchNotifications } from "./notificationsSaga";
+
 function* rootSaga() {
   yield fork(watchGapi);
   yield fork(watchAuth);
@@ -18,6 +20,7 @@ function* rootSaga() {
   yield fork(watchSubjects);
   yield fork(watchCoachingSession);
   yield fork(watchWebsocket);
+  yield fork(watchNotifications);
 }
 
 export default rootSaga;

@@ -1,14 +1,8 @@
 import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import InterweaveBG from "../custom/svgs/interweave.svg";
-import {
-  Paper,
-  Grow,
-  Typography,
-  CircularProgress,
-  Button,
-} from "@material-ui/core";
-import CookieConsent from "react-cookie-consent";
+import { Paper, Grow, Typography, CircularProgress } from "@material-ui/core";
+
 import history from "../../history";
 
 const useStyles = makeStyles((theme) => ({
@@ -130,6 +124,7 @@ const LandingPage = ({
               <Paper className={classes.card}>
                 <div className={classes.header}>
                   <img
+                    alt="CIIT LOGO"
                     className={classes.logo}
                     src={`${process.env.PUBLIC_URL}/ciit_logo.png`}
                   />

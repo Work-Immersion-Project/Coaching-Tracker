@@ -12,8 +12,6 @@ import {
   Typography,
   Divider,
 } from "@material-ui/core";
-import { connect } from "react-redux";
-import { showModal, hideModal, updateNotification } from "../actions";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Lens from "@material-ui/icons/Lens";
 import _ from "lodash";
@@ -22,7 +20,6 @@ const useStyles = makeStyles(() => ({
   root: {
     height: "100%",
     width: "100%",
-
     padding: "1em",
   },
   notificationCard: {
@@ -55,9 +52,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const NotificationPage = (props) => {
+const NotificationPage = ({
+  hideModal,
+  showModal,
+  notifications,
+  updateNotification,
+}) => {
   const onDialogClose = () => {
-    props.hideModal();
+    hideModal();
   };
 
   useEffect(() => {
@@ -69,18 +71,22 @@ const NotificationPage = (props) => {
       },
     });
   }, []);
-  const onNotificationClick = ({ coachingSessionId, notificationId, seen }) => {
+  const onNotificationClick = ({
+    payload: { coachingSessionID },
+    ID,
+    seen,
+  }) => {
     if (!seen) {
-      props.updateNotification(notificationId);
+      updateNotification(ID);
     }
-    props.showModal("COACHING_SESSION_MODAL", {
+    showModal("COACHING_SESSION_MODAL", {
       onDialogClose: onDialogClose,
-      coachingSessionId,
+      selectedCoachingSessionID: coachingSessionID,
     });
   };
 
   const renderContent = () => {
-    if (_.isEmpty(props.notifications)) {
+    if (_.isEmpty(notifications)) {
       return (
         <Grid
           className={classes.emptyContent}
@@ -110,16 +116,15 @@ const NotificationPage = (props) => {
   };
 
   const renderNotification = () => {
-    return props.notifications.map((notif) => {
+    return notifications.map((notif) => {
       return (
-        <>
+        <div key={notif.ID}>
           <ListItem
             button
             alignItems="flex-start"
             onClickCapture={() => {
               onNotificationClick(notif);
             }}
-            key={notif.coachingSessionId}
           >
             {notif.seen ? null : (
               <ListItemIcon>
@@ -127,19 +132,17 @@ const NotificationPage = (props) => {
               </ListItemIcon>
             )}
 
-            <ListItemText className={classes.notifMessage}>
-              {" "}
+            <ListItemText className={classes.notifMessage} key={notif.ID}>
               {notif.message}
             </ListItemText>
             <ListItemSecondaryAction>
-              {" "}
               <Typography variant="caption">
-                {notif.createdAt ? moment(notif.createdAt).fromNow() : ""}
+                {notif.CreatedAt ? moment(notif.CreatedAt).fromNow() : ""}
               </Typography>
             </ListItemSecondaryAction>
           </ListItem>
           <Divider className={classes.divider} component="li" />
-        </>
+        </div>
       );
     });
   };
@@ -160,14 +163,4 @@ const NotificationPage = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    notifications: state.notifications.data,
-  };
-};
-
-export default connect(mapStateToProps, {
-  showModal,
-  hideModal,
-  updateNotification,
-})(NotificationPage);
+export default NotificationPage;

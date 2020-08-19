@@ -1,8 +1,7 @@
-import { takeEvery, put } from "redux-saga/effects";
+import { takeEvery, put, call } from "redux-saga/effects";
 import {
   GET_SUBJECT_FIELDS_REQUEST,
   GET_STUDENT_FIELDS_REQUEST,
-  GET_TEACHERS_REQUEST,
   GET_TEACHER_FIELDS_REQUEST,
 } from "../types";
 import {
@@ -42,10 +41,9 @@ function* getTeacherFieldsSaga({ payload }) {
 
 function* getStudentFieldsSaga({ payload }) {
   try {
-    const response = yield axios
-      .get(`/fields/students/${payload}`)
-      .then((r) => r.data);
-    yield put(getStudentFieldsSuccess(response.data));
+    const response = yield call(axios.get, `/fields/students/${payload}`);
+
+    yield put(getStudentFieldsSuccess(response.data.data));
   } catch (error) {
     if (error.response) {
       yield put(setError(error.response.data.error.message));

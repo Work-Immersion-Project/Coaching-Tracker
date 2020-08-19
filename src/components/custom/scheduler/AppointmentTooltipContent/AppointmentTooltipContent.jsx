@@ -286,6 +286,8 @@ export const AppointmentTooltipContent = withStyles({
         case "waiting_for_student_confirmation":
           updateCoachingSession({ id, status });
           break;
+        default:
+          break;
       }
 
       if (title !== "" && content !== "") {

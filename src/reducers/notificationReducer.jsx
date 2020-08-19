@@ -8,7 +8,7 @@ export default (state = INITIAL_STATE, action) => {
     case GET_NOTIFICATIONS_REQUEST:
       return { ...state };
     case GET_NOTIFICATIONS_SUCCESS:
-      return { ...state, data: action.data };
+      return { ...state, data: action.payload };
     default:
       return state;
   }

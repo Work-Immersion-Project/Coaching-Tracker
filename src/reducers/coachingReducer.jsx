@@ -10,6 +10,7 @@ import {
 const INITIAL_STATE = {
   coachingSchedules: [],
   isLoading: null,
+  selectedCoachingSchedule: {},
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -29,7 +30,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isLoading: false,
-        coachingSchedules: action.data,
+        coachingSchedules: action.payload,
       };
     case GET_COACHING_SCHEDULE_REQUEST:
       return {
@@ -38,7 +39,7 @@ export default (state = INITIAL_STATE, action) => {
     case GET_COACHING_SCHEDULE_SUCCESS:
       return {
         ...state,
-        selectedCoachingSchedule: action.data,
+        selectedCoachingSchedule: action.payload,
       };
 
     default:

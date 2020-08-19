@@ -199,7 +199,7 @@ const AddEventForm = ({
     if (selectedSubject && isStudentListOpened) {
       getStudentFields(selectedSubject.ID);
     }
-  }, [selectedSubject, isStudentListOpened]);
+  }, [selectedSubject, isStudentListOpened, getStudentFields]);
 
   const onDialogClose = () => {
     hideModal();

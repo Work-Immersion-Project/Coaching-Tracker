@@ -8,7 +8,6 @@ import {
   FormControl,
   FormHelperText,
   Paper,
-  FormControlLabel,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import _ from "lodash";
@@ -26,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   },
   selectLabel: {
     marginLeft: "1em",
-    color: "black"
+    color: "black",
   },
   formWrapper: {
     padding: "2em",
@@ -108,8 +107,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "1em",
     margin: "0 5em",
   },
-
-
 }));
 
 const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
@@ -140,7 +137,11 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
 
   const renderStudentForms = () => {
     return (
-      <FormControl fullWidth error={errors.course !== undefined} className={classes.selectField}>
+      <FormControl
+        fullWidth
+        error={errors.course !== undefined}
+        className={classes.selectField}
+      >
         {/* <InputLabel className={classes.selectLabel} >Course</InputLabel> */}
         <Controller
           as={Select}
@@ -248,19 +249,20 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
               })}
               helperText={_.isUndefined(errors.id) ? "" : "Required"}
             />
-            <FormControl fullWidth error={errors.type !== undefined} className={classes.selectField} >
-            <InputLabel className={classes.selectLabel}>Type</InputLabel>
-              <Controller 
-                as={
-                  <Select variant="outlined" />
-                }
-                name="type" 
+            <FormControl
+              fullWidth
+              error={errors.type !== undefined}
+              className={classes.selectField}
+            >
+              <InputLabel className={classes.selectLabel}>Type</InputLabel>
+              <Controller
+                as={<Select variant="outlined" />}
+                name="type"
                 label="Type"
                 control={control}
                 defaultValue=""
                 rules={{ required: true }}
               >
-                
                 <MenuItem value={"student"}>Student</MenuItem>
                 <MenuItem value={"teacher"}>Teacher</MenuItem>
               </Controller>

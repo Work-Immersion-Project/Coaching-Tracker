@@ -2,12 +2,12 @@ import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch, Switch, Redirect } from "react-router-dom";
 
-import NotificationPage from "../NotificationPage";
 import AddEventDrawerContainer from "./components/AddEventDrawer/AddEventDrawerContainer";
 import TeacherDashboardContainer from "./TeacherDashboard/TeacherDashboardContainer";
 import InterweaveBG from "../custom/svgs/interweave.svg";
 import TeacherSchedulesContainer from "./TeacherSchedules/TeacherSchedulesContainer";
 import TeacherDrawerContainer from "./TeacherDrawer/TeacherDrawerContainer";
+import NotificationPageContainer from "../notification_page/NotificationPageContainer";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -41,13 +41,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TeacherPage = ({ getCoachingSchedulesRequest }) => {
+const TeacherPage = ({ getCoachingSchedules, getNotifications }) => {
   let { path } = useRouteMatch();
   const classes = useStyles();
 
   useEffect(() => {
-    getCoachingSchedulesRequest(false);
-  }, [getCoachingSchedulesRequest]);
+    getCoachingSchedules(false);
+  }, [getCoachingSchedules]);
+
+  useEffect(() => {
+    getNotifications();
+  }, [getNotifications]);
 
   return (
     <div className={classes.container}>
@@ -63,7 +67,7 @@ const TeacherPage = ({ getCoachingSchedulesRequest }) => {
               <TeacherSchedulesContainer />
             </Route>
             <Route path={`${path}/notifications`} exact>
-              <NotificationPage />
+              <NotificationPageContainer />
             </Route>
             <Redirect to={`${path}`} />
           </Switch>

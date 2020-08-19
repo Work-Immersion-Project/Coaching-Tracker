@@ -1,8 +1,7 @@
 import { UPDATE_WEBSOCKET } from "../types";
-import { takeEvery, select, put, call } from "redux-saga/effects";
+import { takeEvery, select } from "redux-saga/effects";
 import { openWebsocketsSelector } from "../selectors";
 import { config } from "../consts/config";
-import { updateWebsockets } from "../actions";
 
 function* updateWebsocketSaga() {
   while (true) {
@@ -11,7 +10,7 @@ function* updateWebsocketSaga() {
       setTimeout(resolve, config.WS_TIMEOUT);
     });
     websockets.forEach((ws) => {
-      if (!ws.CLOSED) {
+      if (ws.readyState !== WebSocket.CLOSED) {
         ws.send("keep-alive");
       }
     });

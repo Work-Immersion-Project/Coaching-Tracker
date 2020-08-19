@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 
 import {
@@ -14,7 +14,6 @@ import {
   AppointmentTooltip,
   Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import { AppointmentTooltipContent } from "./AppointmentTooltipContent/AppointmentTooltipContent";
 import { AppointmentTooltipHeader } from "./AppointmentTooltipHeader";
 import MonthTableCell from "./MonthTableCell";
 import DayTableCell from "./DayTableCell";

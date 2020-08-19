@@ -11,6 +11,7 @@ const useStyles = makeStyles({
     width: "100vw",
     height: "100vh",
     backgroundColor: "#222222",
+    borderRadius: "30px",
     color: "white",
   },
   circle: {
@@ -26,7 +27,7 @@ const LoginPage = (props) => {
     if (errorMessage) {
       return (
         <Typography>
-          Woops something went wrong while signin in. Please try again.
+          Woops something went wrong while signing in. Please try again.
         </Typography>
       );
     }

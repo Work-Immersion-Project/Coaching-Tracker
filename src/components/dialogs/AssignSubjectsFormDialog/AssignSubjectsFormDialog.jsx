@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
     margin: "1em 0.25em",
   },
   title: {
-    color: "#84DCC6 !important",
+    color: "#4EC8F4 !important",
   },
 }));
 
@@ -42,7 +42,7 @@ const formTheme = createMuiTheme({
 
     MuiInputLabel: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
 
@@ -53,30 +53,30 @@ const formTheme = createMuiTheme({
       underline: {
         minWidth: "270px",
         "&:before": {
-          borderBottom: "1px solid rgba(132, 220, 198, 1)",
+          borderBottom: "1px solid rgba(78,200,244, 1)",
         },
         "&:after": {
-          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+          borderBottom: `2px solid rgba(78,200,244, 1)`,
         },
         "&:hover:not($disabled):not($focused):not($error):before": {
-          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+          borderBottom: `2px solid rgba(78,200,244, 1)`,
         },
       },
     },
     MuiButton: {
       root: {
-        backgroundColor: "#84DCC6",
+        backgroundColor: "#4EC8F4",
         "&:hover": {
-          backgroundColor: "#52aa95",
+          backgroundColor: "#0097c1",
           "@media (hover: none)": {
-            backgroundColor: "#84DCC6",
+            backgroundColor: "#4EC8F4",
           },
         },
       },
     },
     MuiSvgIcon: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
   },

@@ -59,7 +59,7 @@ const useStyles = makeStyles(({ spacing, palette, typography }) => ({
   },
   icon: {
     verticalAlign: "middle",
-    color: "#84DCC6",
+    color: "#4EC8F4",
   },
   lens: {
     color: (coachingSession) => statusColors[coachingSession.status],

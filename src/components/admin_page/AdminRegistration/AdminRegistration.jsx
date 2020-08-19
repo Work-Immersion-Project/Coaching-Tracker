@@ -26,7 +26,6 @@ const useStyles = makeStyles((theme) => ({
   },
   selectLabel: {
     marginLeft: "1em",
-    color: "black"
   },
   formWrapper: {
     padding: "2em",
@@ -70,6 +69,22 @@ const useStyles = makeStyles((theme) => ({
   selectField: {
     width: "100%",
     // Text Fields
+    "& .MuiInputLabel-formControl": {
+      transform: "translate(0, 21px) scale(1)"
+    }, 
+
+    "& .MuiSelect-select:focus": {
+      borderRadius: "30px"
+    }, 
+
+    "& MuiFormLabel-root": {
+      color: "rgba(0, 0, 0, 0.54)"
+    },
+
+    "& .MuiInputLabel-shrink ": {
+      transform: "translate(-3px, -6px) scale(0.75)",
+    },
+    
     "& .MuiOutlinedInput-root": {
       borderRadius: "30px",
       "& fieldset": {
@@ -82,12 +97,10 @@ const useStyles = makeStyles((theme) => ({
         borderColor: "#4ec8f4",
       },
     },
-  },
 
-  selectFieldLabel: {
-    "&.MuiFormLabel-root": {
-      color: "#4EC8F4",
-    },
+    "& .MuiFormLabel-root.Mui-focused": {
+      color: "#4ec8f4"
+    }
   },
 
   inputLabel: {
@@ -141,7 +154,7 @@ const AdminRegistration = ({ registerUserRequest, showModal, hideModal }) => {
   const renderStudentForms = () => {
     return (
       <FormControl fullWidth error={errors.course !== undefined} className={classes.selectField}>
-        {/* <InputLabel className={classes.selectLabel} >Course</InputLabel> */}
+       <InputLabel className={classes.selectLabel} >Course</InputLabel> 
         <Controller
           as={Select}
           name="course"

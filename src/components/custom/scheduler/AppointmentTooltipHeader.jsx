@@ -8,7 +8,7 @@ export const AppointmentTooltipHeader = withStyles({
     margin: "0.5em 0",
   },
   headerFontColor: {
-    color: "#84DCC6",
+    color: "#4EC8F4",
   },
   emailFontColor: {
     color: "white",

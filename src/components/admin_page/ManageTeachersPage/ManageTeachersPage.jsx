@@ -129,20 +129,18 @@ const ManageTeachersPage = ({
     hideModal();
   };
 
-  const onRemoveSubjectPressed = (rowData, subjectName) => {
+  const onRemoveSubjectPressed = ({ teacherID, subjectID, subjectName }) => {
     showModal("CONFIRMATION_MODAL", {
       onDialogClose: onDialogClose,
       title: "Remove Subject?",
       content: `Are you sure you want to remove ${subjectName} from teacher?`,
       onNegativeClick: onDialogClose,
       onPositiveClick: () => {
-        removeSubjectFromTeacherRequest({
-          teacherDetails: rowData,
-          subjectName,
-        });
+        removeSubjectFromTeacherRequest({ teacherID, subjectID });
       },
     });
   };
+
   const onSubmit = ({ ID }, values) => {
     hideModal();
     assignSubjectToTeacherRequest({
@@ -190,7 +188,11 @@ const ManageTeachersPage = ({
                         key={subject.ID}
                         label={subject.subjectName}
                         onDelete={() =>
-                          onRemoveSubjectPressed(rowData, subject.subjectName)
+                          onRemoveSubjectPressed({
+                            subjectID: subject.ID,
+                            teacherID: rowData.ID,
+                            subjectName: subject.subjectName,
+                          })
                         }
                       />
                     ))

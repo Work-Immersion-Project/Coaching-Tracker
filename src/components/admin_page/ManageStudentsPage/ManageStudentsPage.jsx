@@ -138,7 +138,7 @@ const ManageStudentsPage = ({
     });
   };
 
-  const onRemoveSubjectPressed = (rowData, subjectName) => {
+  const onRemoveSubjectPressed = ({ subjectName, subjectID, studentID }) => {
     showModal("CONFIRMATION_MODAL", {
       onDialogClose: onDialogClose,
       title: "Remove Subject?",
@@ -146,8 +146,8 @@ const ManageStudentsPage = ({
       onNegativeClick: onDialogClose,
       onPositiveClick: () => {
         removeStudentSubjectRequest({
-          studentDetails: rowData,
-          subjectName,
+          subjectID,
+          studentID,
         });
       },
     });
@@ -199,7 +199,11 @@ const ManageStudentsPage = ({
                         key={subject.ID}
                         label={subject.subjectName}
                         onDelete={() =>
-                          onRemoveSubjectPressed(rowData, subject.subjectName)
+                          onRemoveSubjectPressed({
+                            subjectName: subject.subjectName,
+                            studentID: rowData.ID,
+                            subjectID: subject.ID,
+                          })
                         }
                       />
                     ))

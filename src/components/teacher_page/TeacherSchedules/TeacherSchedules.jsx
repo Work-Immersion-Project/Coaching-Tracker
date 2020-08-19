@@ -76,13 +76,6 @@ const formTheme = createMuiTheme({
       highlightedText: {
         color: "#4EC8F4",
       },
-      otherMonth: {
-        color: "rgba(244, 244, 244, 0.38)",
-      },
-      today: {
-        color: "#222222",
-        background: "#4EC8F4",
-      },
     },
 
     MuiIconButton: {

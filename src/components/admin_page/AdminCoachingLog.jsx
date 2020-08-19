@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import {
   Grid,
@@ -7,7 +7,7 @@ import {
   Typography,
   ThemeProvider,
 } from "@material-ui/core";
-import { hideModal, showModal, getCoachingLogs } from "../../actions";
+import { hideModal, showModal } from "../../actions";
 
 import { connect } from "react-redux";
 import moment from "moment";
@@ -125,12 +125,11 @@ const formTheme = createMuiTheme({
 });
 
 const AdminCoachingLog = (props) => {
-  const { getCoachingLogs } = props;
   const classes = useStyles();
 
-  useEffect(() => {
-    getCoachingLogs();
-  }, [getCoachingLogs]);
+  // useEffect(() => {
+  //   getCoachingLogs();
+  // }, [getCoachingLogs]);
 
   return (
     <ThemeProvider theme={formTheme}>
@@ -235,5 +234,4 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   hideModal,
   showModal,
-  getCoachingLogs,
 })(AdminCoachingLog);

@@ -1,15 +1,11 @@
 import React, { useEffect } from "react";
-import { reduxForm, FieldArray, formValueSelector } from "redux-form";
-import { connect } from "react-redux";
-import { getSubjectFieldsRequest } from "../../../actions";
-import CustomAutoComplete from "../../custom/CustomAutocomplete";
+
 import {
   Dialog,
   DialogTitle,
   DialogActions,
   DialogContent,
   Button,
-  InputLabel,
   Grid,
   TextField,
 } from "@material-ui/core";
@@ -18,6 +14,8 @@ import {
   createMuiTheme,
   ThemeProvider,
 } from "@material-ui/core/styles";
+import { useForm, Controller } from "react-hook-form";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -82,18 +80,15 @@ const formTheme = createMuiTheme({
   },
 });
 
-const subjectsFieldSelector = formValueSelector("AssignSubjectsFormDialog");
-
 const AssignSubjectsFormDialog = (props) => {
   const classes = useStyles();
-
+  const { control, errors, handleSubmit } = useForm();
   const {
     open,
     onDialogClose,
     title,
     onNegativeClick,
     onPositiveClick,
-    handleSubmit,
     pristined,
     getSubjectsFields,
     currentSubjects,
@@ -112,24 +107,45 @@ const AssignSubjectsFormDialog = (props) => {
           <DialogContent>
             <Grid container direction="column" justify="center" spacing={1}>
               <Grid item>
-                <InputLabel>Subjects</InputLabel>
-                <FieldArray
+                <Controller
                   name="subjects"
-                  multiple={true}
-                  getOptionLabel={(option) => option.subjectName}
-                  component={CustomAutoComplete}
-                  inputComponent={TextField}
-                  options={
-                    subjects
-                      ? subjects.filter(
-                          (field) =>
-                            currentSubjects.filter(
-                              (currSubj) =>
-                                currSubj.subjectName === field.subjectName
-                            ).length === 0
-                        )
-                      : []
-                  }
+                  defaultValue={[]}
+                  control={control}
+                  rules={{
+                    validate: (subjects = []) => subjects.length !== 0,
+                  }}
+                  render={(props) => {
+                    return (
+                      <Autocomplete
+                        options={
+                          subjects !== null
+                            ? subjects.filter(
+                                (s) =>
+                                  currentSubjects.filter((cs) => s.ID === cs.ID)
+                                    .length === 0
+                              )
+                            : []
+                        }
+                        getOptionLabel={(option) => option.subjectName}
+                        multiple
+                        filterSelectedOptions
+                        size={"small"}
+                        onChange={(_, data) => {
+                          props.onChange(data);
+                        }}
+                        renderInput={(props) => (
+                          <TextField
+                            {...props}
+                            error={errors.subjects !== undefined}
+                            label="Assign Subjects"
+                            helperText={
+                              errors.subjects !== undefined ? "Required" : ""
+                            }
+                          />
+                        )}
+                      />
+                    );
+                  }}
                 />
               </Grid>
             </Grid>
@@ -146,17 +162,4 @@ const AssignSubjectsFormDialog = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    subjectFields: state.fields.data?.subjectFields,
-    subjectFieldsValues: subjectsFieldSelector(state, "subjects"),
-  };
-};
-
-const AssignSubjectsFormDialogWithReduxForm = reduxForm({
-  form: "AssignSubjectsFormDialog",
-})(AssignSubjectsFormDialog);
-
-export default connect(mapStateToProps, {
-  getSubjectFieldsRequest,
-})(AssignSubjectsFormDialogWithReduxForm);
+export default AssignSubjectsFormDialog;

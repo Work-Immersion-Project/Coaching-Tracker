@@ -101,7 +101,7 @@ export const AppointmentTooltipContent = withStyles({
           }}
           variant="contained"
         >
-          Finish Session
+          Confirm Session
         </Button>
       );
     };

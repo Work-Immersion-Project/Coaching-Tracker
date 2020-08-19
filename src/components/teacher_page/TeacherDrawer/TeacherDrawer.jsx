@@ -79,7 +79,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TeacherDrawer = (props) => {
+const TeacherDrawer = ({
+  signOut,
+  showModal,
+  hideModal,
+  isDrawerOpen,
+  closeDrawer,
+}) => {
   const classes = useStyles();
   const [selectedPath, setSelectedPath] = useState(history.location.pathname);
 
@@ -101,17 +107,17 @@ const TeacherDrawer = (props) => {
     },
   ];
   const onDialogClose = () => {
-    props.hideModal();
+    hideModal();
   };
 
   const handleSignoutButton = () => {
-    props.showModal("CONFIRMATION_MODAL", {
+    showModal("CONFIRMATION_MODAL", {
       onDialogClose: onDialogClose,
       title: "Sign Out",
       content: "Are you sure you want to sign out?",
       onNegativeClick: onDialogClose,
       onPositiveClick: () => {
-        props.signOut();
+        signOut();
         onDialogClose();
       },
     });
@@ -158,8 +164,8 @@ const TeacherDrawer = (props) => {
           classes={{
             paper: classes.drawerPaper,
           }}
-          open={props.isDrawerOpen}
-          onClose={props.closeDrawer}
+          open={isDrawerOpen}
+          onClose={closeDrawer}
           anchor="left"
           ModalProps={{
             keepMounted: true,

@@ -128,11 +128,12 @@ function* signInSaga() {
 }
 
 function* signOutSaga() {
-  const gapiAuthClient = select(getGapiAuthClient);
+  const gapiAuthClient = yield select(getGapiAuthClient);
+
   try {
     yield gapiAuthClient.signOut();
     yield app.auth().signOut();
-    yield put(signOutSuccess);
+    yield put(signOutSuccess());
   } catch (error) {
     yield put(setError(error.message));
   }

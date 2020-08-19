@@ -7,14 +7,28 @@ const moment = require("moment");
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    display: "grid",
+    gridTemplate: "1fr / auto auto",
     padding: "1.2em",
     borderRadius: "20px",
     margin: "0.5em",
   },
+  contentWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
+  titleWrapper: {
+    display: "flex",
+    alignItems: "center",
+  },
+  bodyText: {
+    fontWeight: 500,
+    opacity: 0.5,
+  },
   finished: {
     color: "#2e7d32",
   },
-
   pending: {
     color: "#00364D",
   },
@@ -43,48 +57,45 @@ export const CoachingSessionListItem = ({ coachingSessionDetails }) => {
 
   if (coachingSessionDetails) {
     return (
-      <Grid
-        className={classes.root}
-        component={Paper}
-        item
-        container
-        alignItems="center"
-      >
-        <Grid item container xs={5} alignItems="center" spacing={5}>
-          <Grid item>
-            <LensIcon
-              className={classes[coachingSessionDetails.status]}
-              style={{ fontSize: 40 }}
-            />
-          </Grid>
-          <Grid item>
+      <Paper className={classes.root}>
+        <div className={classes.titleWrapper}>
+          <LensIcon
+            className={classes[coachingSessionDetails.status]}
+            style={{ fontSize: 40, marginRight: "0.5em" }}
+          />
+
+          <div>
             <Typography variant="h6">{coachingSessionDetails.title}</Typography>
             <Typography variant="body1">
               {coachingSessionDetails.teacher.metadata.fullName}
             </Typography>
-          </Grid>
-        </Grid>
-        <Grid item container xs={7} alignItems="center" spacing={5}>
-          <Grid item>
-            <Typography variant="subtitle1">
-              {`${coachingSessionDetails.studentAttendees.length} Student/s`}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="subtitle1">{`${moment(
-              coachingSessionDetails.startDate
-            ).format("MMM DD, YYYY - hh:mm a")}`}</Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="h6"> - </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="subtitle1">{`${moment(
-              coachingSessionDetails.startDate
-            ).format("MMM DD, YYYY - hh:mm a")}`}</Typography>
-          </Grid>
-        </Grid>
-      </Grid>
+          </div>
+        </div>
+
+        <div className={classes.contentWrapper}>
+          <Typography className={classes.bodyText} variant="subtitle1">
+            {`${coachingSessionDetails.studentAttendees.length} Student/s`}
+          </Typography>
+
+          <Typography
+            className={classes.bodyText}
+            variant="subtitle1"
+          >{`${moment(coachingSessionDetails.startDate).format(
+            "MMM DD, YYYY - hh:mm A"
+          )}`}</Typography>
+
+          <Typography className={classes.bodyText} variant="h6">
+            -
+          </Typography>
+
+          <Typography
+            className={classes.bodyText}
+            variant="subtitle1"
+          >{`${moment(coachingSessionDetails.startDate).format(
+            "MMM DD, YYYY - hh:mm A"
+          )}`}</Typography>
+        </div>
+      </Paper>
     );
   } else {
     return (

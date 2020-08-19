@@ -7,10 +7,16 @@ import {
   Button,
   Divider,
   CircularProgress,
+  FormControl,
+  InputLabel,
+  FormHelperText,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { DatePicker, TimePicker } from "@material-ui/pickers";
 import { useForm, Controller } from "react-hook-form";
+import _ from "lodash";
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -78,7 +84,7 @@ const formTheme = createMuiTheme({
       daySelected: {
         backgroundColor: "#3f51b5",
         "&:hover": {
-          backgroundColor:"#3f51b5",
+          backgroundColor: "#3f51b5",
         },
         "&:focus": {
           backgroundColor: "#3f51b5",
@@ -172,7 +178,7 @@ const StyledTimePicker = styled(TextField)({
 
 const RequestEventForm = ({
   selectedDate,
-  getTeachers,
+  getTeacherFields,
   showModal,
   hideModal,
   teachers,
@@ -180,16 +186,17 @@ const RequestEventForm = ({
   closeAddEventDrawer,
   isTeacherListOpen,
   setTeacherListState,
+  enrolledSubjects,
 }) => {
-  const { handleSubmit, register, errors, control } = useForm();
+  const { handleSubmit, register, errors, control, watch } = useForm();
 
   const classes = useStyles();
-
+  const selectedSubject = watch("subject");
   useEffect(() => {
-    if (isTeacherListOpen) {
-      getTeachers(true);
+    if (selectedSubject && isTeacherListOpen) {
+      getTeacherFields(selectedSubject.ID);
     }
-  }, [isTeacherListOpen, getTeachers]);
+  }, [selectedSubject, isTeacherListOpen, getTeacherFields]);
 
   const onDialogClose = () => {
     hideModal();
@@ -282,6 +289,26 @@ const RequestEventForm = ({
           defaultValue={selectedDate.endDate}
         />
         <Divider className={classes.divider2} />
+        <FormControl fullWidth error={errors.subject !== undefined}>
+          <InputLabel>Subject</InputLabel>
+          <Controller
+            as={Select}
+            name="subject"
+            label="Subject"
+            control={control}
+            defaultValue=""
+            rules={{ required: true }}
+          >
+            {enrolledSubjects.map((subject) => (
+              <MenuItem key={subject.ID} value={subject}>
+                {subject.subjectName}
+              </MenuItem>
+            ))}
+          </Controller>
+          <FormHelperText>
+            {_.isUndefined(errors.subject) ? "" : "Required"}
+          </FormHelperText>
+        </FormControl>
         <Controller
           name="teacher"
           defaultValue={[]}

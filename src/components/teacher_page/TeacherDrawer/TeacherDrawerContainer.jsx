@@ -1,6 +1,11 @@
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { signOutRequest, hideModal, closeDrawer } from "../../../actions";
+import {
+  signOutRequest,
+  hideModal,
+  closeDrawer,
+  showModal,
+} from "../../../actions";
 import TeacherDrawer from "./TeacherDrawer";
 
 const TeacherDrawerContainer = () => {
@@ -16,7 +21,7 @@ const TeacherDrawerContainer = () => {
     showModal: useCallback((type, props) => dispatch(showModal(type, props)), [
       dispatch,
     ]),
-    closeDrawer: useCallback(() => dispatch(closeDrawer())),
+    closeDrawer: useCallback(() => dispatch(closeDrawer()), [dispatch]),
     hideModal: useCallback(() => dispatch(hideModal()), [dispatch]),
   };
 

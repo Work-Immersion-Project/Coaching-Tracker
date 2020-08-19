@@ -418,7 +418,7 @@ const CoachingSessionDialog = ({
               </div>
             </Grid>
             <Grid item xs={9}>
-              <div className={classes.text}>{student.fullName}</div>
+              <div className={classes.text}>{student.metadata.fullName}</div>
             </Grid>
           </Grid>
         ))}

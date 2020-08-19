@@ -11,7 +11,7 @@ function* registerUserSaga({
   payload: {
     id,
     firstName,
-    middleName,
+    middleName = "",
     lastName,
     email,
     createdAt,

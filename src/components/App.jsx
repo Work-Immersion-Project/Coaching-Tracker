@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "#0097c1",
     },
     borderRadius: "10px ",
-    marginRight: "1em"
+    marginRight: "1em",
   },
 }));
 const App = ({
@@ -77,9 +77,11 @@ const App = ({
         </Switch>
       </Router>
       <CookieConsent
+        location="bottom"
         disableButtonStyles={true}
         containerClasses={classes.consentContainer}
-        debug={true}
+        cookieName="coaching-tracker-cookie"
+        sameSite="strict"
         ButtonComponent={(props) => (
           <Button {...props} className={classes.consentButton} />
         )}

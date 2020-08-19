@@ -18,6 +18,7 @@ import {
   updateCoachingScheduleStatusSuccess,
   requestCoachingScheduleSuccess,
   acceptCoachingScheduleSuccess,
+  createWebsocket,
 } from "../actions";
 import { currentUserSelector, getGapiCalendarClient } from "../selectors";
 import { v4 as uuidV4 } from "uuid";
@@ -32,9 +33,7 @@ function* getStudentCoachingSessions(studentID) {
     `${config.WS_BASE_URL}/coaching-sessions/student/${studentID}`
   );
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));
-  setInterval(() => {
-    ws.send("keepalive");
-  }, config.WS_TIMEOUT);
+  yield put(createWebsocket(ws));
   try {
     while (true) {
       const response = yield take(channel);
@@ -66,9 +65,7 @@ function* getTeacherCoachingSessions(teacherID) {
   );
 
   const channel = eventChannel((subs) => (ws.onmessage = (e) => subs(e.data)));
-  setInterval(() => {
-    ws.send("keepalive");
-  }, config.WS_TIMEOUT);
+  yield put(createWebsocket(ws));
   try {
     while (true) {
       const response = yield take(channel);
@@ -185,6 +182,7 @@ function* addCoachingSessionSaga({
 function* updateCoachingSessionSaga({ payload: { id, status } }) {
   try {
     yield put(hideModal());
+    yield put(showModal("LOADING_MODAL"));
     yield axios.patch(`coaching-sessions/${id}`, {
       status,
     });

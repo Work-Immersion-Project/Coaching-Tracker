@@ -14,6 +14,7 @@ import "./App.css";
 import LandingPageContainer from "./landing_page/LandingPageContainer";
 import CookieConsent from "react-cookie-consent";
 import { makeStyles, Typography, Button } from "@material-ui/core";
+import { updateWebsockets } from "../actions";
 const useStyles = makeStyles((theme) => ({
   consentContainer: {
     backgroundColor: "#222222",
@@ -26,8 +27,18 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "10px ",
   },
 }));
-const App = ({ gapiAuthClient, checkAuthRequest, gapiInitRequest }) => {
+const App = ({
+  gapiAuthClient,
+  checkAuthRequest,
+  gapiInitRequest,
+  updateWebsockets,
+}) => {
   const classes = useStyles();
+
+  useEffect(() => {
+    updateWebsockets();
+  }, []);
+
   useEffect(() => {
     if (gapiAuthClient) {
       checkAuthRequest();

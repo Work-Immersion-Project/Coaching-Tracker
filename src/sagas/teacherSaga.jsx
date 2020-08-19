@@ -7,6 +7,7 @@ import {
   getTeachersSuccess,
   assignSubjectToTeacherSuccess,
   removeSubjectFromTeacherSuccess,
+  createWebsocket,
 } from "../actions";
 import { take, takeEvery, put, select } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
@@ -31,9 +32,7 @@ function* getTeachers() {
         subs(e.data);
       })
   );
-  setInterval(() => {
-    ws.send("keepalive");
-  }, config.WS_TIMEOUT);
+  yield put(createWebsocket(ws));
   try {
     while (true) {
       const response = yield take(channel);

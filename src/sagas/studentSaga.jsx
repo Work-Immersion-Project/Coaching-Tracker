@@ -15,6 +15,7 @@ import {
   getStudentsSuccess,
   showModal,
   removeStudentSubjectSuccess,
+  createWebsocket,
 } from "../actions";
 import { currentUserSelector } from "../selectors";
 import firebase from "firebase";
@@ -51,9 +52,7 @@ function* getStudents() {
       sub(m.data);
     });
   });
-  setInterval(() => {
-    ws.send("keepalive");
-  }, config.WS_TIMEOUT);
+  yield put(createWebsocket(ws));
   try {
     while (true) {
       const response = yield take(channel);

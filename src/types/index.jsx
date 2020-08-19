@@ -15,3 +15,4 @@ export * from "./registrationTypes";
 export * from "./coachingLogTypes";
 
 export * from "./schedulerTypes";
+export * from "./websocketTypes";

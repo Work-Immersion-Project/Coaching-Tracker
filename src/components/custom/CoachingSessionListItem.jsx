@@ -33,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
   denied: {
     color: "#7A1313",
   },
+  overdue: {
+    color: "#C87142",
+  },
 }));
 
 export const CoachingSessionListItem = ({ coachingSessionDetails }) => {

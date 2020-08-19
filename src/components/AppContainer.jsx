@@ -1,7 +1,11 @@
 import React, { useCallback } from "react";
 import App from "./App";
 import { useDispatch, useSelector } from "react-redux";
-import { checkAuthRequest, gapiInitRequest } from "../actions";
+import {
+  checkAuthRequest,
+  gapiInitRequest,
+  updateWebsockets,
+} from "../actions";
 
 const AppContainer = () => {
   const dispatch = useDispatch();
@@ -18,6 +22,9 @@ const AppContainer = () => {
       dispatch,
     ]),
     gapiInitRequest: useCallback(() => dispatch(gapiInitRequest()), [dispatch]),
+    updateWebsockets: useCallback(() => dispatch(updateWebsockets()), [
+      dispatch,
+    ]),
   };
 
   return <App {...stateToProps} {...dispatchToProps} />;

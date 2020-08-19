@@ -13,3 +13,4 @@ export * from "./notificationActions";
 export * from "./coachingLogActions";
 export * from "./schedulerActions";
 export * from "./gapiActions";
+export * from "./websocketActions";

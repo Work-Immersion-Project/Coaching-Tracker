@@ -2,12 +2,13 @@ import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch, Redirect, Switch } from "react-router-dom";
 
-import StudentDrawer from "./StudentDrawer";
 import RequestEventDrawerContainer from "./components/RequestEventDrawer/RequestEventDrawerContainer";
 import { StudentDashboardContainer } from "./StudentDashboard/StudentDashboardContainer";
 import InterweaveBG from "../custom/svgs/interweave.svg";
 import StudentSchedulesContainer from "./StudentSchedules/StudentSchedulesContainer";
 import NotificationPageContainer from "../notification_page/NotificationPageContainer";
+import StudentDrawerContainer from "./StudentDrawer/StudentDrawerContainer";
+import { toast } from "react-toastify";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -41,9 +42,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StudentPage = ({ getCoachingSchedules, getNotifications }) => {
+const StudentPage = ({
+  getCoachingSchedules,
+  getNotifications,
+  notifications,
+  isUpdatedByUser,
+}) => {
   let { path } = useRouteMatch();
   const classes = useStyles();
+
+  // Show Notifications Once
+  useEffect(() => {
+    if (!isUpdatedByUser && notifications.length !== 0) {
+      notifications.forEach((notif) => {
+        toast(notif.message);
+      });
+    }
+  }, [notifications, isUpdatedByUser]);
 
   useEffect(() => {
     getCoachingSchedules(true);
@@ -55,7 +70,7 @@ const StudentPage = ({ getCoachingSchedules, getNotifications }) => {
 
   return (
     <div className={classes.container}>
-      <StudentDrawer />
+      <StudentDrawerContainer />
 
       <div className={classes.background}>
         <div className={classes.content}>

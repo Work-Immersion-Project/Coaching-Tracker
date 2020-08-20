@@ -4,17 +4,11 @@ import {
   UPDATE_NOTIFICATION_REQUEST,
   UPDATE_NOTIFICATION_SUCCESS,
 } from "../types";
-import { toast } from "react-toastify";
 
 export const getNotificationsRequest = () => {
   return { type: GET_NOTIFICATIONS_REQUEST };
 };
 export const getNotificationsSuccess = (results) => {
-  results.forEach((notif) => {
-    if (!notif.seen) {
-      toast(notif.message);
-    }
-  });
   return {
     type: GET_NOTIFICATIONS_SUCCESS,
     payload: results,
@@ -28,8 +22,9 @@ export const updateNotificationRequest = (notificationID) => {
   };
 };
 
-export const updateNotificationSuccess = () => {
+export const updateNotificationSuccess = (notificationID) => {
   return {
     type: UPDATE_NOTIFICATION_SUCCESS,
+    payload: notificationID,
   };
 };

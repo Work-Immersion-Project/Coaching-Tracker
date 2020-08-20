@@ -8,6 +8,7 @@ import InterweaveBG from "../custom/svgs/interweave.svg";
 import TeacherSchedulesContainer from "./TeacherSchedules/TeacherSchedulesContainer";
 import TeacherDrawerContainer from "./TeacherDrawer/TeacherDrawerContainer";
 import NotificationPageContainer from "../notification_page/NotificationPageContainer";
+import { toast } from "react-toastify";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -41,9 +42,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TeacherPage = ({ getCoachingSchedules, getNotifications }) => {
+const TeacherPage = ({
+  getCoachingSchedules,
+  getNotifications,
+  notifications,
+  isUpdatedByUser,
+}) => {
   let { path } = useRouteMatch();
   const classes = useStyles();
+
+  useEffect(() => {
+    if (!isUpdatedByUser && notifications.length !== 0) {
+      notifications.forEach((notif) => {
+        toast(notif.message);
+      });
+    }
+  }, [notifications, isUpdatedByUser]);
 
   useEffect(() => {
     getCoachingSchedules(false);

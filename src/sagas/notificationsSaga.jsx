@@ -49,7 +49,7 @@ function* getNotificationsSaga() {
 function* updateNotificationsSaga({ payload }) {
   try {
     yield axios.patch(`notifications/${payload}`);
-    yield put(updateNotificationSuccess());
+    yield put(updateNotificationSuccess(payload));
   } catch (error) {}
 }
 

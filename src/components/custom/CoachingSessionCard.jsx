@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     width: "100%",
   },
-  headerOverlay: {},
+
   content: {
     display: "grid",
     gridTemplate: "1fr 1fr/ 1fr",

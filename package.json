@@ -1,6 +1,6 @@
 {
   "name": "immersion",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "homepage": "http://work-immersion-project.github.io/Coaching-Tracker",
   "dependencies": {

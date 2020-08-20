@@ -60,6 +60,7 @@ const NotificationPage = ({
   notifications,
   updateNotification,
   currentUser,
+  clearNotifications,
 }) => {
   const onNotificationClick = ({
     payload: { coachingSessionID },
@@ -95,7 +96,11 @@ const NotificationPage = ({
     return (
       <Grid className={classes.content} item container direction="column">
         <Grid container justify="flex-end">
-          <IconButton>
+          <IconButton
+            onClick={() => {
+              clearNotifications();
+            }}
+          >
             <DeleteIcon className={classes.deleteIcon} />
           </IconButton>
         </Grid>

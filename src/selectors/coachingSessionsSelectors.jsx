@@ -25,8 +25,8 @@ export const coachingSessionStudentInstancesSelector = createSelector(
   currentUserSelector,
   (coachingSessions, currentUser) => {
     return _.flatten(
-      coachingSessions.map((session) =>
-        session.studentAttendees.map((student) => {
+      _.mapValues(coachingSessions, (session, _) => {
+        return session.studentAttendees.map((student) => {
           return {
             text:
               currentUser.email !== student.email
@@ -35,8 +35,8 @@ export const coachingSessionStudentInstancesSelector = createSelector(
             id: student.email,
             color: "red",
           };
-        })
-      )
+        });
+      })
     );
   }
 );

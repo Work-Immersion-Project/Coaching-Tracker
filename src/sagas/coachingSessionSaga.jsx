@@ -27,6 +27,7 @@ import { v4 as uuidV4 } from "uuid";
 import { convertCoachingScheduleDates } from "../utils";
 import axios from "../api";
 import { config } from "../consts/config";
+import _ from "lodash";
 
 //** GET COACHING SESSIONS */
 
@@ -73,17 +74,18 @@ function* getTeacherCoachingSessions(teacherID) {
       const response = yield take(channel);
       const coachingSessions = JSON.parse(response);
 
-      yield put(
-        getCoachingSchedulesSuccess(
-          coachingSessions.data.map((s) => {
-            const sched = s;
-            return {
-              ...sched,
-              students: sched.studentAttendees.map((st) => st.email),
-            };
-          })
-        )
+      const mappedSessions = _.keyBy(
+        coachingSessions.data.map((s) => {
+          const sched = s;
+          return {
+            ...sched,
+            students: sched.studentAttendees.map((st) => st.email),
+          };
+        }),
+        "ID"
       );
+
+      yield put(getCoachingSchedulesSuccess(mappedSessions));
     }
   } catch (error) {
     if (error.response) {

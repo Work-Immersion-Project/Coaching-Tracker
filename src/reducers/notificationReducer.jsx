@@ -5,6 +5,8 @@ import {
   UPDATE_NOTIFICATION_SUCCESS,
   CHECK_DESKTOP_NOTIFICATION_PERMISSION_REQUEST,
   CHECK_DESKTOP_NOTIFICATION_PERMISSION_SUCCESS,
+  CLEAR_NOTIFICATIONS_REQUEST,
+  CLEAR_NOTIFICATIONS_SUCCESS,
 } from "../types";
 const INITIAL_STATE = {
   data: [],
@@ -16,11 +18,18 @@ export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case GET_NOTIFICATIONS_REQUEST:
     case CHECK_DESKTOP_NOTIFICATION_PERMISSION_REQUEST:
+    case CLEAR_NOTIFICATIONS_REQUEST:
     case UPDATE_NOTIFICATION_REQUEST: {
       return { ...state };
     }
     case CHECK_DESKTOP_NOTIFICATION_PERMISSION_SUCCESS: {
       return { ...state, isDesktopNotificationAllowed: action.payload };
+    }
+    case CLEAR_NOTIFICATIONS_SUCCESS: {
+      return {
+        ...state,
+        data: [],
+      };
     }
     case UPDATE_NOTIFICATION_SUCCESS: {
       const prevNotifs = state.data;
@@ -37,7 +46,11 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, data: updatedNotifs, isUpdatedByUser: true };
     }
     case GET_NOTIFICATIONS_SUCCESS:
-      return { ...state, data: action.payload, isUpdatedByUser: false };
+      return {
+        ...state,
+        data: [...action.payload, ...state.data],
+        isUpdatedByUser: false,
+      };
     default:
       return state;
   }

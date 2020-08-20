@@ -6,19 +6,9 @@ import {
   checkDesktopNotificationPermissionRequest,
 } from "../../actions";
 import StudentPage from "./StudentPage";
-import { unseenNotificationsSelector } from "../../selectors";
 
 const StudentPageContainer = () => {
   const dispatch = useDispatch();
-
-  const stateToProps = useSelector((state) => {
-    return {
-      notifications: unseenNotificationsSelector(state),
-      isUpdatedByUser: state.notifications.isUpdatedByUser,
-      isDesktopNotificationAllowed:
-        state.notifications.isDesktopNotificationAllowed,
-    };
-  });
 
   const dispatchToProps = {
     getCoachingSchedules: useCallback(
@@ -34,7 +24,7 @@ const StudentPageContainer = () => {
     ),
   };
 
-  return <StudentPage {...dispatchToProps} {...stateToProps} />;
+  return <StudentPage {...dispatchToProps} />;
 };
 
 export default StudentPageContainer;

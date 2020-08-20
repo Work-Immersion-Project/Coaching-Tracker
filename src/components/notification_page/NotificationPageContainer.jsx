@@ -1,7 +1,12 @@
 import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import NotificationPage from "./NotificationPage";
-import { hideModal, showModal, updateNotificationRequest } from "../../actions";
+import {
+  hideModal,
+  showModal,
+  updateNotificationRequest,
+  clearNotificationsRequest,
+} from "../../actions";
 import { currentUserSelector } from "../../selectors";
 
 const NotificationPageContainer = () => {
@@ -20,6 +25,10 @@ const NotificationPageContainer = () => {
     ]),
     updateNotification: useCallback(
       (notificationID) => dispatch(updateNotificationRequest(notificationID)),
+      [dispatch]
+    ),
+    clearNotifications: useCallback(
+      () => dispatch(clearNotificationsRequest()),
       [dispatch]
     ),
   };

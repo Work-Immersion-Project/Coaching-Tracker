@@ -1,5 +1,8 @@
 import { takeEvery, put, select, take } from "redux-saga/effects";
-import { currentUserSelector } from "../selectors";
+import {
+  currentUserSelector,
+  isDesktopNotificationsEnabledSelector,
+} from "../selectors";
 import { config } from "../consts/config";
 import {
   createWebsocket,
@@ -7,17 +10,26 @@ import {
   setError,
   updateNotificationSuccess,
   checkDesktopNotificationPermissionSuccess,
+  checkDesktopNotificationPermissionRequest,
+  clearNotificationsSuccess,
+  showModal,
+  hideModal,
+  showAlert,
 } from "../actions";
 import { eventChannel } from "redux-saga";
 import {
   GET_NOTIFICATIONS_REQUEST,
   UPDATE_NOTIFICATION_REQUEST,
   CHECK_DESKTOP_NOTIFICATION_PERMISSION_REQUEST,
+  CLEAR_NOTIFICATIONS_REQUEST,
 } from "../types";
 import axios from "../api";
+import NotifIMG from "../components/custom/img/ongoing_session_header.png";
+import { toast } from "react-toastify";
 
 function* getNotificationsSaga() {
   const currentUser = yield select(currentUserSelector);
+
   const ws = new WebSocket(
     `${config.WS_BASE_URL}/notifications/${currentUser.UserID}`
   );
@@ -37,6 +49,19 @@ function* getNotificationsSaga() {
           payload: JSON.parse(notif.payload),
         };
       });
+
+      parsedJson.forEach((notif) => {
+        if (!notif.seen) {
+          new Notification("CIIT Coaching Tracker", {
+            body: notif.message,
+            icon: NotifIMG,
+            dir: "ltr",
+          });
+
+          toast(notif.message);
+        }
+      });
+
       yield put(getNotificationsSuccess(parsedJson));
     }
   } catch (error) {
@@ -71,6 +96,17 @@ function* checkDesktopNotificationPermissionSaga() {
   }
 }
 
+function* clearNotificationsSaga() {
+  try {
+    yield put(showModal("LOADING_MODAL"));
+    const currentUser = yield select(currentUserSelector);
+    yield axios.delete(`notifications/${currentUser.UserID}`);
+    yield put(hideModal());
+    yield put(showAlert("SUCCESS", "Notifications Cleared!"));
+    yield put(clearNotificationsSuccess());
+  } catch (error) {}
+}
+
 export function* watchNotifications() {
   yield takeEvery(GET_NOTIFICATIONS_REQUEST, getNotificationsSaga);
   yield takeEvery(UPDATE_NOTIFICATION_REQUEST, updateNotificationsSaga);
@@ -78,4 +114,5 @@ export function* watchNotifications() {
     CHECK_DESKTOP_NOTIFICATION_PERMISSION_REQUEST,
     checkDesktopNotificationPermissionSaga
   );
+  yield takeEvery(CLEAR_NOTIFICATIONS_REQUEST, clearNotificationsSaga);
 }

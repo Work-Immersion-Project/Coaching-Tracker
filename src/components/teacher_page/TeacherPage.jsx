@@ -46,29 +46,10 @@ const useStyles = makeStyles((theme) => ({
 const TeacherPage = ({
   getCoachingSchedules,
   getNotifications,
-  notifications,
-  isUpdatedByUser,
   checkDesktopNotificationPermission,
-  isDesktopNotificationAllowed,
 }) => {
   let { path } = useRouteMatch();
   const classes = useStyles();
-
-  useEffect(() => {
-    if (!isUpdatedByUser && notifications.length !== 0) {
-      notifications.forEach((notif) => {
-        if (isDesktopNotificationAllowed) {
-          new Notification("CIIT Coaching Tracker", {
-            body: notif.message,
-            icon: NotifIMG,
-            dir: "ltr",
-          });
-        }
-
-        toast(notif.message);
-      });
-    }
-  }, [isDesktopNotificationAllowed, notifications, isUpdatedByUser]);
 
   useEffect(() => {
     checkDesktopNotificationPermission();

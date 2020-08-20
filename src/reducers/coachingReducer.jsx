@@ -8,7 +8,7 @@ import {
 } from "../types";
 
 const INITIAL_STATE = {
-  coachingSchedules: [],
+  coachingSchedules: {},
   isLoading: null,
   selectedCoachingSchedule: {},
 };
@@ -30,7 +30,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isLoading: false,
-        coachingSchedules: action.payload,
+        coachingSchedules: { ...state.coachingSchedules, ...action.payload },
       };
     case GET_COACHING_SCHEDULE_REQUEST:
       return {

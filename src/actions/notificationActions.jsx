@@ -5,6 +5,8 @@ import {
   UPDATE_NOTIFICATION_SUCCESS,
   CHECK_DESKTOP_NOTIFICATION_PERMISSION_REQUEST,
   CHECK_DESKTOP_NOTIFICATION_PERMISSION_SUCCESS,
+  CLEAR_NOTIFICATIONS_REQUEST,
+  CLEAR_NOTIFICATIONS_SUCCESS,
 } from "../types";
 
 export const getNotificationsRequest = () => {
@@ -43,5 +45,17 @@ export const checkDesktopNotificationPermissionSuccess = (
   return {
     type: CHECK_DESKTOP_NOTIFICATION_PERMISSION_SUCCESS,
     payload: isDesktopNotificationAllowed,
+  };
+};
+
+export const clearNotificationsRequest = () => {
+  return {
+    type: CLEAR_NOTIFICATIONS_REQUEST,
+  };
+};
+
+export const clearNotificationsSuccess = () => {
+  return {
+    type: CLEAR_NOTIFICATIONS_SUCCESS,
   };
 };

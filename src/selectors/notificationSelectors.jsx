@@ -6,3 +6,6 @@ export const unseenNotificationsSelector = createSelector(
   notificationsSelector,
   (notifications) => notifications.filter((notif) => !notif.seen)
 );
+
+export const isDesktopNotificationsEnabledSelector = (state) =>
+  state.notifications.isDesktopNotificationAllowed;

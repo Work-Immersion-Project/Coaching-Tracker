@@ -7,6 +7,7 @@ import {
   toggleTooltipVisibility,
 } from "../../../actions";
 import { coachingSessionStudentInstancesSelector } from "../../../selectors";
+import _ from "lodash";
 const CustomSchedulerContainer = ({ coachingSessions }) => {
   const dispatch = useDispatch();
 
@@ -38,7 +39,7 @@ const CustomSchedulerContainer = ({ coachingSessions }) => {
     <CustomScheduler
       {...dispatchToProps}
       {...stateToProps}
-      coachingSessions={coachingSessions}
+      coachingSessions={_.map(coachingSessions, (value, _) => value)}
     />
   );
 };

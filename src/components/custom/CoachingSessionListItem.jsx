@@ -1,14 +1,17 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Paper, Grid, Typography } from "@material-ui/core";
+import { Paper, Grid, Typography, ListItem } from "@material-ui/core";
 import LensIcon from "@material-ui/icons/Lens";
 
 const moment = require("moment");
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  root: { borderRadius: "20px", margin: "0.5em" },
+  paperWrapper: {
+    width: "100%",
     display: "grid",
-    gridTemplate: "1fr / auto auto",
+
+    gridTemplate: "1fr / 0.5fr auto",
     padding: "1.2em",
     borderRadius: "20px",
     margin: "0.5em",
@@ -52,50 +55,64 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const CoachingSessionListItem = ({ coachingSessionDetails }) => {
+export const CoachingSessionListItem = ({
+  coachingSessionDetails,
+  onCoachingSessionPressed,
+}) => {
   const classes = useStyles();
 
   if (coachingSessionDetails) {
     return (
-      <Paper className={classes.root}>
-        <div className={classes.titleWrapper}>
-          <LensIcon
-            className={classes[coachingSessionDetails.status]}
-            style={{ fontSize: 40, marginRight: "0.5em" }}
-          />
+      <ListItem
+        button
+        className={classes.root}
+        component={Paper}
+        onClick={() => {
+          onCoachingSessionPressed(coachingSessionDetails.ID);
+        }}
+      >
+        <div className={classes.paperWrapper}>
+          <div className={classes.titleWrapper}>
+            <LensIcon
+              className={classes[coachingSessionDetails.status]}
+              style={{ fontSize: 40, marginRight: "0.5em" }}
+            />
 
-          <div>
-            <Typography variant="h6">{coachingSessionDetails.title}</Typography>
-            <Typography variant="body1">
-              {coachingSessionDetails.teacher.metadata.fullName}
+            <div>
+              <Typography variant="h6">
+                {coachingSessionDetails.title}
+              </Typography>
+              <Typography variant="body1">
+                {coachingSessionDetails.teacher.metadata.fullName}
+              </Typography>
+            </div>
+          </div>
+
+          <div className={classes.contentWrapper}>
+            <Typography className={classes.bodyText} variant="subtitle1">
+              {`${coachingSessionDetails.studentAttendees.length} Student/s`}
             </Typography>
+
+            <Typography
+              className={classes.bodyText}
+              variant="subtitle1"
+            >{`${moment(coachingSessionDetails.startDate).format(
+              "MMM DD, YYYY - hh:mm A"
+            )}`}</Typography>
+
+            <Typography className={classes.bodyText} variant="h6">
+              -
+            </Typography>
+
+            <Typography
+              className={classes.bodyText}
+              variant="subtitle1"
+            >{`${moment(coachingSessionDetails.startDate).format(
+              "MMM DD, YYYY - hh:mm A"
+            )}`}</Typography>
           </div>
         </div>
-
-        <div className={classes.contentWrapper}>
-          <Typography className={classes.bodyText} variant="subtitle1">
-            {`${coachingSessionDetails.studentAttendees.length} Student/s`}
-          </Typography>
-
-          <Typography
-            className={classes.bodyText}
-            variant="subtitle1"
-          >{`${moment(coachingSessionDetails.startDate).format(
-            "MMM DD, YYYY - hh:mm A"
-          )}`}</Typography>
-
-          <Typography className={classes.bodyText} variant="h6">
-            -
-          </Typography>
-
-          <Typography
-            className={classes.bodyText}
-            variant="subtitle1"
-          >{`${moment(coachingSessionDetails.startDate).format(
-            "MMM DD, YYYY - hh:mm A"
-          )}`}</Typography>
-        </div>
-      </Paper>
+      </ListItem>
     );
   } else {
     return (

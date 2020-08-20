@@ -16,27 +16,27 @@ const useStyles = makeStyles((theme) => ({
     overflow: "hidden",
   },
   onGoingSessionsWrapper: {
-    padding: "1em 1em 2em 1em",
+    padding: "1em 1em 3em 1em",
     backgroundColor: "white",
     borderRadius: "30px",
     overflow: "hidden",
   },
 
   onGoingSessions: {
-    display: "flex",
-    flexWrap: "nowrap",
-
-    alignItems: "center",
-    borderRadius: "30px",
+    display: "grid",
     height: "100%",
+    borderRadius: "30px",
+    gridAutoFlow: "column",
+    gridGap: "20px",
     overflowY: "auto",
-
+    overflowX: "auto",
     backgroundColor: "white",
 
+    scrollSnapType: "x proximity",
     WebkitOverflowScrolling: "touch",
     // Scrollbar Related
     "&::-webkit-scrollbar": {
-      height: "5px",
+      height: "8px",
     },
     "&::-webkit-scrollbar-track": {
       background: "#222222",
@@ -78,9 +78,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StudentDashboard = ({ onGoingCoachingSessions, coachingSessions }) => {
+const StudentDashboard = ({
+  onGoingCoachingSessions,
+  coachingSessions,
+  showModal,
+  hideModal,
+}) => {
   const classes = useStyles();
-
+  const onCoachingSessionPressed = (coachingSesssionID) => {
+    showModal("COACHING_SESSION_MODAL", {
+      onDialogClose: () => hideModal(),
+      selectedCoachingSessionID: coachingSesssionID,
+    });
+  };
   const renderOnGoingSessions = () => {
     if (onGoingCoachingSessions) {
       if (onGoingCoachingSessions.length === 0) {
@@ -103,6 +113,7 @@ const StudentDashboard = ({ onGoingCoachingSessions, coachingSessions }) => {
         <CoachingSessionCard
           key={coachingSession.ID}
           coachingSessionDetails={coachingSession}
+          onCoachingSessionPressed={onCoachingSessionPressed}
         />
       ));
     }
@@ -141,6 +152,7 @@ const StudentDashboard = ({ onGoingCoachingSessions, coachingSessions }) => {
         <CoachingSessionListItem
           key={coachingSession.ID}
           coachingSessionDetails={coachingSession}
+          onCoachingSessionPressed={onCoachingSessionPressed}
         />
       ));
     }

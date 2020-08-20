@@ -1,6 +1,14 @@
 import React from "react";
-import { makeStyles, Grid, Paper, Typography, Avatar } from "@material-ui/core";
+import {
+  makeStyles,
+  Grid,
+  Paper,
+  Typography,
+  Avatar,
+  ListItem,
+} from "@material-ui/core";
 import { AvatarGroup } from "@material-ui/lab";
+import HeaderIMG from "./img/ongoing_session_header.png";
 
 const moment = require("moment");
 
@@ -8,20 +16,38 @@ const useStyles = makeStyles((theme) => ({
   card: {
     height: 310,
     width: 255,
+    minWidth: 255,
+    minHeight: 310,
     borderRadius: "20px",
-    gridTemplateRows: "auto 1fr auto",
+    display: "grid",
+    gridTemplate: "1fr 1fr / 1fr",
     overflow: "hidden",
     "&:hover": {
       transition: "box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     },
-    margin: "0 0.5em",
+    padding: 0,
+    placeSelf: "center",
   },
   header: {
-    backgroundColor: "#222222",
-    height: "50%",
+    backgroundImage: `url(${HeaderIMG})`,
+
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+
+    height: "100%",
+    width: "100%",
   },
+  headerOverlay: {},
   content: {
-    padding: "1em",
+    display: "grid",
+    gridTemplate: "1fr 1fr/ 1fr",
+    padding: "0.8em",
+  },
+  studentsInfo: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   studentCount: {
     backgroundColor: "#4EC8F4",
@@ -38,9 +64,26 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "400",
     opacity: 0.5,
   },
+  headerOverlay: {
+    backgroundColor: "rgba(0, 54, 77, 0.75)",
+    height: "100%",
+    width: "100%",
+
+    display: "grid",
+    placeContent: "center",
+  },
+  subjectTitle: {
+    fontWeight: 500,
+    color: "white",
+    mixBlendMode: "overlay",
+  },
+  titleDate: {},
 }));
 
-export const CoachingSessionCard = ({ coachingSessionDetails }) => {
+export const CoachingSessionCard = ({
+  coachingSessionDetails,
+  onCoachingSessionPressed,
+}) => {
   const classes = useStyles();
 
   const renderStudentProfiles = () => {
@@ -58,45 +101,49 @@ export const CoachingSessionCard = ({ coachingSessionDetails }) => {
   };
 
   return (
-    <Grid item>
-      <Paper className={classes.card} component={Grid} container>
-        <Grid className={classes.header} item xs={12}></Grid>
-        <Grid
-          className={classes.content}
-          item
-          container
-          direction="column"
-          justify="space-between"
-          xs
-        >
-          <Grid item>
-            <Typography variant="h6">{coachingSessionDetails.title}</Typography>
-            <Typography className={classes.date} variant="subtitle1">
-              {`${moment(coachingSessionDetails.startDate).format(
-                "h:mm a"
-              )} - ${moment(coachingSessionDetails.endDate).format("h:mm a")}`}
-            </Typography>
-          </Grid>
-          <Grid item container justify="space-between" alignItems="center">
-            <Grid item xs>
-              <Typography variant="caption" className={classes.studentCount}>
-                {`${coachingSessionDetails.studentAttendees.length} Student/s`}
-              </Typography>
-            </Grid>
+    <ListItem
+      button
+      className={classes.card}
+      component={Paper}
+      onClick={() => {
+        onCoachingSessionPressed(coachingSessionDetails.ID);
+      }}
+    >
+      <div className={classes.header}>
+        <div className={classes.headerOverlay}>
+          <Typography variant="h4" className={classes.subjectTitle}>
+            {coachingSessionDetails.subject.subjectName}
+          </Typography>
+        </div>
+      </div>
 
+      <div className={classes.content}>
+        <div className={classes.titleDate}>
+          <Typography variant="h6">{coachingSessionDetails.title}</Typography>
+          <Typography className={classes.date} variant="subtitle1">
+            {`${moment(coachingSessionDetails.startDate).format(
+              "h:mm a"
+            )} - ${moment(coachingSessionDetails.endDate).format("h:mm a")}`}
+          </Typography>
+        </div>
+        <div className={classes.studentsInfo}>
+          <Typography variant="caption" className={classes.studentCount}>
+            {`${coachingSessionDetails.studentAttendees.length} Student/s`}
+          </Typography>
+          <AvatarGroup>
             <Grid
               item
-              container
-              direction="row"
-              xs
-              component={AvatarGroup}
-              max={3}
-            >
-              {renderStudentProfiles()}
-            </Grid>
-          </Grid>
-        </Grid>
-      </Paper>
-    </Grid>
+              component={Avatar}
+              alt={coachingSessionDetails.teacher.metadata.fullName}
+              className={classes.studentProfiles}
+              variant="rounded"
+              src={coachingSessionDetails.teacher.metadata.profileUrl}
+              key={coachingSessionDetails.teacher.ID}
+            />
+            {renderStudentProfiles()}
+          </AvatarGroup>
+        </div>
+      </div>
+    </ListItem>
   );
 };

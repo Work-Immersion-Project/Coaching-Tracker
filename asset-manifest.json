@@ -1,23 +1,27 @@
 {
   "files": {
     "main.css": "/Coaching-Tracker/static/css/main.ac428dc0.chunk.css",
-    "main.js": "/Coaching-Tracker/static/js/main.f5f0990f.chunk.js",
-    "main.js.map": "/Coaching-Tracker/static/js/main.f5f0990f.chunk.js.map",
+    "main.js": "/Coaching-Tracker/static/js/main.be18719e.chunk.js",
+    "main.js.map": "/Coaching-Tracker/static/js/main.be18719e.chunk.js.map",
     "runtime-main.js": "/Coaching-Tracker/static/js/runtime-main.bb1d85c1.js",
     "runtime-main.js.map": "/Coaching-Tracker/static/js/runtime-main.bb1d85c1.js.map",
-    "static/js/2.c7d3f1c8.chunk.js": "/Coaching-Tracker/static/js/2.c7d3f1c8.chunk.js",
-    "static/js/2.c7d3f1c8.chunk.js.map": "/Coaching-Tracker/static/js/2.c7d3f1c8.chunk.js.map",
+    "static/css/2.d34346ea.chunk.css": "/Coaching-Tracker/static/css/2.d34346ea.chunk.css",
+    "static/js/2.38255c93.chunk.js": "/Coaching-Tracker/static/js/2.38255c93.chunk.js",
+    "static/js/2.38255c93.chunk.js.map": "/Coaching-Tracker/static/js/2.38255c93.chunk.js.map",
     "index.html": "/Coaching-Tracker/index.html",
-    "precache-manifest.fe3812300c51fc3691cfde4a18be1624.js": "/Coaching-Tracker/precache-manifest.fe3812300c51fc3691cfde4a18be1624.js",
+    "precache-manifest.6e61524f1b078caeca2fe90a935fd95b.js": "/Coaching-Tracker/precache-manifest.6e61524f1b078caeca2fe90a935fd95b.js",
     "service-worker.js": "/Coaching-Tracker/service-worker.js",
+    "static/css/2.d34346ea.chunk.css.map": "/Coaching-Tracker/static/css/2.d34346ea.chunk.css.map",
     "static/css/main.ac428dc0.chunk.css.map": "/Coaching-Tracker/static/css/main.ac428dc0.chunk.css.map",
-    "static/js/2.c7d3f1c8.chunk.js.LICENSE.txt": "/Coaching-Tracker/static/js/2.c7d3f1c8.chunk.js.LICENSE.txt",
-    "static/media/interweave.svg": "/Coaching-Tracker/static/media/interweave.137f01f4.svg"
+    "static/js/2.38255c93.chunk.js.LICENSE.txt": "/Coaching-Tracker/static/js/2.38255c93.chunk.js.LICENSE.txt",
+    "static/media/interweave.svg": "/Coaching-Tracker/static/media/interweave.137f01f4.svg",
+    "static/media/ongoing_session_header.png": "/Coaching-Tracker/static/media/ongoing_session_header.a17c63ee.png"
   },
   "entrypoints": [
     "static/js/runtime-main.bb1d85c1.js",
-    "static/js/2.c7d3f1c8.chunk.js",
+    "static/css/2.d34346ea.chunk.css",
+    "static/js/2.38255c93.chunk.js",
     "static/css/main.ac428dc0.chunk.css",
-    "static/js/main.f5f0990f.chunk.js"
+    "static/js/main.be18719e.chunk.js"
   ]
 }

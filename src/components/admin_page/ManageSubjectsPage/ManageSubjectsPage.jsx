@@ -1,6 +1,11 @@
 import React, { useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { Chip, createMuiTheme, ThemeProvider } from "@material-ui/core";
+import {
+  Chip,
+  createMuiTheme,
+  ThemeProvider,
+  Typography,
+} from "@material-ui/core";
 import MaterialTable, { MTableHeader } from "material-table";
 
 const useStyles = makeStyles((theme) => ({
@@ -14,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     borderRadius: "20px",
     overflow: "hidden",
-    
   },
   fontColor: {
     color: "white",
@@ -32,7 +36,6 @@ const StyledTableHeader = withStyles({})(
     return <MTableHeader className={classes.test} {...restProps} />;
   }
 );
-
 
 const ManageSubjectsPage = ({
   getSubjects,
@@ -169,7 +172,13 @@ const ManageSubjectsPage = ({
           data={subjects ? subjects : []}
           title="Subjects"
           columns={[
-            { title: "Subject Name", field: "subjectName" },
+            {
+              title: "Subject Name",
+              field: "subjectName",
+              render: ({ subjectName }) => (
+                <Typography>{subjectName}</Typography>
+              ),
+            },
             {
               title: "Assigned Teacher",
               field: "assignedTeachers",
@@ -179,7 +188,7 @@ const ManageSubjectsPage = ({
                   : assignedTeachers.map((teacher) => (
                       <Chip
                         className={classes.teacherChip}
-                        label={teacher.email}
+                        label={<Typography>{teacher.email}</Typography>}
                         key={teacher.email}
                       />
                     )),
@@ -193,7 +202,7 @@ const ManageSubjectsPage = ({
                   : enrolledStudents.map((student) => (
                       <Chip
                         className={classes.studentChip}
-                        label={student.email}
+                        label={<Typography>{student.email}</Typography>}
                         key={student.email}
                       />
                     )),

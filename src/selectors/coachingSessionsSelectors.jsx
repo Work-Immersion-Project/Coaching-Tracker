@@ -7,7 +7,7 @@ const coachingSessionsSelector = (state) => state.coaching.coachingSchedules;
 export const onGoingSessionsSelector = createSelector(
   coachingSessionsSelector,
   (coachingSessions) =>
-    coachingSessions.filter(
+    _.map(coachingSessions, (session, _) => session).filter(
       (coachingSession) => coachingSession.status === "ongoing"
     )
 );
@@ -15,7 +15,7 @@ export const onGoingSessionsSelector = createSelector(
 export const allCoachingSessionsSelector = createSelector(
   coachingSessionsSelector,
   (coachingSessions) =>
-    coachingSessions.filter(
+    _.map(coachingSessions, (session, _) => session).filter(
       (coachingSession) => coachingSession.status !== "ongoing"
     )
 );

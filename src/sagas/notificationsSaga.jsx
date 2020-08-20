@@ -27,6 +27,7 @@ function* getNotificationsSaga() {
     while (true) {
       const response = yield take(channel);
       const rawNotifs = JSON.parse(response);
+
       const parsedJson = rawNotifs.data.map((n) => {
         const notif = n;
         return {

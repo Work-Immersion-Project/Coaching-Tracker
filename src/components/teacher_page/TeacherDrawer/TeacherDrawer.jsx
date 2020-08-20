@@ -6,6 +6,7 @@ import {
   ListItemIcon,
   ListItemText,
   Hidden,
+  Badge,
 } from "@material-ui/core";
 // Icons
 import HomeIcon from "@material-ui/icons/Home";
@@ -85,6 +86,7 @@ const TeacherDrawer = ({
   hideModal,
   isDrawerOpen,
   closeDrawer,
+  notifications,
 }) => {
   const classes = useStyles();
   const [selectedPath, setSelectedPath] = useState(history.location.pathname);
@@ -102,7 +104,11 @@ const TeacherDrawer = ({
     },
     {
       text: "Notifications",
-      icon: <NotificationsIcon />,
+      icon: (
+        <Badge badgeContent={notifications.length} color="primary">
+          <NotificationsIcon />
+        </Badge>
+      ),
       path: "/notifications",
     },
   ];

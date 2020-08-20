@@ -7,12 +7,14 @@ import {
   showModal,
 } from "../../../actions";
 import TeacherDrawer from "./TeacherDrawer";
+import { unseenNotificationsSelector } from "../../../selectors";
 
 const TeacherDrawerContainer = () => {
   const dispatch = useDispatch();
   const stateToProps = useSelector((state) => {
     return {
       isDrawerOpen: state.drawer.navigationDrawer.isOpen,
+      notifications: unseenNotificationsSelector(state),
     };
   });
 

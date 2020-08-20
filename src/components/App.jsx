@@ -15,6 +15,8 @@ import LandingPageContainer from "./landing_page/LandingPageContainer";
 import CookieConsent from "react-cookie-consent";
 import { makeStyles, Typography, Button } from "@material-ui/core";
 import moment from "moment";
+import { ToastContainer, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const useStyles = makeStyles((theme) => ({
   consentContainer: {
@@ -66,8 +68,6 @@ const App = ({
 
   return (
     <LocalizationProvider dateAdapter={MomentUtils}>
-      <ModalRoot />
-      <AlertRoot />
       <Router history={history}>
         <Switch>
           <Route
@@ -87,6 +87,17 @@ const App = ({
           <Route component={LandingPageContainer} />
         </Switch>
       </Router>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={true}
+        newestOnTop={true}
+        closeOnClick
+        draggable
+        pauseOnHover
+        limit={5}
+        transition={Bounce}
+      />
       <CookieConsent
         location="bottom"
         disableButtonStyles={true}
@@ -102,6 +113,8 @@ const App = ({
           is needed for signing in.
         </Typography>
       </CookieConsent>
+      <ModalRoot />
+      <AlertRoot />
     </LocalizationProvider>
   );
 };

@@ -3,6 +3,8 @@ import {
   GET_NOTIFICATIONS_REQUEST,
   UPDATE_NOTIFICATION_REQUEST,
   UPDATE_NOTIFICATION_SUCCESS,
+  CHECK_DESKTOP_NOTIFICATION_PERMISSION_REQUEST,
+  CHECK_DESKTOP_NOTIFICATION_PERMISSION_SUCCESS,
 } from "../types";
 
 export const getNotificationsRequest = () => {
@@ -26,5 +28,20 @@ export const updateNotificationSuccess = (notificationID) => {
   return {
     type: UPDATE_NOTIFICATION_SUCCESS,
     payload: notificationID,
+  };
+};
+
+export const checkDesktopNotificationPermissionRequest = () => {
+  return {
+    type: CHECK_DESKTOP_NOTIFICATION_PERMISSION_REQUEST,
+  };
+};
+
+export const checkDesktopNotificationPermissionSuccess = (
+  isDesktopNotificationAllowed
+) => {
+  return {
+    type: CHECK_DESKTOP_NOTIFICATION_PERMISSION_SUCCESS,
+    payload: isDesktopNotificationAllowed,
   };
 };

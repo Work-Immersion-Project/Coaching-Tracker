@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getCoachingSchedulesRequest,
   getNotificationsRequest,
+  checkDesktopNotificationPermissionRequest,
 } from "../../actions";
 import StudentPage from "./StudentPage";
 import { unseenNotificationsSelector } from "../../selectors";
@@ -14,6 +15,8 @@ const StudentPageContainer = () => {
     return {
       notifications: unseenNotificationsSelector(state),
       isUpdatedByUser: state.notifications.isUpdatedByUser,
+      isDesktopNotificationAllowed:
+        state.notifications.isDesktopNotificationAllowed,
     };
   });
 
@@ -25,6 +28,10 @@ const StudentPageContainer = () => {
     getNotifications: useCallback(() => dispatch(getNotificationsRequest()), [
       dispatch,
     ]),
+    checkDesktopNotificationPermission: useCallback(
+      () => dispatch(checkDesktopNotificationPermissionRequest()),
+      [dispatch]
+    ),
   };
 
   return <StudentPage {...dispatchToProps} {...stateToProps} />;

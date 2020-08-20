@@ -9,6 +9,7 @@ import TeacherSchedulesContainer from "./TeacherSchedules/TeacherSchedulesContai
 import TeacherDrawerContainer from "./TeacherDrawer/TeacherDrawerContainer";
 import NotificationPageContainer from "../notification_page/NotificationPageContainer";
 import { toast } from "react-toastify";
+import NotifIMG from "../custom/img/ongoing_session_header.png";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -47,6 +48,8 @@ const TeacherPage = ({
   getNotifications,
   notifications,
   isUpdatedByUser,
+  checkDesktopNotificationPermission,
+  isDesktopNotificationAllowed,
 }) => {
   let { path } = useRouteMatch();
   const classes = useStyles();
@@ -54,10 +57,22 @@ const TeacherPage = ({
   useEffect(() => {
     if (!isUpdatedByUser && notifications.length !== 0) {
       notifications.forEach((notif) => {
+        if (isDesktopNotificationAllowed) {
+          new Notification("CIIT Coaching Tracker", {
+            body: notif.message,
+            icon: NotifIMG,
+            dir: "ltr",
+          });
+        }
+
         toast(notif.message);
       });
     }
-  }, [notifications, isUpdatedByUser]);
+  }, [isDesktopNotificationAllowed, notifications, isUpdatedByUser]);
+
+  useEffect(() => {
+    checkDesktopNotificationPermission();
+  }, [checkDesktopNotificationPermission]);
 
   useEffect(() => {
     getCoachingSchedules(false);

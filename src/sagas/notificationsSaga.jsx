@@ -6,11 +6,13 @@ import {
   getNotificationsSuccess,
   setError,
   updateNotificationSuccess,
+  checkDesktopNotificationPermissionSuccess,
 } from "../actions";
 import { eventChannel } from "redux-saga";
 import {
   GET_NOTIFICATIONS_REQUEST,
   UPDATE_NOTIFICATION_REQUEST,
+  CHECK_DESKTOP_NOTIFICATION_PERMISSION_REQUEST,
 } from "../types";
 import axios from "../api";
 
@@ -53,7 +55,27 @@ function* updateNotificationsSaga({ payload }) {
   } catch (error) {}
 }
 
+function* checkDesktopNotificationPermissionSaga() {
+  try {
+    if (!("Notification" in window)) {
+      throw new Error("This browser does not support desktop notifications");
+    }
+    const isDesktopNotificationAllowed = yield Notification.requestPermission();
+    if (isDesktopNotificationAllowed === "granted") {
+      yield put(checkDesktopNotificationPermissionSuccess(true));
+    } else {
+      yield put(checkDesktopNotificationPermissionSuccess(false));
+    }
+  } catch (error) {
+    yield put(setError(error.message));
+  }
+}
+
 export function* watchNotifications() {
   yield takeEvery(GET_NOTIFICATIONS_REQUEST, getNotificationsSaga);
   yield takeEvery(UPDATE_NOTIFICATION_REQUEST, updateNotificationsSaga);
+  yield takeEvery(
+    CHECK_DESKTOP_NOTIFICATION_PERMISSION_REQUEST,
+    checkDesktopNotificationPermissionSaga
+  );
 }

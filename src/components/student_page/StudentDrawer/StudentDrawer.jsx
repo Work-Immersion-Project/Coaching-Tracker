@@ -6,21 +6,15 @@ import {
   ListItemIcon,
   ListItemText,
   Hidden,
+  Badge,
 } from "@material-ui/core";
 // Icons
 import HomeIcon from "@material-ui/icons/Home";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import NotificationsIcon from "@material-ui/icons/Notifications";
-import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  signOutRequest,
-  showModal,
-  hideModal,
-  closeDrawer,
-} from "../../actions";
-import history from "../../history";
+import history from "../../../history";
 
 const drawerWidth = 240;
 
@@ -86,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StudentDrawer = (props) => {
+const StudentDrawer = ({ notifications, showModal, hideModal, signOut }) => {
   const [selectedPath, setSelectedPath] = useState(history.location.pathname);
   const classes = useStyles();
   const drawerItems = [
@@ -102,22 +96,26 @@ const StudentDrawer = (props) => {
     },
     {
       text: "Notifications",
-      icon: <NotificationsIcon />,
+      icon: (
+        <Badge badgeContent={notifications.length} color="primary">
+          <NotificationsIcon />
+        </Badge>
+      ),
       path: "/notifications",
     },
   ];
   const onDialogClose = () => {
-    props.hideModal();
+    hideModal();
   };
 
   const handleSignoutButton = () => {
-    props.showModal("CONFIRMATION_MODAL", {
+    showModal("CONFIRMATION_MODAL", {
       onDialogClose: onDialogClose,
       title: "Sign Out",
       content: "Are you sure you want to sign out?",
       onNegativeClick: onDialogClose,
       onPositiveClick: () => {
-        props.signOut();
+        signOut();
         onDialogClose();
       },
     });
@@ -154,7 +152,7 @@ const StudentDrawer = (props) => {
 
   return (
     <>
-      <Hidden smUp>
+      {/* <Hidden smUp>
         <Drawer
           className={classes.drawer}
           variant="temporary"
@@ -187,7 +185,7 @@ const StudentDrawer = (props) => {
             <ListItemText primary="Sign Out" />
           </ListItem>
         </Drawer>
-      </Hidden>
+      </Hidden> */}
       <Hidden xsDown>
         <Drawer
           className={classes.drawer}
@@ -221,15 +219,4 @@ const StudentDrawer = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    isDrawerOpen: state.drawer.navigationDrawer.isOpen,
-  };
-};
-
-export default connect(mapStateToProps, {
-  closeDrawer,
-  signOutRequest,
-  showModal,
-  hideModal,
-})(StudentDrawer);
+export default StudentDrawer;

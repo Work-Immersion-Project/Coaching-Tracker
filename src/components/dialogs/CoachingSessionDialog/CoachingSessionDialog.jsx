@@ -13,14 +13,6 @@ import {
 import DuoIcon from "@material-ui/icons/Duo";
 import Lens from "@material-ui/icons/Lens";
 import AccessTime from "@material-ui/icons/AccessTime";
-import {
-  getCoachingSchedule,
-  updateNotification,
-  showModal,
-  hideModal,
-  updateCoachingScheduleStatusRequest,
-} from "../../../actions";
-import { connect } from "react-redux";
 import { isDayBehind, isMeetingAvailable } from "../../../utils";
 import moment from "moment";
 import classNames from "clsx";
@@ -59,7 +51,7 @@ const useStyles = makeStyles(({ spacing, palette, typography }) => ({
   },
   icon: {
     verticalAlign: "middle",
-    color: "#84DCC6",
+    color: "#4EC8F4",
   },
   lens: {
     color: (coachingSession) => statusColors[coachingSession.status],
@@ -150,16 +142,15 @@ const CoachingSessionDialog = ({
   updateCoachingScheduleStatus,
   showModal,
   coachingSession,
-  coachingSessionId,
-
-  getCoachingSchedule,
-  loggedInUser,
+  selectedCoachingSessionID,
+  getCoachingSession,
+  currentUser,
 }) => {
   const classes = useStyles(coachingSession);
 
   useEffect(() => {
-    getCoachingSchedule(coachingSessionId);
-  }, [coachingSessionId, getCoachingSchedule]);
+    getCoachingSession(selectedCoachingSessionID);
+  }, [selectedCoachingSessionID, getCoachingSession]);
 
   const onUpdateStatusButtonPressed = (status) => {
     let title = "";
@@ -181,30 +172,30 @@ const CoachingSessionDialog = ({
       content,
       onNegativeClick: onDialogClose,
       onPositiveClick: () =>
-        updateCoachingScheduleStatus(coachingSessionId, status),
+        updateCoachingScheduleStatus(selectedCoachingSessionID, status),
     });
   };
 
   const renderConfirmationButton = () => {
-    if (loggedInUser.type === "teacher") {
+    if (currentUser.type === "teacher") {
       return (
         <Button
           className={classes.acceptMeetingButton}
           onClick={() => {
-            // confirmCoachingSchedule(coachingSessionId);
+            // confirmCoachingSchedule(selectedCoachingSessionID);
           }}
           variant="contained"
         >
           Finish Session
         </Button>
       );
-    } else if (loggedInUser.type === "student") {
+    } else if (currentUser.type === "student") {
       let disabled = true;
 
       if (coachingSession.studentsConfirmed) {
         disabled =
           !coachingSession.studentsConfirmed.filter(
-            (student) => student.email === loggedInUser.email
+            (student) => student.email === currentUser.email
           ).length === 0;
       }
 
@@ -213,7 +204,7 @@ const CoachingSessionDialog = ({
           disabled={disabled}
           className={classes.acceptMeetingButton}
           onClick={() => {
-            // confirmCoachingSchedule(coachingSessionId);
+            // confirmCoachingSchedule(selectedCoachingSessionID);
           }}
           variant="contained"
         >
@@ -234,12 +225,13 @@ const CoachingSessionDialog = ({
     }
     if (
       coachingSession.status === "waiting_for_response" &&
-      loggedInUser.type === "student"
+      currentUser.type === "student"
     ) {
       return null;
-    } else if (
+    }
+    if (
       coachingSession.status === "waiting_for_response" &&
-      loggedInUser.type === "teacher"
+      currentUser.type === "teacher"
     ) {
       return (
         <Grid
@@ -315,8 +307,11 @@ const CoachingSessionDialog = ({
           disabled={!meetingAvailable || dayBehind}
           className={classes.meetingButton}
           onClick={() => {
-            if (loggedInUser.type !== "student") {
-              updateCoachingScheduleStatus(coachingSessionId, "ongoing");
+            if (currentUser.type !== "student") {
+              updateCoachingScheduleStatus(
+                selectedCoachingSessionID,
+                "ongoing"
+              );
             }
             window.open(coachingSession.meetingLink, "_blank");
           }}
@@ -325,15 +320,11 @@ const CoachingSessionDialog = ({
         >
           Join Google Meet
         </Button>
-        <Typography
-          display={meetingAvailable || dayBehind ? "none" : ""}
-          align="center"
-          variant="subtitle2"
-        >
+        <Typography align="center" variant="subtitle2">
           {!meetingAvailable || dayBehind ? "" : coachingSession.meetingLink}
         </Typography>
 
-        {loggedInUser.type !== "student" ? (
+        {currentUser.type !== "student" ? (
           <Button
             className={classes.denyMeetingButton}
             onClick={() => {
@@ -351,7 +342,7 @@ const CoachingSessionDialog = ({
   const renderContent = () => {
     if (
       _.isEmpty(coachingSession) ||
-      coachingSessionId !== coachingSession.coachingSessionId
+      coachingSession.ID !== selectedCoachingSessionID
     ) {
       return <CircularProgress />;
     }
@@ -427,7 +418,7 @@ const CoachingSessionDialog = ({
               </div>
             </Grid>
             <Grid item xs={9}>
-              <div className={classes.text}>{student.fullName}</div>
+              <div className={classes.text}>{student.metadata.fullName}</div>
             </Grid>
           </Grid>
         ))}
@@ -444,18 +435,4 @@ const CoachingSessionDialog = ({
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    coachingSession: state.coaching.selectedCoachingSchedule,
-    loggedInUser: state.auth.data.user,
-  };
-};
-
-export default connect(mapStateToProps, {
-  getCoachingSchedule,
-  updateNotification,
-  showModal,
-  hideModal,
-  updateCoachingScheduleStatusRequest,
-  // confirmCoachingSchedule,
-})(CoachingSessionDialog);
+export default CoachingSessionDialog;

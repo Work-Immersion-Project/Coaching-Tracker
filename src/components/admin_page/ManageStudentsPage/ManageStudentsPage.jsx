@@ -26,36 +26,36 @@ const formTheme = createMuiTheme({
   overrides: {
     MuiPaper: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
         backgroundColor: "#222222",
       },
     },
     MuiInput: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
       underline: {
         minWidth: "270px",
         "&:before": {
-          borderBottom: "1px solid rgba(132, 220, 198, 1)",
+          borderBottom: "1px solid rgba(78,200,244, 1)",
         },
         "&:after": {
-          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+          borderBottom: `2px solid rgba(78,200,244, 1)`,
         },
         "&:hover:not($disabled):not($focused):not($error):before": {
-          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+          borderBottom: `2px solid rgba(78,200,244, 1)`,
         },
       },
     },
     MuiIconButton: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
         "&$disabled": {
           color: "#222222",
         },
       },
       colorInherit: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
 
@@ -66,7 +66,7 @@ const formTheme = createMuiTheme({
     },
     MuiSelect: {
       icon: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
     MuiTypography: {
@@ -82,26 +82,26 @@ const formTheme = createMuiTheme({
         color: "white !important",
       },
       head: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
     MuiTableSortLabel: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
         "&$active": {
-          color: "#84DCC6",
+          color: "#4EC8F4",
           "&& $icon": {
-            color: "#84DCC6",
+            color: "#4EC8F4",
           },
         },
         "&:hover": {
-          color: "#84DCC6",
+          color: "#4EC8F4",
         },
       },
     },
     MuiIcon: {
       fontSizeSmall: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
     MuiTablePagination: {
@@ -138,7 +138,7 @@ const ManageStudentsPage = ({
     });
   };
 
-  const onRemoveSubjectPressed = (rowData, subjectName) => {
+  const onRemoveSubjectPressed = ({ subjectName, subjectID, studentID }) => {
     showModal("CONFIRMATION_MODAL", {
       onDialogClose: onDialogClose,
       title: "Remove Subject?",
@@ -146,8 +146,8 @@ const ManageStudentsPage = ({
       onNegativeClick: onDialogClose,
       onPositiveClick: () => {
         removeStudentSubjectRequest({
-          studentDetails: rowData,
-          subjectName,
+          subjectID,
+          studentID,
         });
       },
     });
@@ -184,10 +184,12 @@ const ManageStudentsPage = ({
             {
               title: "Email",
               field: "email",
+              render: ({ email }) => <Typography>{email}</Typography>,
             },
             {
               title: "Course",
               field: "course",
+              render: ({ course }) => <Typography>{course}</Typography>,
             },
             {
               title: "Enrolled Subjects",
@@ -199,7 +201,11 @@ const ManageStudentsPage = ({
                         key={subject.ID}
                         label={subject.subjectName}
                         onDelete={() =>
-                          onRemoveSubjectPressed(rowData, subject.subjectName)
+                          onRemoveSubjectPressed({
+                            subjectName: subject.subjectName,
+                            studentID: rowData.ID,
+                            subjectID: subject.ID,
+                          })
                         }
                       />
                     ))

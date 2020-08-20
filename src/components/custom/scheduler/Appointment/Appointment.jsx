@@ -19,9 +19,8 @@ const Appointment = ({
   children,
   data,
   classes,
-  setAppointmentMeta,
-  setTooltipVisibility,
-  onClick,
+  toggleTooltipVisibility,
+  updateAppointmentMeta,
   ...restProps
 }) => {
   return (
@@ -29,10 +28,9 @@ const Appointment = ({
       data={data}
       {...restProps}
       onClick={({ target }) => {
-        setTooltipVisibility(true);
-        setAppointmentMeta({
-          target:
-            target.parentElement.parentElement.parentElement.parentElement,
+        toggleTooltipVisibility(true);
+        updateAppointmentMeta({
+          target: target,
           data,
         });
       }}

@@ -1,129 +1,61 @@
 import {
   GET_NOTIFICATIONS_SUCCESS,
   GET_NOTIFICATIONS_REQUEST,
-  ADD_NOTIFICATION_REQUEST,
-  ADD_NOTIFICATION_SUCCESS,
   UPDATE_NOTIFICATION_REQUEST,
   UPDATE_NOTIFICATION_SUCCESS,
+  CHECK_DESKTOP_NOTIFICATION_PERMISSION_REQUEST,
+  CHECK_DESKTOP_NOTIFICATION_PERMISSION_SUCCESS,
+  CLEAR_NOTIFICATIONS_REQUEST,
+  CLEAR_NOTIFICATIONS_SUCCESS,
 } from "../types";
-import { setError, showAlert } from "./";
-import _ from 'lodash';
-import { v4 as uuidV4 } from "uuid";
-import { db } from "../firebase";
-import moment from "moment";
 
-const collections = {
-  student: db.collection("students"),
-  teacher: db.collection("teachers"),
-};
-
-export const getNotifications = () => async (dispatch, getState) => {
-  const currentLoggedInUser = getState().auth.data.user;
-  if (currentLoggedInUser.type !== "admin") {
-    dispatch(getNotificationsRequest());
-    collections[currentLoggedInUser.type]
-      .doc(currentLoggedInUser.email)
-      .collection("notifications")
-      .onSnapshot((snapshot) => {
-        const userNotifications = snapshot.docs.map((doc) => {
-          return {
-            ...doc.data(),
-            notificationId: doc.id,
-          }
-        });
-        const unseenNotificationCount = userNotifications.filter(
-          (notif) => !notif.seen
-        ).length;
-        dispatch(getNotificationsSuccess(_.orderBy(userNotifications, 'createdAt', 'desc')));
-        if (unseenNotificationCount > 0) {
-          dispatch(
-            showAlert(
-              "NOTIFY",
-              `You have ${unseenNotificationCount} new notifications.`
-            )
-          );
-        }
-      });
-  }
-};
-
-const getNotificationsRequest = () => {
+export const getNotificationsRequest = () => {
   return { type: GET_NOTIFICATIONS_REQUEST };
 };
-const getNotificationsSuccess = (results) => {
+export const getNotificationsSuccess = (results) => {
   return {
     type: GET_NOTIFICATIONS_SUCCESS,
-    data: results,
+    payload: results,
   };
 };
 
-export const addNotification = (
-  recepient,
-  message,
-  coachingSessionId,
-  type
-) => async (dispatch, getState) => {
-  try {
-    dispatch(addNotificationRequest());
-    const notificationId = uuidV4();
-    const sender = getState().auth.data.user;
-
-    await collections[recepient.type]
-      .doc(recepient.email)
-      .collection("notifications")
-      .doc(notificationId)
-      .set({
-        message,
-        coachingSessionId,
-        sender: {
-          email: sender.email,
-          fullName: sender.metadata.fullName,
-        },
-        createdAt: moment().format(),
-        seen: false,
-        type,
-      });
-    dispatch(addNotificationSuccess());
-  } catch (error) {
-    console.log(error);
-    dispatch(setError(error));
-  }
-};
-
-const addNotificationRequest = () => {
-  return { type: ADD_NOTIFICATION_REQUEST };
-};
-
-const addNotificationSuccess = () => {
-  return { type: ADD_NOTIFICATION_SUCCESS };
-};
-
-export const updateNotification = (notificationId) => async (
-  dispatch,
-  getState
-) => {
-  try {
-    dispatch(updateNotificationRequest());
-    const { email, type } = getState().auth.data.user;
-    await collections[type]
-      .doc(email)
-      .collection("notifications")
-      .doc(notificationId)
-      .update({ seen: true });
-    dispatch(updateNotificationSuccess());
-  } catch (error) {
-    dispatch(setError(error));
-  }
-};
-
-const updateNotificationRequest = () => {
+export const updateNotificationRequest = (notificationID) => {
   return {
     type: UPDATE_NOTIFICATION_REQUEST,
+    payload: notificationID,
   };
 };
 
-const updateNotificationSuccess = () => {
+export const updateNotificationSuccess = (notificationID) => {
   return {
     type: UPDATE_NOTIFICATION_SUCCESS,
+    payload: notificationID,
+  };
+};
+
+export const checkDesktopNotificationPermissionRequest = () => {
+  return {
+    type: CHECK_DESKTOP_NOTIFICATION_PERMISSION_REQUEST,
+  };
+};
+
+export const checkDesktopNotificationPermissionSuccess = (
+  isDesktopNotificationAllowed
+) => {
+  return {
+    type: CHECK_DESKTOP_NOTIFICATION_PERMISSION_SUCCESS,
+    payload: isDesktopNotificationAllowed,
+  };
+};
+
+export const clearNotificationsRequest = () => {
+  return {
+    type: CLEAR_NOTIFICATIONS_REQUEST,
+  };
+};
+
+export const clearNotificationsSuccess = () => {
+  return {
+    type: CLEAR_NOTIFICATIONS_SUCCESS,
   };
 };

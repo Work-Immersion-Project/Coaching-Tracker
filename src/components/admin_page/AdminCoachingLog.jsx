@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import {
   Grid,
@@ -7,7 +7,7 @@ import {
   Typography,
   ThemeProvider,
 } from "@material-ui/core";
-import { hideModal, showModal, getCoachingLogs } from "../../actions";
+import { hideModal, showModal } from "../../actions";
 
 import { connect } from "react-redux";
 import moment from "moment";
@@ -18,7 +18,6 @@ const useStyles = makeStyles(() => ({
     height: "100%",
     width: "100%",
     padding: "1em",
-    background: "#4B4E6D",
   },
 
   teacherChip: {
@@ -39,36 +38,36 @@ const formTheme = createMuiTheme({
   overrides: {
     MuiPaper: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
         backgroundColor: "#222222",
       },
     },
     MuiInput: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
       underline: {
         minWidth: "270px",
         "&:before": {
-          borderBottom: "1px solid rgba(132, 220, 198, 1)",
+          borderBottom: "1px solid rgba(78,200,244, 1)",
         },
         "&:after": {
-          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+          borderBottom: `2px solid rgba(78,200,244, 1)`,
         },
         "&:hover:not($disabled):not($focused):not($error):before": {
-          borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+          borderBottom: `2px solid rgba(78,200,244, 1)`,
         },
       },
     },
     MuiIconButton: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
         "&$disabled": {
           color: "#222222",
         },
       },
       colorInherit: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
 
@@ -79,7 +78,7 @@ const formTheme = createMuiTheme({
     },
     MuiSelect: {
       icon: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
     MuiTypography: {
@@ -95,26 +94,26 @@ const formTheme = createMuiTheme({
         color: "white",
       },
       head: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
     MuiTableSortLabel: {
       root: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
         "&$active": {
-          color: "#84DCC6",
+          color: "#4EC8F4",
           "&& $icon": {
-            color: "#84DCC6",
+            color: "#4EC8F4",
           },
         },
         "&:hover": {
-          color: "#84DCC6",
+          color: "#4EC8F4",
         },
       },
     },
     MuiIcon: {
       fontSizeSmall: {
-        color: "#84DCC6",
+        color: "#4EC8F4",
       },
     },
     MuiTablePagination: {
@@ -126,12 +125,11 @@ const formTheme = createMuiTheme({
 });
 
 const AdminCoachingLog = (props) => {
-  const { getCoachingLogs } = props;
   const classes = useStyles();
 
-  useEffect(() => {
-    getCoachingLogs();
-  }, [getCoachingLogs]);
+  // useEffect(() => {
+  //   getCoachingLogs();
+  // }, [getCoachingLogs]);
 
   return (
     <ThemeProvider theme={formTheme}>
@@ -236,5 +234,4 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   hideModal,
   showModal,
-  getCoachingLogs,
 })(AdminCoachingLog);

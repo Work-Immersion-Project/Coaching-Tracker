@@ -4,7 +4,6 @@ import {
   AUTH_SIGN_OUT_REQUEST,
 } from "../types";
 import _ from "lodash";
-import app from "../firebase";
 
 import {
   checkAuthSuccess,
@@ -128,11 +127,11 @@ function* signInSaga() {
 }
 
 function* signOutSaga() {
-  const gapiAuthClient = select(getGapiAuthClient);
+  const gapiAuthClient = yield select(getGapiAuthClient);
+
   try {
     yield gapiAuthClient.signOut();
-    yield app.auth().signOut();
-    yield put(signOutSuccess);
+    yield put(signOutSuccess());
   } catch (error) {
     yield put(setError(error.message));
   }

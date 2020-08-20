@@ -1,13 +1,25 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { getCoachingSchedulesRequest } from "../../actions";
+import {
+  getCoachingSchedulesRequest,
+  getNotificationsRequest,
+  checkDesktopNotificationPermissionRequest,
+} from "../../actions";
 import TeacherPage from "./TeacherPage";
 
 const TeacherPageContainer = () => {
   const dispatch = useDispatch();
+
   const dispatchToProps = {
-    getCoachingSchedulesRequest: useCallback(
+    getCoachingSchedules: useCallback(
       (isStudent) => dispatch(getCoachingSchedulesRequest(isStudent)),
+      [dispatch]
+    ),
+    getNotifications: useCallback(() => dispatch(getNotificationsRequest()), [
+      dispatch,
+    ]),
+    checkDesktopNotificationPermission: useCallback(
+      () => dispatch(checkDesktopNotificationPermissionRequest()),
       [dispatch]
     ),
   };

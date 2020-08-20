@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 
     borderRadius: "30px 0 0 30px",
     backgroundPosition: "right bottom",
-    color: "#00364D",
+    color: "#00364D !important",
 
     "& $icon": {
       color: "#00364D",
@@ -130,9 +130,9 @@ const AdminDrawer = (props) => {
     return drawerItems.map((item) => {
       const { path, text, icon } = item;
       const pathname = `/Coaching-Tracker/admin${path}`;
-      const formattedSelectedPath = selectedPath.endsWith("/")
-        ? selectedPath
-        : `${selectedPath}/`;
+      const formattedSelectedPath = selectedPath.endsWith("admin")
+        ? `${selectedPath}/`
+        : selectedPath;
 
       const isActive = formattedSelectedPath === pathname;
       return (

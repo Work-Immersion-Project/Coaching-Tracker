@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Grid,
@@ -12,75 +12,73 @@ import {
   Typography,
   Divider,
 } from "@material-ui/core";
-import { connect } from "react-redux";
-import { showModal, hideModal, updateNotification } from "../actions";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Lens from "@material-ui/icons/Lens";
 import _ from "lodash";
 import moment from "moment";
+
 const useStyles = makeStyles(() => ({
   root: {
     height: "100%",
     width: "100%",
-    backgroundColor: "white",
     padding: "1em",
   },
   notificationCard: {
     height: "100%",
     width: "100%",
+    borderRadius: "30px",
     backgroundColor: "#222222",
   },
   emptyContent: {
     width: "100%",
     height: "100%",
-    color: "#84DCC6",
+    color: "#4EC8F4",
   },
   content: {
     width: "100%",
     padding: "2em",
-    color: "#84DCC6",
+    color: "#4EC8F4",
   },
   unseenIndicator: {
-    color: "#4B4E6D",
+    color: "#00364D",
   },
   divider: {
     height: "0.1px",
     backgroundColor: "#95a3b3",
   },
   deleteIcon: {
-    color: "#84DCC6",
+    color: "#4EC8F4",
   },
   notifMessage: {
     padding: "0.5em 0.5em",
   },
 }));
 
-const NotificationPage = (props) => {
-  const onDialogClose = () => {
-    props.hideModal();
-  };
-
-  useEffect(() => {
-    moment.updateLocale("en", {
-      relativeTime: {
-        ss: "%d secs",
-        m: "a minute",
-        mm: "%d mins",
-      },
-    });
-  }, []);
-  const onNotificationClick = ({ coachingSessionId, notificationId, seen }) => {
+const NotificationPage = ({
+  hideModal,
+  showModal,
+  notifications,
+  updateNotification,
+  currentUser,
+  clearNotifications,
+}) => {
+  const onNotificationClick = ({
+    payload: { coachingSessionID },
+    ID,
+    seen,
+  }) => {
     if (!seen) {
-      props.updateNotification(notificationId);
+      updateNotification(ID);
     }
-    props.showModal("COACHING_SESSION_MODAL", {
-      onDialogClose: onDialogClose,
-      coachingSessionId,
+
+    showModal("COACHING_SESSION_MODAL", {
+      onDialogClose: () => hideModal(),
+      selectedCoachingSessionID: coachingSessionID,
     });
   };
 
   const renderContent = () => {
-    if (_.isEmpty(props.notifications)) {
+    if (_.isEmpty(notifications)) {
       return (
         <Grid
           className={classes.emptyContent}
@@ -98,7 +96,11 @@ const NotificationPage = (props) => {
     return (
       <Grid className={classes.content} item container direction="column">
         <Grid container justify="flex-end">
-          <IconButton>
+          <IconButton
+            onClick={() => {
+              clearNotifications();
+            }}
+          >
             <DeleteIcon className={classes.deleteIcon} />
           </IconButton>
         </Grid>
@@ -110,16 +112,15 @@ const NotificationPage = (props) => {
   };
 
   const renderNotification = () => {
-    return props.notifications.map((notif) => {
+    return notifications.map((notif) => {
       return (
-        <>
+        <div key={notif.ID}>
           <ListItem
             button
             alignItems="flex-start"
             onClickCapture={() => {
               onNotificationClick(notif);
             }}
-            key={notif.coachingSessionId}
           >
             {notif.seen ? null : (
               <ListItemIcon>
@@ -127,19 +128,17 @@ const NotificationPage = (props) => {
               </ListItemIcon>
             )}
 
-            <ListItemText className={classes.notifMessage}>
-              {" "}
+            <ListItemText className={classes.notifMessage} key={notif.ID}>
               {notif.message}
             </ListItemText>
             <ListItemSecondaryAction>
-              {" "}
               <Typography variant="caption">
-                {notif.createdAt ? moment(notif.createdAt).fromNow() : ""}
+                {notif.CreatedAt ? moment(notif.CreatedAt).fromNow() : ""}
               </Typography>
             </ListItemSecondaryAction>
           </ListItem>
           <Divider className={classes.divider} component="li" />
-        </>
+        </div>
       );
     });
   };
@@ -160,14 +159,4 @@ const NotificationPage = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    notifications: state.notifications.data,
-  };
-};
-
-export default connect(mapStateToProps, {
-  showModal,
-  hideModal,
-  updateNotification,
-})(NotificationPage);
+export default NotificationPage;

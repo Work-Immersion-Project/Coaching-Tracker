@@ -1,22 +1,23 @@
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getTeachersRequest,
   showModal,
   hideModal,
   requestCoachingScheduleRequest,
   closeAddEventDrawer,
+  getTeacherFieldsRequest,
 } from "../../../../actions";
 import RequestEventForm from "./RequestEventForm";
 import { useState } from "react";
+import { currentUserSelector } from "../../../../selectors";
 
 const RequestEventFormContainer = ({ selectedDate }) => {
   const [isTeacherListOpen, setTeacherListState] = useState(false);
 
   const dispatch = useDispatch();
   const dispatchToProps = {
-    getTeachers: useCallback(
-      (bySubject) => dispatch(getTeachersRequest(bySubject)),
+    getTeacherFields: useCallback(
+      (subjectID) => dispatch(getTeacherFieldsRequest(subjectID)),
       [dispatch]
     ),
     showModal: useCallback((type, props) => dispatch(showModal(type, props)), [
@@ -34,7 +35,8 @@ const RequestEventFormContainer = ({ selectedDate }) => {
   };
   const stateToProps = useSelector((state) => {
     return {
-      teachers: state.teachers.data,
+      teachers: state.fields.data.teacherFields,
+      enrolledSubjects: currentUserSelector(state).enrolledSubjects,
     };
   });
 

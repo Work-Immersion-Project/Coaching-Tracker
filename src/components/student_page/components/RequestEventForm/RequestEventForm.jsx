@@ -7,10 +7,16 @@ import {
   Button,
   Divider,
   CircularProgress,
+  FormControl,
+  InputLabel,
+  FormHelperText,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { DatePicker, TimePicker } from "@material-ui/pickers";
 import { useForm, Controller } from "react-hook-form";
+import _ from "lodash";
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -78,7 +84,7 @@ const formTheme = createMuiTheme({
       daySelected: {
         backgroundColor: "#3f51b5",
         "&:hover": {
-          backgroundColor:"#3f51b5",
+          backgroundColor: "#3f51b5",
         },
         "&:focus": {
           backgroundColor: "#3f51b5",
@@ -172,7 +178,7 @@ const StyledTimePicker = styled(TextField)({
 
 const RequestEventForm = ({
   selectedDate,
-  getTeachers,
+  getTeacherFields,
   showModal,
   hideModal,
   teachers,
@@ -180,16 +186,17 @@ const RequestEventForm = ({
   closeAddEventDrawer,
   isTeacherListOpen,
   setTeacherListState,
+  enrolledSubjects,
 }) => {
-  const { handleSubmit, register, errors, control } = useForm();
+  const { handleSubmit, register, errors, control, watch } = useForm();
 
   const classes = useStyles();
-
+  const selectedSubject = watch("subject");
   useEffect(() => {
-    if (isTeacherListOpen) {
-      getTeachers(true);
+    if (selectedSubject && isTeacherListOpen) {
+      getTeacherFields(selectedSubject.ID);
     }
-  }, [isTeacherListOpen, getTeachers]);
+  }, [selectedSubject, isTeacherListOpen, getTeacherFields]);
 
   const onDialogClose = () => {
     hideModal();
@@ -226,9 +233,7 @@ const RequestEventForm = ({
           as={DatePicker}
           label="Start Date"
           control={control}
-          renderInput={(props) => (
-            <StyledDatePicker {...props} name="startDate" />
-          )}
+          renderInput={(props) => <StyledDatePicker {...props} />}
           name="startDate"
           inputRef={register({
             required: true,
@@ -241,24 +246,21 @@ const RequestEventForm = ({
           as={TimePicker}
           label="Start Time"
           control={control}
-          renderInput={(props) => (
-            <StyledTimePicker {...props} name="startTime" />
-          )}
+          renderInput={(props) => <StyledTimePicker {...props} />}
           name="startTime"
           inputRef={register({
             required: true,
           })}
           allowKeyboardControl={false}
           defaultValue={selectedDate.startDate}
+          disableMaskedInput
         />
         <Divider className={classes.divider2} />
         <Controller
           as={DatePicker}
           label="End Date"
           control={control}
-          renderInput={(props) => (
-            <StyledDatePicker {...props} name="endDate" />
-          )}
+          renderInput={(props) => <StyledDatePicker {...props} />}
           name="endDate"
           inputRef={register({
             required: true,
@@ -271,17 +273,36 @@ const RequestEventForm = ({
           as={TimePicker}
           label="End Time"
           control={control}
-          renderInput={(props) => (
-            <StyledTimePicker {...props} name="endTime" />
-          )}
+          renderInput={(props) => <StyledTimePicker {...props} />}
           name="endTime"
           inputRef={register({
             required: true,
           })}
           allowKeyboardControl={false}
           defaultValue={selectedDate.endDate}
+          disableMaskedInput
         />
         <Divider className={classes.divider2} />
+        <FormControl fullWidth error={errors.subject !== undefined}>
+          <InputLabel>Subject</InputLabel>
+          <Controller
+            as={Select}
+            name="subject"
+            label="Subject"
+            control={control}
+            defaultValue=""
+            rules={{ required: true }}
+          >
+            {enrolledSubjects.map((subject) => (
+              <MenuItem key={subject.ID} value={subject}>
+                {subject.subjectName}
+              </MenuItem>
+            ))}
+          </Controller>
+          <FormHelperText>
+            {_.isUndefined(errors.subject) ? "" : "Required"}
+          </FormHelperText>
+        </FormControl>
         <Controller
           name="teacher"
           defaultValue={[]}
@@ -292,8 +313,8 @@ const RequestEventForm = ({
           render={(props) => {
             return (
               <Autocomplete
-                options={teachers !== null ? teachers : []}
-                loading={isTeacherListOpen && teachers === null}
+                options={teachers}
+                loading={isTeacherListOpen && teachers.length === 0}
                 getOptionLabel={(option) => option.email}
                 filterSelectedOptions
                 size={"small"}
@@ -314,7 +335,7 @@ const RequestEventForm = ({
                       ...props.InputProps,
                       endAdornment: (
                         <>
-                          {isTeacherListOpen && teachers === null ? (
+                          {isTeacherListOpen && teachers.length === 0 ? (
                             <CircularProgress size={20} />
                           ) : null}
                         </>

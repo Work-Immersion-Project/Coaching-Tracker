@@ -1,6 +1,11 @@
 import React, { useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { Chip, createMuiTheme, ThemeProvider } from "@material-ui/core";
+import {
+  Chip,
+  createMuiTheme,
+  ThemeProvider,
+  Typography,
+} from "@material-ui/core";
 import MaterialTable, { MTableHeader } from "material-table";
 
 const useStyles = makeStyles((theme) => ({
@@ -14,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     borderRadius: "20px",
     overflow: "hidden",
-    
   },
   fontColor: {
     color: "white",
@@ -32,7 +36,6 @@ const StyledTableHeader = withStyles({})(
     return <MTableHeader className={classes.test} {...restProps} />;
   }
 );
-
 
 const ManageSubjectsPage = ({
   getSubjects,
@@ -60,30 +63,30 @@ const ManageSubjectsPage = ({
       },
       MuiInput: {
         root: {
-          color: "#84DCC6",
+          color: "#4EC8F4",
         },
         underline: {
           minWidth: "270px",
           "&:before": {
-            borderBottom: "1px solid rgba(132, 220, 198, 1)",
+            borderBottom: "1px solid rgba(78,200,244, 1)",
           },
           "&:after": {
-            borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+            borderBottom: `2px solid rgba(78,200,244, 1)`,
           },
           "&:hover:not($disabled):not($focused):not($error):before": {
-            borderBottom: `2px solid rgba(132, 220, 198, 1)`,
+            borderBottom: `2px solid rgba(78,200,244, 1)`,
           },
         },
       },
       MuiIconButton: {
         root: {
-          color: "#84DCC6",
+          color: "#4EC8F4",
           "&$disabled": {
             color: "#222222",
           },
         },
         colorInherit: {
-          color: "#84DCC6",
+          color: "#4EC8F4",
         },
       },
 
@@ -94,7 +97,7 @@ const ManageSubjectsPage = ({
       },
       MuiSelect: {
         icon: {
-          color: "#84DCC6",
+          color: "#4EC8F4",
         },
       },
       MuiTypography: {
@@ -107,26 +110,26 @@ const ManageSubjectsPage = ({
           color: "white",
         },
         head: {
-          color: "#84DCC6",
+          color: "#4EC8F4",
         },
       },
       MuiTableSortLabel: {
         root: {
-          color: "#84DCC6",
+          color: "#4EC8F4",
           "&$active": {
-            color: "#84DCC6",
+            color: "#4EC8F4",
             "&& $icon": {
-              color: "#84DCC6",
+              color: "#4EC8F4",
             },
           },
           "&:hover": {
-            color: "#84DCC6",
+            color: "#4EC8F4",
           },
         },
       },
       MuiIcon: {
         fontSizeSmall: {
-          color: "#84DCC6",
+          color: "#4EC8F4",
         },
       },
       MuiTablePagination: {
@@ -169,7 +172,13 @@ const ManageSubjectsPage = ({
           data={subjects ? subjects : []}
           title="Subjects"
           columns={[
-            { title: "Subject Name", field: "subjectName" },
+            {
+              title: "Subject Name",
+              field: "subjectName",
+              render: ({ subjectName }) => (
+                <Typography>{subjectName}</Typography>
+              ),
+            },
             {
               title: "Assigned Teacher",
               field: "assignedTeachers",
@@ -179,7 +188,7 @@ const ManageSubjectsPage = ({
                   : assignedTeachers.map((teacher) => (
                       <Chip
                         className={classes.teacherChip}
-                        label={teacher.email}
+                        label={<Typography>{teacher.email}</Typography>}
                         key={teacher.email}
                       />
                     )),
@@ -193,7 +202,7 @@ const ManageSubjectsPage = ({
                   : enrolledStudents.map((student) => (
                       <Chip
                         className={classes.studentChip}
-                        label={student.email}
+                        label={<Typography>{student.email}</Typography>}
                         key={student.email}
                       />
                     )),

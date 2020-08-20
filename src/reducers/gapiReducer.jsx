@@ -12,6 +12,6 @@ export default (state = INITIAL_STATE, action) => {
     case GAPI_INIT_SUCCESS:
       return { ...state, ...action.payload };
     default:
-      return { ...state };
+      return state;
   }
 };

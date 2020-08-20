@@ -49,39 +49,21 @@ export const getCoachingSchedulesRequest = (isStudent) => {
 export const getCoachingSchedulesSuccess = (result) => {
   return {
     type: GET_COACHING_SCHEDULES_SUCCESS,
-    data: result,
+    payload: result,
   };
 };
 
-export const getCoachingSchedule = (coachingSessionId) => async (
-  dispatch,
-  getState
-) => {
-  // const currentSchedules = getState().coaching.coachingSchedules;
-  // dispatch(getCoachingScheduleRequest());
-  // // Check if it is existing
-  // let coachingSchedule = currentSchedules.filter(
-  //   (sched) => sched.coachingSessionId === coachingSessionId
-  // )[0];
-  // if (!coachingSchedule) {
-  //   coachingSchedule = await coachingSessionCollection
-  //     .doc(coachingSessionId)
-  //     .get()
-  //     .then((doc) => doc.data());
-  // }
-  // dispatch(getCoachingScheduleSuccess(coachingSchedule));
-};
-
-export const getCoachingScheduleRequest = () => {
+export const getCoachingScheduleRequest = (coachingSessionID) => {
   return {
     type: GET_COACHING_SCHEDULE_REQUEST,
+    payload: coachingSessionID,
   };
 };
 
-export const getCoachingScheduleSuccess = (result) => {
+export const getCoachingScheduleSuccess = (coachingSession) => {
   return {
     type: GET_COACHING_SCHEDULE_SUCCESS,
-    data: result,
+    payload: coachingSession,
   };
 };
 

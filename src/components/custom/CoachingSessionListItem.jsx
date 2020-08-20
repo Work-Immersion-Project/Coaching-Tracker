@@ -1,20 +1,37 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Paper, Grid, Typography } from "@material-ui/core";
+import { Paper, Grid, Typography, ListItem } from "@material-ui/core";
 import LensIcon from "@material-ui/icons/Lens";
 
 const moment = require("moment");
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  root: { borderRadius: "20px", margin: "0.5em" },
+  paperWrapper: {
+    width: "100%",
+    display: "grid",
+
+    gridTemplate: "1fr / 0.5fr auto",
     padding: "1.2em",
     borderRadius: "20px",
     margin: "0.5em",
   },
+  contentWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
+  titleWrapper: {
+    display: "flex",
+    alignItems: "center",
+  },
+  bodyText: {
+    fontWeight: 500,
+    opacity: 0.5,
+  },
   finished: {
     color: "#2e7d32",
   },
-
   pending: {
     color: "#00364D",
   },
@@ -33,55 +50,69 @@ const useStyles = makeStyles((theme) => ({
   denied: {
     color: "#7A1313",
   },
+  overdue: {
+    color: "#C87142",
+  },
 }));
 
-export const CoachingSessionListItem = ({ coachingSessionDetails }) => {
+export const CoachingSessionListItem = ({
+  coachingSessionDetails,
+  onCoachingSessionPressed,
+}) => {
   const classes = useStyles();
 
   if (coachingSessionDetails) {
     return (
-      <Grid
+      <ListItem
+        button
         className={classes.root}
         component={Paper}
-        item
-        container
-        alignItems="center"
+        onClick={() => {
+          onCoachingSessionPressed(coachingSessionDetails.ID);
+        }}
       >
-        <Grid item container xs={5} alignItems="center" spacing={5}>
-          <Grid item>
+        <div className={classes.paperWrapper}>
+          <div className={classes.titleWrapper}>
             <LensIcon
               className={classes[coachingSessionDetails.status]}
-              style={{ fontSize: 40 }}
+              style={{ fontSize: 40, marginRight: "0.5em" }}
             />
-          </Grid>
-          <Grid item>
-            <Typography variant="h6">{coachingSessionDetails.title}</Typography>
-            <Typography variant="body1">
-              {coachingSessionDetails.teacher.metadata.fullName}
-            </Typography>
-          </Grid>
-        </Grid>
-        <Grid item container xs={7} alignItems="center" spacing={5}>
-          <Grid item>
-            <Typography variant="subtitle1">
+
+            <div>
+              <Typography variant="h6">
+                {coachingSessionDetails.title}
+              </Typography>
+              <Typography variant="body1">
+                {coachingSessionDetails.teacher.metadata.fullName}
+              </Typography>
+            </div>
+          </div>
+
+          <div className={classes.contentWrapper}>
+            <Typography className={classes.bodyText} variant="subtitle1">
               {`${coachingSessionDetails.studentAttendees.length} Student/s`}
             </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="subtitle1">{`${moment(
-              coachingSessionDetails.startDate
-            ).format("MMM DD, YYYY - hh:mm a")}`}</Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="h6"> - </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="subtitle1">{`${moment(
-              coachingSessionDetails.startDate
-            ).format("MMM DD, YYYY - hh:mm a")}`}</Typography>
-          </Grid>
-        </Grid>
-      </Grid>
+
+            <Typography
+              className={classes.bodyText}
+              variant="subtitle1"
+            >{`${moment(coachingSessionDetails.startDate).format(
+              "MMM DD, YYYY - hh:mm A"
+            )}`}</Typography>
+
+            <Typography className={classes.bodyText} variant="h6">
+              -
+            </Typography>
+
+            <Typography
+              className={classes.bodyText}
+              variant="subtitle1"
+            >{`${moment(coachingSessionDetails.startDate).format(
+              "MMM DD, YYYY - hh:mm A"
+            )}`}</Typography>
+          </div>
+        </div>
+      </ListItem>
     );
   } else {
     return (

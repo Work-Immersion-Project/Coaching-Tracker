@@ -6,6 +6,7 @@ import {
   ListItemIcon,
   ListItemText,
   Hidden,
+  Badge,
 } from "@material-ui/core";
 // Icons
 import HomeIcon from "@material-ui/icons/Home";
@@ -79,7 +80,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TeacherDrawer = (props) => {
+const TeacherDrawer = ({
+  signOut,
+  showModal,
+  hideModal,
+  isDrawerOpen,
+  closeDrawer,
+  notifications,
+}) => {
   const classes = useStyles();
   const [selectedPath, setSelectedPath] = useState(history.location.pathname);
 
@@ -96,22 +104,26 @@ const TeacherDrawer = (props) => {
     },
     {
       text: "Notifications",
-      icon: <NotificationsIcon />,
+      icon: (
+        <Badge badgeContent={notifications.length} color="primary">
+          <NotificationsIcon />
+        </Badge>
+      ),
       path: "/notifications",
     },
   ];
   const onDialogClose = () => {
-    props.hideModal();
+    hideModal();
   };
 
   const handleSignoutButton = () => {
-    props.showModal("CONFIRMATION_MODAL", {
+    showModal("CONFIRMATION_MODAL", {
       onDialogClose: onDialogClose,
       title: "Sign Out",
       content: "Are you sure you want to sign out?",
       onNegativeClick: onDialogClose,
       onPositiveClick: () => {
-        props.signOut();
+        signOut();
         onDialogClose();
       },
     });
@@ -122,11 +134,12 @@ const TeacherDrawer = (props) => {
       const { path, text, icon } = item;
       const pathname = `/Coaching-Tracker/teacher${path}`;
 
-      const formattedSelectedPath = selectedPath.endsWith("teacher")
-        ? selectedPath + "/"
-        : selectedPath;
+      const formattedSelectedPath = selectedPath.replace(/\/\d/, "");
+      const convertedPath = selectedPath.endsWith("teacher")
+        ? formattedSelectedPath + "/"
+        : formattedSelectedPath;
 
-      const isActive = formattedSelectedPath === pathname;
+      const isActive = convertedPath === pathname;
       return (
         <div
           className={isActive ? classes.active : classes.inActive}
@@ -158,8 +171,8 @@ const TeacherDrawer = (props) => {
           classes={{
             paper: classes.drawerPaper,
           }}
-          open={props.isDrawerOpen}
-          onClose={props.closeDrawer}
+          open={isDrawerOpen}
+          onClose={closeDrawer}
           anchor="left"
           ModalProps={{
             keepMounted: true,

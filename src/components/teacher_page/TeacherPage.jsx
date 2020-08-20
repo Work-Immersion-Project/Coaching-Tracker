@@ -2,12 +2,14 @@ import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch, Switch, Redirect } from "react-router-dom";
 
-import TeacherDrawer from "./TeacherDrawer/TeacherDrawer";
-import NotificationPage from "../NotificationPage";
 import AddEventDrawerContainer from "./components/AddEventDrawer/AddEventDrawerContainer";
 import TeacherDashboardContainer from "./TeacherDashboard/TeacherDashboardContainer";
 import InterweaveBG from "../custom/svgs/interweave.svg";
 import TeacherSchedulesContainer from "./TeacherSchedules/TeacherSchedulesContainer";
+import TeacherDrawerContainer from "./TeacherDrawer/TeacherDrawerContainer";
+import NotificationPageContainer from "../notification_page/NotificationPageContainer";
+import { toast } from "react-toastify";
+import NotifIMG from "../custom/img/ongoing_session_header.png";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -41,30 +43,51 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TeacherPage = ({ getCoachingSchedulesRequest }) => {
+const TeacherPage = ({
+  getCoachingSchedules,
+  getNotifications,
+  checkDesktopNotificationPermission,
+}) => {
   let { path } = useRouteMatch();
   const classes = useStyles();
 
   useEffect(() => {
-    getCoachingSchedulesRequest(false);
-  }, [getCoachingSchedulesRequest]);
+    checkDesktopNotificationPermission();
+  }, [checkDesktopNotificationPermission]);
+
+  useEffect(() => {
+    getCoachingSchedules(false);
+  }, [getCoachingSchedules]);
+
+  useEffect(() => {
+    getNotifications();
+  }, [getNotifications]);
 
   return (
     <div className={classes.container}>
-      <TeacherDrawer />
+      <TeacherDrawerContainer />
 
       <div className={classes.background}>
         <div className={classes.content}>
           <Switch>
-            <Route path={`${path}`} exact>
-              <TeacherDashboardContainer />
-            </Route>
-            <Route path={`${path}/schedules`} exact>
-              <TeacherSchedulesContainer />
-            </Route>
-            <Route path={`${path}/notifications`} exact>
-              <NotificationPage />
-            </Route>
+            <Route
+              path={`${path}`}
+              exact
+              component={TeacherDashboardContainer}
+            />
+
+            <Route
+              path={`${path}/schedules/:id?`}
+              exact
+              component={TeacherSchedulesContainer}
+            />
+
+            <Route
+              path={`${path}/notifications`}
+              exact
+              component={NotificationPageContainer}
+            />
+
             <Redirect to={`${path}`} />
           </Switch>
         </div>

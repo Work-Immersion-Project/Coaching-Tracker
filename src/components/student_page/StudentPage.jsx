@@ -2,12 +2,14 @@ import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, useRouteMatch, Redirect, Switch } from "react-router-dom";
 
-import StudentDrawer from "./StudentDrawer";
-import NotificationPage from "../NotificationPage";
 import RequestEventDrawerContainer from "./components/RequestEventDrawer/RequestEventDrawerContainer";
 import { StudentDashboardContainer } from "./StudentDashboard/StudentDashboardContainer";
 import InterweaveBG from "../custom/svgs/interweave.svg";
 import StudentSchedulesContainer from "./StudentSchedules/StudentSchedulesContainer";
+import NotificationPageContainer from "../notification_page/NotificationPageContainer";
+import StudentDrawerContainer from "./StudentDrawer/StudentDrawerContainer";
+import { toast } from "react-toastify";
+import NotifIMG from "../custom/img/ongoing_session_header.png";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -41,17 +43,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StudentPage = ({ getCoachingSchedulesRequest }) => {
+const StudentPage = ({
+  getCoachingSchedules,
+  getNotifications,
+
+  checkDesktopNotificationPermission,
+}) => {
   let { path } = useRouteMatch();
   const classes = useStyles();
 
   useEffect(() => {
-    getCoachingSchedulesRequest(true);
-  }, [getCoachingSchedulesRequest]);
+    checkDesktopNotificationPermission();
+  }, [checkDesktopNotificationPermission]);
+
+  useEffect(() => {
+    getCoachingSchedules(true);
+  }, [getCoachingSchedules]);
+
+  useEffect(() => {
+    getNotifications();
+  }, [getNotifications]);
 
   return (
     <div className={classes.container}>
-      <StudentDrawer />
+      <StudentDrawerContainer />
 
       <div className={classes.background}>
         <div className={classes.content}>
@@ -63,7 +78,7 @@ const StudentPage = ({ getCoachingSchedulesRequest }) => {
               <StudentSchedulesContainer />
             </Route>
             <Route path={`${path}/notifications`} exact>
-              <NotificationPage />
+              <NotificationPageContainer />
             </Route>
             <Redirect to={path} />
           </Switch>

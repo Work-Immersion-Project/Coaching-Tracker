@@ -8,7 +8,6 @@ const INITIAL_STATE = {};
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case REGISTRATION_REGISTER_USER_REQUEST:
-      return { ...state };
     case REGISTRATION_REGISTER_USER_SUCCESS:
       return { ...state };
     default:

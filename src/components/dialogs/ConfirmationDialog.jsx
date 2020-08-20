@@ -19,9 +19,9 @@ const useStyles = makeStyles(() => ({
 
   buttonText: {
     color: "black",
-    backgroundColor: "#84DCC6",
+    backgroundColor: "#4EC8F4",
     "&:hover": {
-      backgroundColor: "#52aa95",
+      backgroundColor: "#0097c1",
     },
   },
 }));

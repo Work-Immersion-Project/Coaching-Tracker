@@ -13,13 +13,14 @@ import coachingReducer from "./coachingReducer";
 import alertsReducer from "./alertsReducer";
 import registrationReducer from "./registrationReducer";
 import notificationReducer from "./notificationReducer";
-import coachingLogReducer from "./coachingLogReducer";
+import websocketReducer from "./websocketReducer";
+import schedulerReducer from "./schedulerReducer";
 const reducers = combineReducers({
+  scheduler: schedulerReducer,
   auth: authReducer,
   form: formReducer,
   registration: registrationReducer,
   notifications: notificationReducer,
-  coachingLog: coachingLogReducer,
   alerts: alertsReducer,
   fields: fieldsReducer,
   teachers: teacherReducer,
@@ -30,6 +31,7 @@ const reducers = combineReducers({
   errors: errorReducer,
   drawer: drawerReducer,
   coaching: coachingReducer,
+  websockets: websocketReducer,
 });
 
 export default reducers;

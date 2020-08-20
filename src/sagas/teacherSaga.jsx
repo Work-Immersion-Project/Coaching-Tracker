@@ -7,6 +7,7 @@ import {
   getTeachersSuccess,
   assignSubjectToTeacherSuccess,
   removeSubjectFromTeacherSuccess,
+  createWebsocket,
 } from "../actions";
 import { take, takeEvery, put, select } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
@@ -16,9 +17,9 @@ import {
   ASSIGN_SUBJECT_TO_TEACHER_REQUEST,
   REMOVE_SUBJECT_FROM_TEACHER_REQUEST,
 } from "../types";
-import { collections, db } from "../firebase";
+
 import { currentUserSelector } from "../selectors";
-import firebase from "firebase";
+
 import axios from "../api";
 import { config } from "../consts/config";
 
@@ -31,7 +32,7 @@ function* getTeachers() {
         subs(e.data);
       })
   );
-
+  yield put(createWebsocket(ws));
   try {
     while (true) {
       const response = yield take(channel);
@@ -126,41 +127,23 @@ function* assignSubjectToTeacher({ payload: { ID, subjects } }) {
   }
 }
 
-function* removeSubjectFromTeacher({
-  payload: {
-    teacherDetails: { email, metadata },
-    subjectName,
-  },
-}) {
-  const teacherRef = collections.teacher.doc(email);
-  const subjectRef = collections.subjects.doc(subjectName);
-  const fieldVal = firebase.firestore.FieldValue;
-  yield put(hideModal());
-  yield put(showModal("LOADING_MODAL"));
-
+function* removeSubjectFromTeacher({ payload: { subjectID, teacherID } }) {
   try {
-    yield teacherRef.update({
-      handledSubjects: fieldVal.arrayRemove(subjectName),
-    });
-
-    yield db.runTransaction(async (trans) => {
-      const subjTeacherRef = subjectRef.collection("teachers").doc(email);
-      trans.delete(subjTeacherRef);
-      trans.update(subjectRef, {
-        totalTeachers: fieldVal.increment(-1),
-      });
-    });
-
     yield put(hideModal());
-    yield put(removeSubjectFromTeacherSuccess());
+    yield put(showModal("LOADING_MODAL"));
+
+    yield axios.delete(`subjects/${subjectID}/teacher/${teacherID}`);
+
     yield put(
-      showAlert(
-        "SUCCESS",
-        `Subject ${subjectName} has been unassigned from ${metadata.fullName}`
-      )
+      showAlert("SUCCESS", "Subject has been successfully unassigned.")
     );
+    yield put(removeSubjectFromTeacherSuccess());
   } catch (error) {
-    yield put(setError(error.message));
+    if (error.response) {
+      yield put(setError(error.response.data.error.message));
+    } else {
+      yield put(setError(error.message));
+    }
   }
 }
 

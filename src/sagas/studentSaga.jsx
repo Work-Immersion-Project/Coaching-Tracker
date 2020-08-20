@@ -6,7 +6,7 @@ import {
 } from "../types";
 import { takeEvery, put, take, select } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
-import { collections, db } from "../firebase";
+
 import {
   hideModal,
   addStudentSuccess,
@@ -15,9 +15,10 @@ import {
   getStudentsSuccess,
   showModal,
   removeStudentSubjectSuccess,
+  createWebsocket,
 } from "../actions";
 import { currentUserSelector } from "../selectors";
-import firebase from "firebase";
+
 import axios from "../api";
 import { config } from "../consts/config";
 
@@ -51,6 +52,7 @@ function* getStudents() {
       sub(m.data);
     });
   });
+  yield put(createWebsocket(ws));
   try {
     while (true) {
       const response = yield take(channel);
@@ -127,40 +129,23 @@ function* assignStudentSubjSaga({ payload: { ID, subjects } }) {
   }
 }
 
-function* removeStudentSubjSaga({
-  payload: {
-    studentDetails: { email, metadata },
-    subjectName,
-  },
-}) {
-  const fieldValue = firebase.firestore.FieldValue;
-  const studentRef = collections.student.doc(email);
-  const subjRef = collections.subjects.doc(subjectName);
-  yield put(hideModal());
-  yield put(showModal("LOADING_MODAL"));
+function* removeStudentSubjSaga({ payload: { studentID, subjectID } }) {
+  try {
+    yield put(hideModal());
+    yield put(showModal("LOADING_MODAL"));
 
-  yield studentRef.update({
-    enrolledSubjects: fieldValue.arrayRemove(subjectName),
-  });
-
-  yield db.runTransaction(async (transaction) => {
-    const enrolledStudentRef = subjRef
-      .collection("enrolledStudents")
-      .doc(email);
-    transaction.delete(enrolledStudentRef);
-    transaction.update(subjRef, {
-      totalStudentsEnrolled: fieldValue.increment(-1),
-    });
-  });
-
-  yield put(hideModal());
-  yield put(removeStudentSubjectSuccess());
-  yield put(
-    showAlert(
-      "SUCCESS",
-      `Subject ${subjectName} has been removed from ${metadata.fullName}`
-    )
-  );
+    yield axios.delete(`subjects/${subjectID}/student/${studentID}`);
+    yield put(removeStudentSubjectSuccess());
+    yield put(
+      showAlert("SUCCESS", "Subject has been successfully unassigned.")
+    );
+  } catch (error) {
+    if (error.response) {
+      yield put(error.response.data.error.message);
+    } else {
+      yield put(error.message);
+    }
+  }
 }
 
 export function* watchStudent() {

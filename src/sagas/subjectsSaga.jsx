@@ -33,7 +33,9 @@ function* addSubject({ payload: { subjectName } }) {
 function* getSubjects() {
   const ws = new WebSocket(`${config.WS_BASE_URL}/subjects`);
   const event = eventChannel((sub) => (ws.onmessage = (m) => sub(m.data)));
-
+  setInterval(() => {
+    ws.send("keepalive");
+  }, config.WS_TIMEOUT);
   try {
     while (true) {
       const response = yield take(event);

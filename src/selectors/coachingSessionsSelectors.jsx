@@ -7,7 +7,7 @@ const coachingSessionsSelector = (state) => state.coaching.coachingSchedules;
 export const onGoingSessionsSelector = createSelector(
   coachingSessionsSelector,
   (coachingSessions) =>
-    coachingSessions.filter(
+    _.map(coachingSessions, (session, _) => session).filter(
       (coachingSession) => coachingSession.status === "ongoing"
     )
 );
@@ -15,7 +15,7 @@ export const onGoingSessionsSelector = createSelector(
 export const allCoachingSessionsSelector = createSelector(
   coachingSessionsSelector,
   (coachingSessions) =>
-    coachingSessions.filter(
+    _.map(coachingSessions, (session, _) => session).filter(
       (coachingSession) => coachingSession.status !== "ongoing"
     )
 );
@@ -25,8 +25,8 @@ export const coachingSessionStudentInstancesSelector = createSelector(
   currentUserSelector,
   (coachingSessions, currentUser) => {
     return _.flatten(
-      coachingSessions.map((session) =>
-        session.studentAttendees.map((student) => {
+      _.mapValues(coachingSessions, (session, _) => {
+        return session.studentAttendees.map((student) => {
           return {
             text:
               currentUser.email !== student.email
@@ -35,8 +35,8 @@ export const coachingSessionStudentInstancesSelector = createSelector(
             id: student.email,
             color: "red",
           };
-        })
-      )
+        });
+      })
     );
   }
 );

@@ -1,8 +1,5 @@
 import { takeEvery, put, select, take } from "redux-saga/effects";
-import {
-  currentUserSelector,
-  isDesktopNotificationsEnabledSelector,
-} from "../selectors";
+import { currentUserSelector } from "../selectors";
 import { config } from "../consts/config";
 import {
   createWebsocket,
@@ -10,7 +7,6 @@ import {
   setError,
   updateNotificationSuccess,
   checkDesktopNotificationPermissionSuccess,
-  checkDesktopNotificationPermissionRequest,
   clearNotificationsSuccess,
   showModal,
   hideModal,

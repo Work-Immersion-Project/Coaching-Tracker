@@ -303,51 +303,54 @@ const RequestEventForm = ({
             {_.isUndefined(errors.subject) ? "" : "Required"}
           </FormHelperText>
         </FormControl>
-        <Controller
-          name="teacher"
-          defaultValue={[]}
-          control={control}
-          rules={{
-            validate: (teacher = "") => teacher !== "",
-          }}
-          render={(props) => {
-            return (
-              <Autocomplete
-                options={teachers}
-                loading={isTeacherListOpen && teachers.length === 0}
-                getOptionLabel={(option) => option.email}
-                filterSelectedOptions
-                size={"small"}
-                onOpen={() => {
-                  setTeacherListState(true);
-                }}
-                onChange={(_, data) => {
-                  props.onChange(data);
-                }}
-                renderInput={(props) => (
-                  <TextField
-                    {...props}
-                    className={classes.addStudentsField}
-                    error={errors.teacher !== undefined}
-                    label="Teacher"
-                    helperText={errors.teacher !== undefined ? "Required" : ""}
-                    InputProps={{
-                      ...props.InputProps,
-                      endAdornment: (
-                        <>
-                          {isTeacherListOpen && teachers.length === 0 ? (
-                            <CircularProgress size={20} />
-                          ) : null}
-                        </>
-                      ),
-                    }}
-                  />
-                )}
-              />
-            );
-          }}
-        />
-
+        {selectedSubject !== "" ? (
+          <Controller
+            name="teacher"
+            defaultValue={[]}
+            control={control}
+            rules={{
+              validate: (teacher = "") => teacher !== "",
+            }}
+            render={(props) => {
+              return (
+                <Autocomplete
+                  options={teachers}
+                  loading={isTeacherListOpen && teachers.length === 0}
+                  getOptionLabel={(option) => option.email}
+                  filterSelectedOptions
+                  size={"small"}
+                  onOpen={() => {
+                    setTeacherListState(true);
+                  }}
+                  onChange={(_, data) => {
+                    props.onChange(data);
+                  }}
+                  renderInput={(props) => (
+                    <TextField
+                      {...props}
+                      className={classes.addStudentsField}
+                      error={errors.teacher !== undefined}
+                      label="Teacher"
+                      helperText={
+                        errors.teacher !== undefined ? "Required" : ""
+                      }
+                      InputProps={{
+                        ...props.InputProps,
+                        endAdornment: (
+                          <>
+                            {isTeacherListOpen && teachers.length === 0 ? (
+                              <CircularProgress size={20} />
+                            ) : null}
+                          </>
+                        ),
+                      }}
+                    />
+                  )}
+                />
+              );
+            }}
+          />
+        ) : null}
         <Button type="submit" className={classes.button}>
           Create Coaching Schedule
         </Button>

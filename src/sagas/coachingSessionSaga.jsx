@@ -41,17 +41,18 @@ function* getStudentCoachingSessions(studentID) {
     while (true) {
       const response = yield take(channel);
       const coachingSessions = JSON.parse(response);
-      yield put(
-        getCoachingSchedulesSuccess(
-          coachingSessions.data.map((s) => {
-            const sched = s;
-            return {
-              ...sched,
-              students: sched.studentAttendees.map((st) => st.email),
-            };
-          })
-        )
+      const mappedSessions = _.keyBy(
+        coachingSessions.data.map((s) => {
+          const sched = s;
+          return {
+            ...sched,
+            students: sched.studentAttendees.map((st) => st.email),
+          };
+        }),
+        "ID"
       );
+
+      yield put(getCoachingSchedulesSuccess(mappedSessions));
     }
   } catch (error) {
     if (error.response) {

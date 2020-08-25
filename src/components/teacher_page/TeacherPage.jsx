@@ -8,8 +8,6 @@ import InterweaveBG from "../custom/svgs/interweave.svg";
 import TeacherSchedulesContainer from "./TeacherSchedules/TeacherSchedulesContainer";
 import TeacherDrawerContainer from "./TeacherDrawer/TeacherDrawerContainer";
 import NotificationPageContainer from "../notification_page/NotificationPageContainer";
-import { toast } from "react-toastify";
-import NotifIMG from "../custom/img/ongoing_session_header.png";
 
 const useStyles = makeStyles((theme) => ({
   container: {

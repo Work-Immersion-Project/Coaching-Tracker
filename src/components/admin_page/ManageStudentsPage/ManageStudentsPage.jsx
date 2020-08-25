@@ -188,10 +188,12 @@ const ManageStudentsPage = ({
             {
               title: "Email",
               field: "email",
+              render: ({ email }) => <Typography>{email}</Typography>,
             },
             {
               title: "Course",
               field: "course",
+              render: ({ course }) => <Typography>{course}</Typography>,
             },
             {
               title: "Enrolled Subjects",

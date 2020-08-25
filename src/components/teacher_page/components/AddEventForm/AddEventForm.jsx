@@ -302,53 +302,56 @@ const AddEventForm = ({
             {_.isUndefined(errors.subject) ? "" : "Required"}
           </FormHelperText>
         </FormControl>
-        <Controller
-          name="studentAttendees"
-          defaultValue={[]}
-          control={control}
-          rules={{
-            validate: (studentAttendees = []) => studentAttendees.length !== 0,
-          }}
-          render={(props) => {
-            return (
-              <Autocomplete
-                options={students !== null ? students : []}
-                loading={isStudentListOpened && students.length === 0}
-                getOptionLabel={(option) => option.email}
-                multiple
-                filterSelectedOptions
-                size={"small"}
-                onChange={(_, data) => {
-                  props.onChange(data);
-                }}
-                onOpen={() => {
-                  setStudentListState(true);
-                }}
-                renderInput={(props) => (
-                  <TextField
-                    {...props}
-                    className={classes.addStudentsField}
-                    error={errors.studentAttendees !== undefined}
-                    label="Add Students"
-                    helperText={
-                      errors.studentAttendees !== undefined ? "Required" : ""
-                    }
-                    InputProps={{
-                      ...props.InputProps,
-                      endAdornment: (
-                        <>
-                          {isStudentListOpened && students.length === 0 ? (
-                            <CircularProgress size={20} />
-                          ) : null}
-                        </>
-                      ),
-                    }}
-                  />
-                )}
-              />
-            );
-          }}
-        />
+        {selectedSubject !== "" ? (
+          <Controller
+            name="studentAttendees"
+            defaultValue={[]}
+            control={control}
+            rules={{
+              validate: (studentAttendees = []) =>
+                studentAttendees.length !== 0,
+            }}
+            render={(props) => {
+              return (
+                <Autocomplete
+                  options={students !== null ? students : []}
+                  loading={isStudentListOpened && students.length === 0}
+                  getOptionLabel={(option) => option.email}
+                  multiple
+                  filterSelectedOptions
+                  size={"small"}
+                  onChange={(_, data) => {
+                    props.onChange(data);
+                  }}
+                  onOpen={() => {
+                    setStudentListState(true);
+                  }}
+                  renderInput={(props) => (
+                    <TextField
+                      {...props}
+                      className={classes.addStudentsField}
+                      error={errors.studentAttendees !== undefined}
+                      label="Add Students"
+                      helperText={
+                        errors.studentAttendees !== undefined ? "Required" : ""
+                      }
+                      InputProps={{
+                        ...props.InputProps,
+                        endAdornment: (
+                          <>
+                            {isStudentListOpened && students.length === 0 ? (
+                              <CircularProgress size={20} />
+                            ) : null}
+                          </>
+                        ),
+                      }}
+                    />
+                  )}
+                />
+              );
+            }}
+          />
+        ) : null}
 
         <Button type="submit" className={classes.button}>
           Create Coaching Schedule

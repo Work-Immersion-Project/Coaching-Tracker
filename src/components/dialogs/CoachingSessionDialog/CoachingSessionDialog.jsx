@@ -34,20 +34,20 @@ const useStyles = makeStyles(({ spacing, palette, typography }) => ({
     minHeight: "190px",
     padding: spacing(1.5),
     paddingTop: spacing(1),
-    background: "#222222",
+    background: "white",
     boxSizing: "border-box",
     ...typography.body2,
   },
   text: {
     display: "inline-block",
-    color: "white",
+    color: "black",
   },
   title: {
     ...typography.h6,
     fontWeight: typography.fontWeightBold,
     overflow: "hidden",
     textOverflow: "ellipsis",
-    color: "white",
+    color: "black",
   },
   icon: {
     verticalAlign: "middle",

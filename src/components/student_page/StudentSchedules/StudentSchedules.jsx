@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     width: "100%",
     alignSelf: "center",
-    backgroundColor: "#222222",
     borderRadius: "30px",
     overflow: "hidden",
   },
@@ -34,115 +33,116 @@ const formTheme = createMuiTheme({
   overrides: {
     MuiPaper: {
       root: {
-        backgroundColor: "#222222",
+        backgroundColor: "white",
       },
     },
 
     MuiPopover: {
       paper: {
-        backgroundColor: "#222222",
+        backgroundColor: "white",
       },
     },
 
     MuiTypography: {
       h6: {
-        color: "white",
+        color: "#000000",
       },
     },
 
     DayScaleEmptyCell: {
       emptyCell: {
-        backgroundColor: "#222222",
+        backgroundColor: "white",
       },
     },
 
     MuiTableBody: {
       root: {
-        backgroundColor: "#222222",
+        backgroundColor: "white",
       },
     },
     TickCell: {
       cell: {
-        borderBottom: "1px solid rgba(34, 34, 34, 1)",
+        borderBottom: "1px solid white",
       },
     },
 
     Cell: {
       dayOfWeek: {
-        color: "white",
+        color: "#222222",
       },
       dayOfMonth: {
-        color: "white",
+        color: "#222222",
       },
       highlightedText: {
-        color: "#4EC8F4",
+        color: "#00364D",
       },
     },
 
     MuiIconButton: {
       root: {
-        color: "#4EC8F4",
+        color: "#00364D",
       },
     },
 
     MuiButton: {
       root: {
-        backgroundColor: "#4EC8F4",
+        backgroundColor: "#00364D",
         "&:hover": {
-          backgroundColor: "#0097c1",
+          backgroundColor: "#001025",
           "@media (hover: none)": {
-            backgroundColor: "#4EC8F4",
+            backgroundColor: "#00364D",
           },
         },
+        color: "white"
       },
       text: {
-        color: "#000000",
+        color: "white",
       },
     },
     MuiInputBase: {
       root: {
-        color: "#4EC8F4",
+        color: "#00364D",
       },
     },
 
     Label: {
       text: {
-        color: "white",
+        color: "#000000",
       },
     },
 
     MuiOutlinedInput: {
       root: {
         "&$focused $notchedOutline": {
-          borderColor: "#4EC8F4",
+          borderColor: "#00364D",
         },
         "&:hover:not($disabled):not($focused):not($error) $notchedOutline": {
-          borderColor: "#4EC8F4",
+          borderColor: "#00364D",
         },
       },
       notchedOutline: {
-        borderColor: "#4EC8F4",
+        borderColor: "#00364D",
       },
     },
 
     MuiTableCell: {
       head: {
-        color: "#4EC8F4",
+        color: "#4EC00364D8F4",
       },
       body: {
-        color: "white",
+        color: "black",
       },
     },
 
     MuiMenuItem: {
       root: {
-        color: "#4EC8F4",
+        color: "#00364D",
       },
     },
 
     MuiSelect: {
       icon: {
-        color: "#4EC8F4",
+        color: "#00364D",
       },
     },
   },

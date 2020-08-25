@@ -25,88 +25,92 @@ const StyledTableHeader = withStyles({})(
 const formTheme = createMuiTheme({
   overrides: {
     MuiPaper: {
+      rounded: {
+        borderRadius: "30px",
+      },
       root: {
-        color: "#4EC8F4",
-        backgroundColor: "#222222",
+        color: "#00364D",
+        backgroundColor: "white",
       },
     },
     MuiInput: {
       root: {
-        color: "#4EC8F4",
+        color: "#00364D",
       },
       underline: {
         minWidth: "270px",
         "&:before": {
-          borderBottom: "1px solid rgba(78,200,244, 1)",
+          borderBottom: "1px solid #00364D",
         },
         "&:after": {
-          borderBottom: `2px solid rgba(78,200,244, 1)`,
+          borderBottom: `2px solid #00364D`,
         },
         "&:hover:not($disabled):not($focused):not($error):before": {
-          borderBottom: `2px solid rgba(78,200,244, 1)`,
+          borderBottom: `2px solid #00364D`,
         },
       },
     },
     MuiIconButton: {
       root: {
-        color: "#4EC8F4",
+        color: "#00364D",
         "&$disabled": {
           color: "#222222",
         },
       },
       colorInherit: {
-        color: "#4EC8F4",
+        color: "#00364D",
       },
     },
 
     MuiInputBase: {
       input: {
-        color: "white",
+        color: "#00364D",
       },
     },
     MuiSelect: {
       icon: {
-        color: "#4EC8F4",
+        color: "#00364D",
       },
     },
     MuiTypography: {
-      root: {
-        color: "white",
-      },
       caption: {
-        color: "white",
+        color: "#00364D",
       },
     },
     MuiTableCell: {
+      root: {
+        borderBottomColor: "#00364D",
+        fontFamily: "Robot, Helvetica, Arial, ans-serif !important"
+      },
       body: {
-        color: "white !important",
+        color: "#00364D",
       },
       head: {
-        color: "#4EC8F4",
+        color: "#00364D",
       },
     },
     MuiTableSortLabel: {
       root: {
-        color: "#4EC8F4",
+        color: "#00364D",
         "&$active": {
-          color: "#4EC8F4",
+          color: "#00364D",
           "&& $icon": {
-            color: "#4EC8F4",
+            color: "#00364D",
           },
         },
         "&:hover": {
-          color: "#4EC8F4",
+          color: "#00364D",
         },
       },
     },
     MuiIcon: {
       fontSizeSmall: {
-        color: "#4EC8F4",
+        color: "#00364D",
       },
     },
     MuiTablePagination: {
       root: {
-        color: "white",
+        color: "#00364D",
       },
     },
   },
@@ -219,8 +223,8 @@ const ManageStudentsPage = ({
           ]}
           options={{
             headerStyle: {
-              backgroundColor: "#222222",
-              color: "#84DCC6",
+              backgroundColor: "white",
+              color: "#00364D",
             },
           }}
         />

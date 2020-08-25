@@ -14,7 +14,7 @@ import {
 
 const useStyles = makeStyles(() => ({
   title: {
-    color: "white",
+    color: "black",
   },
 }));
 
@@ -22,13 +22,13 @@ const formTheme = createMuiTheme({
   overrides: {
     MuiPaper: {
       root: {
-        color: "white",
-        backgroundColor: "#222222",
+        color: "black",
+        backgroundColor: "white",
       }
     },
     MuiInputLabel: {
       root: {
-        color: "white",
+        color: "black",
         "&$focused": {
           color: "#4EC8F4",
         },
@@ -36,7 +36,7 @@ const formTheme = createMuiTheme({
     },
     MuiInput: {
       root: {
-        color: "white",
+        color: "black",
       },
       underline: {
         minWidth: "270px",

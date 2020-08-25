@@ -27,27 +27,27 @@ const useStyles = makeStyles(() => ({
     height: "100%",
     width: "100%",
     borderRadius: "30px",
-    backgroundColor: "#222222",
+    backgroundColor: "white",
   },
   emptyContent: {
     width: "100%",
     height: "100%",
-    color: "#4EC8F4",
+    color: "#00364D",
   },
   content: {
     width: "100%",
     padding: "2em",
-    color: "#4EC8F4",
+    color: "#00364D",
   },
   unseenIndicator: {
-    color: "#00364D",
+    color: "#4EC8F4",
   },
   divider: {
     height: "0.1px",
-    backgroundColor: "#95a3b3",
+    backgroundColor: "black",
   },
   deleteIcon: {
-    color: "#4EC8F4",
+    color: "#00364D",
   },
   notifMessage: {
     padding: "0.5em 0.5em",

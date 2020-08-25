@@ -25,7 +25,7 @@ const useStyles = makeStyles(() => ({
     margin: "1em 0.25em",
   },
   title: {
-    color: "#4EC8F4 !important",
+    color: "black !important",
   },
 }));
 
@@ -33,14 +33,14 @@ const formTheme = createMuiTheme({
   overrides: {
     MuiPaper: {
       root: {
-        color: "white",
-        backgroundColor: "#222222",
+        color: "black",
+        backgroundColor: "white",
       },
     },
 
     MuiInputLabel: {
       root: {
-        color: "#4EC8F4",
+        color: "black",
       },
     },
 
@@ -51,13 +51,13 @@ const formTheme = createMuiTheme({
       underline: {
         minWidth: "270px",
         "&:before": {
-          borderBottom: "1px solid rgba(78,200,244, 1)",
+          borderBottom: "1px solid #4EC8F4",
         },
         "&:after": {
-          borderBottom: `2px solid rgba(78,200,244, 1)`,
+          borderBottom: `2px solid #4EC8F4`,
         },
         "&:hover:not($disabled):not($focused):not($error):before": {
-          borderBottom: `2px solid rgba(78,200,244, 1)`,
+          borderBottom: `2px solid #4EC8F4`,
         },
       },
     },

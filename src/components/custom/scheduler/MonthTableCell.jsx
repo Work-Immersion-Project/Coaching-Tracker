@@ -6,12 +6,12 @@ import classNames from "clsx";
 
 const MonthTableCell = withStyles(({ palette }) => ({
   dayBehindCell: {
-    backgroundColor: "#111",
+    backgroundColor: "#999",
     "&:hover": {
-      backgroundColor: "#111",
+      backgroundColor: "#999",
     },
     "&:focus": {
-      backgroundColor: "#111",
+      backgroundColor: "#999",
     },
   },
 }))(({ classes, onCellClick, ...restProps }) => {

@@ -11,14 +11,14 @@ import {
 
 const useStyles = makeStyles(() => ({
   content: {
-    backgroundColor: "#222222",
+    backgroundColor: "white",
   },
   contentText: {
-    color: "white",
+    color: "black",
   },
 
   buttonText: {
-    color: "black",
+    color: "white",
     backgroundColor: "#4EC8F4",
     "&:hover": {
       backgroundColor: "#0097c1",
